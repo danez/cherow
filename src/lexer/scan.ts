@@ -113,11 +113,11 @@ table[Chars.EqualSign] = state => {
     if (currentChar === Chars.EqualSign) {
       if (state.index < state.length && nextChar(state) === Chars.EqualSign) {
         ++state.column;
-        state.currentChar = state.source.charCodeAt(++state.index); // ===
+        state.currentChar = state.source.charCodeAt(++state.index);
         return Token.StrictEqual;
       } else return Token.LooseEqual;
     } else if (currentChar === Chars.GreaterThan) {
-      state.currentChar = state.source.charCodeAt(++state.index); // =>
+      state.currentChar = state.source.charCodeAt(++state.index);
       ++state.column;
       return Token.Arrow;
     }
@@ -129,18 +129,16 @@ table[Chars.LessThan] = (state: ParserState) => {
   state.column++;
   if (state.index < state.length) {
     if (state.currentChar === Chars.EqualSign) {
-      state.currentChar = state.source.charCodeAt(++state.index); // >=
+      state.currentChar = state.source.charCodeAt(++state.index);
       state.column++;
       return Token.LessThanOrEqual;
     } else if (state.currentChar === Chars.LessThan) {
       state.column++;
-      state.currentChar = state.source.charCodeAt(++state.index); // >>
-      if (state.index < state.length && state.currentChar === Chars.EqualSign) {
-        state.column++;
-        state.currentChar = state.source.charCodeAt(++state.index); // >>=
-        return Token.ShiftLeftAssign;
-      }
-      return Token.ShiftLeft;
+      state.currentChar = state.source.charCodeAt(++state.index);
+      if (state.currentChar !== Chars.EqualSign) return Token.ShiftLeft;
+      state.column++;
+      state.currentChar = state.source.charCodeAt(++state.index);
+      return Token.ShiftLeftAssign;
     }
   }
   return Token.LessThan;
@@ -149,29 +147,25 @@ table[Chars.LessThan] = (state: ParserState) => {
 // `>`, `>=`, `>>`, `>>>`, `>>=`, `>>>=`
 table[Chars.GreaterThan] = (state: ParserState) => {
   ++state.column;
-  let next = state.currentChar;
-  if (next === Chars.EqualSign) {
-    state.currentChar = state.source.charCodeAt(++state.index); // >=
+  if (state.currentChar === Chars.EqualSign) {
+    state.currentChar = state.source.charCodeAt(++state.index);
     state.column++;
     return Token.GreaterThanOrEqual;
-  } else if (next === Chars.GreaterThan) {
-    state.currentChar = state.source.charCodeAt(++state.index); // >=
-    state.column++;// >>
+  } else if (state.currentChar === Chars.GreaterThan) {
+    state.currentChar = state.source.charCodeAt(++state.index);
+    state.column++;
     if (state.index < state.length) {
-      next = state.currentChar;
-      if (next === Chars.EqualSign) {
+      if (state.currentChar === Chars.EqualSign) {
         ++state.column;
-        state.currentChar = state.source.charCodeAt(++state.index); // >= // >>=
+        state.currentChar = state.source.charCodeAt(++state.index);
         return Token.ShiftRightAssign;
-      } else if (next === Chars.GreaterThan) {
+      } else if (state.currentChar === Chars.GreaterThan) {
         ++state.column;
-        state.currentChar = state.source.charCodeAt(++state.index); // >= // >>>
-        if (state.index < state.length && state.currentChar === Chars.EqualSign) {
-          ++state.column;
-          state.currentChar = state.source.charCodeAt(++state.index); // >= // >>>=
-          return Token.LogicalShiftRightAssign;
-        }
-        return Token.LogicalShiftRight;
+        state.currentChar = state.source.charCodeAt(++state.index);
+        if (state.currentChar !== Chars.EqualSign) return Token.LogicalShiftRight;
+        ++state.column;
+        state.currentChar = state.source.charCodeAt(++state.index);
+        return Token.LogicalShiftRightAssign;
       }
     }
     return Token.ShiftRight;
@@ -184,16 +178,15 @@ table[Chars.Exclamation] = state => {
   ++state.column;
   if (state.currentChar === Chars.EqualSign) {
     ++state.column;
-    state.currentChar = state.source.charCodeAt(++state.index); // !=
+    state.currentChar = state.source.charCodeAt(++state.index);
     if (state.index < state.length && state.currentChar === Chars.EqualSign) {
       ++state.column;
-      state.currentChar = state.source.charCodeAt(++state.index); // !==
+      state.currentChar = state.source.charCodeAt(++state.index);
       return Token.StrictNotEqual;
     }
     return Token.LooseNotEqual;
   }
   return Token.Negate;
-
 };
 
 // `*`, `**`, `*=`, `**=`
@@ -202,11 +195,11 @@ table[Chars.Asterisk] = state => {
   if (state.index >= state.length) return Token.Multiply;
   if (state.currentChar === Chars.Asterisk) {
     ++state.column;
-    state.currentChar = state.source.charCodeAt(++state.index);// **
+    state.currentChar = state.source.charCodeAt(++state.index);
     if (state.index < state.length && state.currentChar === Chars.EqualSign) {
       ++state.column;
       state.currentChar = state.source.charCodeAt(++state.index);
-      return Token.ExponentiateAssign;// **=
+      return Token.ExponentiateAssign;
     }
     return Token.Exponentiate;
   } else if (state.currentChar === Chars.EqualSign) {
@@ -220,33 +213,29 @@ table[Chars.Asterisk] = state => {
 // `%`, `%=`
 table[Chars.Percent] = state => {
   ++state.column;
-  if (state.index < state.length && state.currentChar === Chars.EqualSign) {
+  if (state.currentChar !== Chars.EqualSign) return Token.Modulo;
     ++state.column;
     state.currentChar = state.source.charCodeAt(++state.index);
     return Token.ModuloAssign;
-  }
-  return Token.Modulo;
-
 };
 
 // `^`, `^=`
 table[Chars.Caret] = state => {
   ++state.column;
-  if (state.index < state.length && state.currentChar === Chars.EqualSign) {
+  if (state.currentChar !== Chars.EqualSign) return Token.BitwiseXor;
     ++state.column;
     state.currentChar = state.source.charCodeAt(++state.index);
     return Token.BitwiseXorAssign;
-  }
-  return Token.BitwiseXor;
 };
 
 // `&`, `&&`, `&=`
 table[Chars.Ampersand] = state => {
   ++state.column;
+  if (state.index >= state.length) return Token.BitwiseAnd;
   if (state.currentChar === Chars.Ampersand) {
     state.currentChar = state.source.charCodeAt(++state.index);
-      ++state.column;
-      return Token.LogicalAnd;
+    ++state.column;
+    return Token.LogicalAnd;
   }
   if (state.currentChar === Chars.EqualSign) {
       state.currentChar = state.source.charCodeAt(++state.index);
