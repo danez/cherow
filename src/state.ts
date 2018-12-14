@@ -17,7 +17,7 @@ export class State {
   constructor(source: string) {
       this.index = 0;
       this.column = 0;
-      this.line = 0;
+      this.line = 1;
       this.source = source || '';
       this.length = source.length;
       this.flags = Flags.Empty;

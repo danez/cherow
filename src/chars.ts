@@ -174,13 +174,3 @@ export const enum Chars {
     ByteOrderMark      = 0b1111111111101111,
     BigEndian          = 0b1111111111101110
 }
-
-/*@internal*/
-export const whiteSpaceMap: Function[] = new Array(0xFEFF);
-const truthFn = (state: State) => { state.index++; state.column++; return true; };
-const falsyFn = () => false;
-
-whiteSpaceMap.fill(falsyFn);
-whiteSpaceMap.fill(truthFn, 0x9, 0xD + 1);
-whiteSpaceMap.fill(truthFn, 0x2000, 0x200A + 1);
-whiteSpaceMap[0xA0] = whiteSpaceMap[0x1680] = whiteSpaceMap[0x202F] = whiteSpaceMap[0x205F] = whiteSpaceMap[0x3000] = whiteSpaceMap[0xFEFF] = truthFn;
