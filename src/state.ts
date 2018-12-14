@@ -10,6 +10,7 @@ export class State {
   public currentChar: number;
   public flags: Flags;
   public token: Token;
+  public tokens: any;
   public tokenRaw: string | null;
   public tokenRegExp: any;
   public tokenValue: any;
@@ -26,5 +27,6 @@ export class State {
       this.token = Token.EndOfSource;
       this.tokenRaw = null;
       this.tokenRegExp = undefined;
+      this.tokens = [];
   }
 }

@@ -1,4 +1,4 @@
-import { Options } from '../types';
+import { Options, EcmaVersion } from '../types';
 import { Context } from '../common';
 import * as ESTree from '../estree';
 import { State } from '../state';
@@ -19,6 +19,9 @@ export function parseSource(
   let sourceFile: string = '';
 
   if (options !== undefined) {
+      // The option to specify ecamVersion
+      let ecmaVersion = options.ecmaVersion || 10;
+      options.ecmaVersion = <EcmaVersion>(ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion)
       // The flag to enable module syntax support
       if (options.module) context |= Context.Module;
       // The flag to enable stage 3 support (ESNext)
@@ -29,7 +32,7 @@ export function parseSource(
       if (options.ranges) context |= Context.OptionsRanges;
       // The flag to enable line/column location information to each node
       if (options.loc) context |= Context.OptionsLoc;
-      // The flag to attach raw property to each literal node
+      // The flag to attach raw property to each literal and identifier node
       if (options.raw) context |= Context.OptionsRaw;
       // The flag to allow return in the global scope
       if (options.globalReturn) context |= Context.OptionsGlobalReturn;
@@ -39,6 +42,12 @@ export function parseSource(
       if (options.impliedStrict) context |= Context.Strict;
       // The flag to enable experimental features
       if (options.experimental) context |= Context.OptionsExperimental;
+      // The flag to enable "native" NodeJS / V8 features
+      if (options.native) context |= Context.OptionsNative;
+      // The flag to enable tokenizing
+      if (options.tokenize) context |= Context.OptionsTokenize;
+      // The flag to disable web compability (AnnexB)
+      if (options.disableWebCompat) context &= ~Context.OptionsWebCompat;
   }
 
   const state = new State(source);
@@ -82,7 +91,7 @@ export function parse(source: string, options?: Options): ESTree.Program {
  * @param options parser options
  */
 export function parseScript(source: string, options?: Options): ESTree.Program {
-  return parseSource(source, options, Context.Empty);
+  return parseSource(source, options, Context.OptionsWebCompat);
 }
 
 /**
@@ -94,5 +103,5 @@ export function parseScript(source: string, options?: Options): ESTree.Program {
  * @param options parser options
  */
 export function parseModule(source: string, options?: Options): ESTree.Program {
-  return parseSource(source, options, Context.Strict | Context.Module);
+  return parseSource(source, options, Context.Strict | Context.Module | Context.OptionsWebCompat);
 }

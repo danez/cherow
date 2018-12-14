@@ -1,27 +1,20 @@
 import { Token } from './token';
-import { Flags, LabelState } from './common';
+import { Flags } from './common';
 import { Comment } from './estree';
-import { CommentType } from '../test/lexer/comments';
 
 /**
- * `onToken` option.
+ * `ECMAScript version
  */
-export type OnToken = void | ((token: string, value: string, line?: number, column?: number) => void);
-
-/**
- * `onError` option.
- */
-export type OnError = void | ((error: string, line: number, column: number) => void);
-
-/**
- * `onComment` option.
- */
-export type OnComment = void | Comment[] | ((type: string, value: string, start: number, end: number) => any);
+export type EcmaVersion = 1 | 2 | 3 | 4 | 5 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020;
 
 /**
  * The parser options.
  */
 export interface Options {
+
+  // Set to 3, 5 (default), 6, 7, 8, 9, or 10 to specify the version of ECMAScript syntax you want to use.
+  // You can also set to 2015 (same as 6), 2016 (same as 7), 2017 (same as 8), 2018 (same as 9), or 2019 (same as 10) to use the year-based naming.
+  ecmaVersion?: EcmaVersion;
 
   // The flag to allow module code
   module?: boolean;
@@ -61,6 +54,9 @@ export interface Options {
 
   // Enabled tokenizing
   tokenize?: boolean;
+
+  // Disable web compability (AnnexB)
+  disableWebCompat?: boolean;
 }
 
 export interface ParserState {
@@ -76,6 +72,7 @@ export interface ParserState {
     tokenValue: any;
     tokenRegExp: any;
     lastIdentifier: any;
+    tokens: any;
 }
 
 /**

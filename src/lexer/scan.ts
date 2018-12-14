@@ -139,7 +139,7 @@ table[Chars.LessThan] = (state: ParserState, context: Context) => {
       state.currentChar = state.source.charCodeAt(++state.index);
       return Token.ShiftLeftAssign;
     }
-  } else if (context & Context.OptionsAnnexB &&
+  } else if (context & Context.OptionsWebCompat &&
     state.currentChar === Chars.Exclamation &&
     state.source.codePointAt(1) === Chars.Hyphen &&
     state.source.codePointAt(2) === Chars.Hyphen) {
@@ -339,6 +339,7 @@ export function nextToken(state: ParserState, context: Context): Token {
       const currentChar = state.currentChar;
       state.currentChar = state.source.charCodeAt(++state.index);
       if (((state.token = table[currentChar](state, context, currentChar)) & Token.WhiteSpace) !== Token.WhiteSpace) {
+        if (context & Context.OptionsTokenize) state.tokens.push(state.token);
         return state.token;
       }
   }
