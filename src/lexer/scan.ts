@@ -3,7 +3,7 @@ import { ParserState } from '../types';
 import { Token } from '../token';
 import { Chars } from '../chars';
 import { report, Errors } from '../errors';
-
+import { skipSingleLineComment, skipMultilineComment } from './comments';
 /*@internal*/
 export const whiteSpaceMap: Function[] = new Array(0xFEFF);
 const truthFn = (state: ParserState) => { state.column++; return true; };
@@ -54,6 +54,25 @@ table[Chars.CarriageReturn] = state => {
   }
   return Token.WhiteSpace;
 }
+
+// `/`, `/=`, `/>`, '/*..*/'
+table[Chars.Slash] = (state, context) => {
+  if (state.index  >= state.length) return Token.Divide;
+  const currentChar = state.currentChar;
+  if (currentChar === Chars.Slash) {
+      state.currentChar = state.source.charCodeAt(state.index++);
+      return skipSingleLineComment(state);
+  } else if (currentChar === Chars.Asterisk) {
+      state.currentChar = state.source.charCodeAt(state.index++);
+      return skipMultilineComment(state);
+  } else if (currentChar === Chars.EqualSign) {
+    return Token.DivideAssign;
+  } else if (context & Context.ExpressionStart) {
+    // TODO: return scanRegularExpression(state, context);
+  }
+  return Token.Divide;
+};
+
 
 /**
  * Scans and return the next token in the stream.
