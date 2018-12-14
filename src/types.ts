@@ -1,7 +1,7 @@
 import { Token } from './token';
 import { Flags, LabelState } from './common';
 import { Comment } from './estree';
-import { CommentType } from './lexer/comments';
+import { CommentType } from '../test/lexer/comments';
 
 /**
  * `onToken` option.
