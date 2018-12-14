@@ -15,9 +15,10 @@ const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80)/*.fill(maybeI
  * @param context Context masks
  */
 export function nextToken(state: ParserState, context: Context): Token {
-  state.flags &= ~Flags.LineTerminator;
   while (state.index < state.length) {
-      if (((state.token = table[state.currentChar](state, context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
+      const currentChar = state.currentChar;
+      state.currentChar = state.source.charCodeAt(state.index++);
+      if (((state.token = table[currentChar](state, context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
         return state.token;
       }
   }
