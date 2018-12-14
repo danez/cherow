@@ -315,11 +315,10 @@ table[Chars.VerticalBar] = state => {
 table[Chars.Period] = (state: ParserState) => {
   if (state.currentChar === Chars.Period) {
     if (state.source.charCodeAt(state.index + 1) === Chars.Period) {
-      state.currentChar = state.source.charCodeAt(++state.index);
-      state.currentChar = state.source.charCodeAt(++state.index);
+      state.currentChar = state.source.charCodeAt(state.index + 2);
       state.column += 3;
       return Token.Ellipsis;
-    } // the else will ultimately lead to an error in the parser
+    }
     state.column++;
     return Token.Period;
 
