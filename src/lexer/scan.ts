@@ -3,7 +3,7 @@ import { ParserState } from '../types';
 import { Token } from '../token';
 import { Chars } from '../chars';
 import { report, Errors } from '../errors';
-import { skipSingleLineComment, skipMultilineComment } from './comments';
+import { skipSingleHTMLComment, skipSingleLineComment, skipMultilineComment } from './comments';
 
 export const whiteSpaceMap: Function[] = new Array(0xFEFF);
 
@@ -11,8 +11,8 @@ const truthFn = (state: ParserState) => { state.column++; return true; };
 
 whiteSpaceMap.fill(truthFn, 0x9, 0xD + 1);
 whiteSpaceMap.fill(truthFn, 0x2000, 0x200A + 1);
-whiteSpaceMap[0xA0] = whiteSpaceMap[0x1680] = whiteSpaceMap[0x202F] = whiteSpaceMap[0x205F] = whiteSpaceMap[0x3000] = whiteSpaceMap[0xFEFF] = truthFn;
-whiteSpaceMap[Chars.ByteOrderMark] = () => Token.WhiteSpace;
+whiteSpaceMap[0xA0] = whiteSpaceMap[0x1680] =
+whiteSpaceMap[0x202F] = whiteSpaceMap[0x205F] = whiteSpaceMap[0x3000] = whiteSpaceMap[0xFEFF] = truthFn;
 whiteSpaceMap[Chars.ParagraphSeparator] = whiteSpaceMap[Chars.LineSeparator] = (state: ParserState) => {
   state.column = 0;
   state.line++;
@@ -20,16 +20,15 @@ whiteSpaceMap[Chars.ParagraphSeparator] = whiteSpaceMap[Chars.LineSeparator] = (
   return Token.WhiteSpace;
 }
 
-const unexpectedCharacter: (state: ParserState) => void = (state: ParserState) => report(state, Errors.Unexpected, String.fromCharCode(state.currentChar));
+const unexpectedCharacter: (state: ParserState) => void =
+(state: ParserState) => report(state, Errors.Unexpected, String.fromCharCode(state.currentChar));
 
-const maybeIdentifier = (state: ParserState, context: Context, currentChar: number) => {
+const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80).fill((state: ParserState, context: Context, currentChar: number) => {
   if (whiteSpaceMap[currentChar](state)) return Token.WhiteSpace;
   const c = context;
   // TODO: Identifier special cases
   return Token.WhiteSpace;
-}
-
-const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80).fill(maybeIdentifier, 0x80) as((state: ParserState, context: Context, currentChar: number) => Token)[];
+}, 0x80) as((state: ParserState, context: Context, currentChar: number) => Token)[];
 
 export function nextChar(state: ParserState): number {
   ++state.column;
@@ -125,7 +124,7 @@ table[Chars.EqualSign] = state => {
 };
 
 // `<`, `<=`, `<<`, `<<=`, `</`,  <!--
-table[Chars.LessThan] = (state: ParserState) => {
+table[Chars.LessThan] = (state: ParserState, context: Context) => {
   state.column++;
   if (state.index < state.length) {
     if (state.currentChar === Chars.EqualSign) {
@@ -140,6 +139,11 @@ table[Chars.LessThan] = (state: ParserState) => {
       state.currentChar = state.source.charCodeAt(++state.index);
       return Token.ShiftLeftAssign;
     }
+  } else if (context & Context.OptionsAnnexB &&
+    state.currentChar === Chars.Exclamation &&
+    state.source.codePointAt(1) === Chars.Hyphen &&
+    state.source.codePointAt(2) === Chars.Hyphen) {
+      return skipSingleHTMLComment(state, context);
   }
   return Token.LessThan;
 };
@@ -265,12 +269,17 @@ table[Chars.Plus] = state => {
 };
 
 // `-`, `--`, `-=`
-table[Chars.Hyphen] = (state) => {
+table[Chars.Hyphen] = (state, context) => {
   ++state.column;
   if (state.index < state.source.length) {
       if (state.currentChar === Chars.Hyphen) {
         state.currentChar = state.source.charCodeAt(++state.index);
           ++state.column;
+          // https://tc39.github.io/ecma262/#prod-annexB-MultiLineComment
+          if ((state.flags & (Flags.LineTerminator | Flags.ConsumedComment)) &&
+              state.currentChar === Chars.Hyphen && state.source.charCodeAt(state.index + 1) === Chars.GreaterThan) {
+              return skipSingleHTMLComment(state, context);
+          }
           return Token.Decrement;
       } else if (state.currentChar === Chars.EqualSign) {
         state.currentChar = state.source.charCodeAt(++state.index);
@@ -325,6 +334,7 @@ table[Chars.Period] = (state: ParserState) => {
  * @param context Context masks
  */
 export function nextToken(state: ParserState, context: Context): Token {
+  state.flags &= ~(Flags.LineTerminator | Flags.ConsumedComment);
   while (state.index < state.length) {
       const currentChar = state.currentChar;
       state.currentChar = state.source.charCodeAt(++state.index);

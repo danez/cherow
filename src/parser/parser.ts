@@ -2,6 +2,7 @@ import { Options } from '../types';
 import { Context } from '../common';
 import * as ESTree from '../estree';
 import { State } from '../state';
+import { skipHashBang } from '../lexer/common';
 
 /**
  * Parse source
@@ -41,6 +42,9 @@ export function parseSource(
   }
 
   const state = new State(source);
+
+  // Stage 3 - HashBang grammar
+  skipHashBang(state, context);
 
   const body = {};
 

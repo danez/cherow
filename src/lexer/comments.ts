@@ -1,7 +1,22 @@
-import { Flags } from '../common';
+import { Context, Flags } from '../common';
 import { ParserState } from '../types';
 import { Token } from '../token';
 import { Chars } from '../chars';
+import { report, Errors } from '../errors';
+
+// TODO: Make sure this works, and add option to collect the comments
+
+/**
+ * Skips single HTML comments. Same behavior as in V8.
+ *
+ * @param parser Parser Object
+ * @param context Context masks.
+ */
+export function skipSingleHTMLComment(state: ParserState, context: Context): Token {
+  // ES 2015 B.1.3 -  HTML comments are only allowed when parsing non-module code.
+  if (context & Context.Module) report(state, Errors.Unexpected);
+  return skipSingleLineComment(state);
+}
 
 /**
  * Skips SingleLineComment, SingleLineHTMLCloseComment and SingleLineHTMLOpenComment
@@ -24,7 +39,7 @@ export function skipSingleLineComment(state: ParserState): Token {
               next === Chars.ParagraphSeparator)) {
           if (next === Chars.CarriageReturn) lastIsCR = 2;
           if (!--lastIsCR) ++state.line;
-          state.flags |= Flags.LineTerminator;
+          state.flags |= (Flags.LineTerminator | Flags.ConsumedComment);
           state.column = 0;
           ++state.line;
           break;
@@ -70,7 +85,7 @@ export function skipMultilineComment(state: ParserState): Token {
         currentChar === Chars.LineSeparator))) {
           if (currentChar === Chars.CarriageReturn) lastIsCR = 2;
           if (!--lastIsCR) ++state.line;
-          state.flags |= Flags.LineTerminator;
+          state.flags |= (Flags.LineTerminator | Flags.ConsumedComment);
           state.column = 0;
     } else {
       if (lastIsCR) {

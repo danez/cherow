@@ -36,4 +36,6 @@ export const enum Context {
 export const enum Flags {
   Empty               = 0,
   LineTerminator      = 1 << 0,
+  ConsumedComment     = 1 << 1,
+
 }
