@@ -27,7 +27,7 @@ export interface Options {
   module?: boolean;
 
   // Create a top-level comments array containing all comments
-  comments?: boolean;
+  attachComments?: boolean;
 
   // The flag to enable stage 3 support (ESNext)
   next?: boolean;
@@ -41,11 +41,8 @@ export interface Options {
   // The flag to enable React JSX parsing
   jsx?: boolean;
 
-  // The flag to attach raw property to each literal node
+  // The flag to attach raw property to each literal and identifier node
   raw?: boolean;
-
-  // Attach raw property to each identifier node
-  rawIdentifier?: boolean;
 
   // Set to true to record the source file in every node's loc object when the loc option is set.
   source?: string;
@@ -59,61 +56,26 @@ export interface Options {
   // The flag to allow experimental features
   experimental?: boolean;
 
-   // The flag to allow to skip shebang - '#'
-  skipShebang?: boolean;
-
-  // Enable editor mode
-  edit?: OnError;
-
-  // Enable editor mode
-  onToken?: OnToken;
-
   // Enables method that should be bypassed when running on NodeJS
-  node?: boolean;
+  native?: boolean;
 
   // Enabled tokenizing
   tokenize?: boolean;
-
-  // Option to enable either array or callback for comments
-  onComment?: OnComment;
 }
 
 export interface ParserState {
     index: number;
-    startIndex: number;
-    lastIndex: number;
     line: number;
-    startLine: number;
-    lastLine: number;
     column: number;
-    startColumn: number;
-    lastColumn: number;
     source: string;
     flags: Flags;
     length: number;
-    commentState: number | undefined;
-    nextChar: number;
+    currentChar: number;
     tokenRaw: string | null;
     token: Token;
-    onToken: any;
-    onComment: any;
-    commentStart: number;
-    commentType: CommentType | void;
     tokenValue: any;
     tokenRegExp: any;
-     // Regular expression
-    capturingParens: number;
-    largestBackReference: number;
-    //
-    assignable: boolean;
-    destructible: boolean;
-    labelSet: any;
-    functionBoundaryStack: any;
-    labelSetStack: {[key: string]: boolean}[];
-    iterationStack: (boolean | LabelState)[];
-    switchStatement: LabelState;
-    iterationStatement: LabelState;
-    labelDepth: number;
+    lastIdentifier: any;
 }
 
 /**

@@ -1,10 +1,7 @@
-import { Options, OnToken } from '../types';
+import { Options } from '../types';
 import { Context } from '../common';
 import * as ESTree from '../estree';
 import { State } from '../state';
-import { parseStatementList } from './statements';
-import { parseModuleItemList } from './module';
-import { skipBomAndShebang } from '../lexer/common';
 
 /**
  * Parse source
@@ -18,8 +15,6 @@ export function parseSource(
   options: Options | void,
   /*@internal*/
   context: Context): any {
-  let onComment: any;
-  let onToken: OnToken;
   let sourceFile: string = '';
 
   if (options !== undefined) {
@@ -35,58 +30,25 @@ export function parseSource(
       if (options.loc) context |= Context.OptionsLoc;
       // The flag to attach raw property to each literal node
       if (options.raw) context |= Context.OptionsRaw;
-      // Attach raw property to each identifier node
-      if (options.rawIdentifier) context |= Context.OptionsRawidentifiers;
       // The flag to allow return in the global scope
       if (options.globalReturn) context |= Context.OptionsGlobalReturn;
-      // The flag to allow to skip shebang - '#'
-      if (options.skipShebang) context |= Context.OptionsShebang;
       // Set to true to record the source file in every node's loc object when the loc option is set.
       if (!!options.source) sourceFile = options.source;
-      // Create a top-level comments array containing all comments
-      if (!!options.comments) context |= Context.OptionsComments;
       // The flag to enable implied strict mode
       if (options.impliedStrict) context |= Context.Strict;
       // The flag to enable experimental features
       if (options.experimental) context |= Context.OptionsExperimental;
-      if (options.onToken !== null) onToken = options.onToken;
-      // The callback for handling comments
-      if (options.onComment !== null) onComment = options.onComment;
   }
 
-  const state = new State(source, onToken, onComment);
+  const state = new State(source);
 
-  skipBomAndShebang(state, context);
-
-  const body = (context & Context.Module) === Context.Module ?
-      parseModuleItemList(state, context) : parseStatementList(state, context);
+  const body = {};
 
   const node: ESTree.Program = {
       type: 'Program',
       sourceType: context & Context.Module ? 'module' : 'script',
       body: body as ESTree.Statement[],
   };
-
-  if (context & Context.OptionsRanges) {
-      node.start = 0;
-      node.end = source.length;
-  }
-
-  if (context & Context.OptionsLoc) {
-
-      node.loc = {
-          start: {
-              line: 1,
-              column: 0
-          },
-          end: {
-              line: state.line,
-              column: state.column
-          }
-      };
-
-      if (sourceFile) node.loc.source = sourceFile;
-  }
 
   return node;
 
