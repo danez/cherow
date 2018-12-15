@@ -11,23 +11,30 @@ import { Token, descKeywordTable } from '../token';
  * @param state ParserState instance
  * @param context Context masks
  */
-export function scanIdentifier(
-  state: ParserState,
-  context: Context,
-  currentChar: number,
-  start: number): Token {
-  const c = context;
-  const adfadsf = currentChar;
+export function scanIdentifier(state: ParserState, context: Context): Token {
   state.column++;
   if (state.index < state.length) {
-    let next = state.currentChar;
-    while ((AsciiLookup[next] & (CharType.IDContinue | CharType.Decimal)) > 0) next = nextChar(state)
-    state.tokenValue = state.source.slice(start, state.index);
-    if (next === Chars.Backslash) {
-      // TODO!
+    while ((AsciiLookup[state.currentChar] & (CharType.IDContinue | CharType.Decimal)) > 0) nextChar(state)
+    state.tokenValue = state.source.slice(state.start, state.index);
+    if (state.currentChar <= Chars.MaxAsciiCharacter || state.currentChar !== Chars.Backslash) {
+      if (context & Context.OptionsRaw) state.tokenRaw = state.tokenValue;
+      return descKeywordTable[state.tokenValue] || Token.Identifier;
     }
-    return descKeywordTable[state.tokenValue] || Token.Identifier;
+    return scanIdentifierRest(state, context);
   }
-  state.tokenValue = state.source.slice(start, state.index);
+  state.tokenValue = state.source.slice(state.start, state.index);
+  return Token.Identifier;
+}
+
+/**
+ * Scans the rest of the identifiers. It's the slow path that has to deal with multi unit encoding
+ *
+ * @param state ParserState instance
+ * @param context Context masks
+ */
+export function scanIdentifierRest(state: ParserState, context: Context): Token {
+  let start = state.index;
+  let c = context;
+  if (start < state.index) state.tokenValue += state.source.slice(start, state.index)
   return Token.Identifier;
 }

@@ -5,6 +5,7 @@ export class State {
   public index: number;
   public column: number;
   public line: number;
+  public start: number;
   public source: string;
   public length: number;
   public currentChar: number;
@@ -17,6 +18,7 @@ export class State {
   constructor(source: string) {
       this.index = 0;
       this.column = 0;
+      this.start = 0;
       this.line = 1;
       this.source = source || '';
       this.length = source.length;

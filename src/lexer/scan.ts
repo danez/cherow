@@ -31,7 +31,7 @@ const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80).fill((state: 
   const c = context;
   // TODO: Identifier special cases
   return Token.WhiteSpace;
-}, 0x80) as((state: ParserState, context: Context, currentChar: number, start: number) => Token)[];
+}, 0x80) as((state: ParserState, context: Context, currentChar: number) => Token)[];
 
 export function mapToToken(token: Token): (state: ParserState) => Token {
   return state => {
@@ -345,9 +345,9 @@ export function nextToken(state: ParserState, context: Context): Token {
   state.flags &= ~(Flags.LineTerminator | Flags.ConsumedComment);
   while (state.index < state.length) {
       const currentChar = state.currentChar;
-      let start = state.index;
+      state.start = state.index;
       state.currentChar = state.source.charCodeAt(++state.index);
-      if (((state.token = table[currentChar](state, context, currentChar, start)) & Token.WhiteSpace) !== Token.WhiteSpace) {
+      if (((state.token = table[currentChar](state, context, currentChar)) & Token.WhiteSpace) !== Token.WhiteSpace) {
         if (context & Context.OptionsTokenize) state.tokens.push(state.token);
         return state.token;
       }

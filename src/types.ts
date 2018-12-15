@@ -63,6 +63,7 @@ export interface ParserState {
     index: number;
     line: number;
     column: number;
+    start: number;
     source: string;
     flags: Flags;
     length: number;
