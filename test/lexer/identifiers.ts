@@ -277,4 +277,35 @@ pass('scans \'a\u2001b\'', {
   line: 1,
   column: 1,
  });
+
+
+ pass('scans \'a\\u{71}c\'', {
+  source: 'a\\u{71}c',
+  value: 'aqc',
+  raw: 'a\\u{71}c',
+  token: Token.Identifier,
+  line: 1,
+  column: 8,
+});
+
+
+pass('scans \'ab\\u{0000000000000000000072}\'', {
+  source: 'ab\\u{0000000000000000000072}',
+  value: 'abr',
+  raw: 'ab\\u{0000000000000000000072}',
+  token: Token.Identifier,
+  line: 1,
+  column: 29,
+});
+
+pass('scans \'abc\\u007Xvwxyz\'', {
+  source: 'abc\\u007Xvwxyz',
+  value: 'abcqvwxyz',
+  raw: 'abc\\u007Xvwxyz',
+  token: Token.Identifier,
+  line: 1,
+  column: 14,
+});
+
+
 });
