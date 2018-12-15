@@ -4,6 +4,26 @@ import { Token } from '../token';
 import { Chars } from '../chars';
 import { report, Errors } from '../errors';
 
+export function fromCodePoint (code: Chars): string {
+  return code <= 0xFFFF ?
+      String.fromCharCode(code) :
+      String.fromCharCode(
+          ((code - 0x10000) >> 10) + 0xD800,
+          ((code - 0x10000) & (1024 - 1)) + 0xDC00);
+}
+
+export function toHex(code: number): number {
+  code -= Chars.Zero;
+  if (code <= 9) return code;
+  code = (code | 0x20) - (Chars.LowerA - Chars.Zero);
+  if (code <= 5) return code + 10;
+  return -1;
+}
+
+export function nextChar(state: ParserState): number {
+  ++state.column;
+  return state.currentChar = state.source.charCodeAt(++state.index);
+}
 /**
  * Skips any byte order mark at the start
  *

@@ -71,7 +71,6 @@ export interface ParserState {
     token: Token;
     tokenValue: any;
     tokenRegExp: any;
-    lastIdentifier: any;
     tokens: any;
 }
 

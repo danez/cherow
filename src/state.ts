@@ -14,7 +14,6 @@ export class State {
   public tokenRaw: string | null;
   public tokenRegExp: any;
   public tokenValue: any;
-  public lastIdentifier: any;
   constructor(source: string) {
       this.index = 0;
       this.column = 0;

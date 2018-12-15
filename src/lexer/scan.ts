@@ -1,8 +1,11 @@
 import { Context, Flags } from '../common';
+import { nextChar } from './common';
 import { ParserState } from '../types';
 import { Token } from '../token';
 import { Chars } from '../chars';
 import { report, Errors } from '../errors';
+import { scanIdentifier } from './identifiers';
+
 import { skipSingleHTMLComment, skipSingleLineComment, skipMultilineComment } from './comments';
 
 export const whiteSpaceMap: Function[] = new Array(0xFEFF);
@@ -28,12 +31,8 @@ const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80).fill((state: 
   const c = context;
   // TODO: Identifier special cases
   return Token.WhiteSpace;
-}, 0x80) as((state: ParserState, context: Context, currentChar: number) => Token)[];
+}, 0x80) as((state: ParserState, context: Context, currentChar: number, start: number) => Token)[];
 
-export function nextChar(state: ParserState): number {
-  ++state.column;
-  return state.currentChar = state.source.charCodeAt(++state.index);
-}
 export function mapToToken(token: Token): (state: ParserState) => Token {
   return state => {
       nextChar(state);
@@ -54,6 +53,15 @@ table[Chars.Semicolon] = mapToToken(Token.Semicolon);
 table[Chars.LeftParen] = mapToToken(Token.LeftParen);
 table[Chars.RightParen] = mapToToken(Token.RightParen);
 table[Chars.At] = mapToToken(Token.At);
+
+// `A`...`Z`
+for (let i = Chars.UpperA; i <= Chars.UpperZ; i++) table[i] = scanIdentifier;
+
+// `a`...z`
+for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
+
+// `$foo`, `_var`
+table[Chars.Dollar] = table[Chars.Underscore] = scanIdentifier;
 
 // Whitespace
 table[Chars.Space] =
@@ -337,8 +345,9 @@ export function nextToken(state: ParserState, context: Context): Token {
   state.flags &= ~(Flags.LineTerminator | Flags.ConsumedComment);
   while (state.index < state.length) {
       const currentChar = state.currentChar;
+      let start = state.index;
       state.currentChar = state.source.charCodeAt(++state.index);
-      if (((state.token = table[currentChar](state, context, currentChar)) & Token.WhiteSpace) !== Token.WhiteSpace) {
+      if (((state.token = table[currentChar](state, context, currentChar, start)) & Token.WhiteSpace) !== Token.WhiteSpace) {
         if (context & Context.OptionsTokenize) state.tokens.push(state.token);
         return state.token;
       }
