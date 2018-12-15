@@ -63,12 +63,11 @@ export interface ParserState {
     index: number;
     line: number;
     column: number;
-    start: number;
+    startIndex: number;
     source: string;
     flags: Flags;
     length: number;
     currentChar: number;
-    tokenRaw: string | null;
     token: Token;
     tokenValue: any;
     tokenRegExp: any;
