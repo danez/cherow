@@ -1,5 +1,5 @@
 import * as ESTree from '../estree';
-import { ParserState, Scope } from '../types';
+import { ParserState, ScopeState } from '../types';
 import { nextToken } from '../lexer/scan';
 import { Token, KeywordDescTable } from '../token';
 import {
@@ -16,7 +16,7 @@ import {
  * @param Context masks
  */
 
-export function parseStatementList(state: ParserState, context: Context, scope: Scope): ESTree.Statement[] {
+export function parseStatementList(state: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
   nextToken(state, context);
   const statements: ESTree.Statement[] = [];
   const isStrict = !!(context & Context.Strict);
@@ -35,7 +35,7 @@ export function parseStatementList(state: ParserState, context: Context, scope: 
  * @param parser  Parser instance
  * @param context Context masks
  */
-function parseStatementListItem(state: ParserState, context: Context, scope: Scope): any {
+function parseStatementListItem(state: ParserState, context: Context, scope: ScopeState): any {
   return parseStatement(state, context, scope);
 }
 
@@ -47,7 +47,7 @@ function parseStatementListItem(state: ParserState, context: Context, scope: Sco
  * @param parser  Parser instance
  * @param context Context masks
  */
-export function parseStatement(state: ParserState, context: Context, scope: Scope): any {
+export function parseStatement(state: ParserState, context: Context, scope: ScopeState): any {
   const s = state;
   const c = context;
   const sc = scope;

@@ -2,10 +2,10 @@ import { Context } from '../common';
 import * as ESTree from '../estree';
 import { skipHashBang } from '../lexer/common';
 import { State } from '../state';
-import { EcmaVersion, Options, Scope } from '../types';
+import { EcmaVersion, Options, ScopeState } from '../types';
 import { parseStatementList } from './statements';
 import { parseModuleItemList } from './module';
-import { createScope } from './scope';
+import { Scope } from '../scope';
 
 /**
  * Parse source
@@ -61,7 +61,7 @@ export function parseSource(
   skipHashBang(state, context);
 
   // Scope
-  const scope: Scope = createScope()
+  const scope: ScopeState = new Scope();
 
   const body = (context & Context.Module) === Context.Module ?
       parseModuleItemList(state, context, scope) : parseStatementList(state, context, scope);

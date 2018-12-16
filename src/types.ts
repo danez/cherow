@@ -11,8 +11,8 @@ export type EcmaVersion = 1 | 2 | 3 | 4 | 5 | 2015 | 2016 | 2017 | 2018 | 2019 |
  * The Scope types
   */
 
-export interface Scope {
-  var: any;
+export interface ScopeState {
+  vars: any;
   lexvar: any;
   lexical: any
 }
