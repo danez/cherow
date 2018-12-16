@@ -3,7 +3,7 @@ import { Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import { Token } from '../token';
 import { ParserState } from '../types';
-import { nextChar, advanceNewLine, fromCodePoint } from './common';
+import { advanceNewLine, fromCodePoint, nextChar } from './common';
 import { scanIdentifier } from './identifiers';
 import { scanNumber } from './numbers';
 import { scanString } from './strings';
@@ -30,7 +30,7 @@ const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80).fill((state: 
   if (whiteSpaceMap[state.currentChar](state)) return Token.WhiteSpace;
   // TODO: Identifier special cases
   return Token.WhiteSpace;
-}, 0x80) as((state: ParserState, context: Context) => Token)[];
+},                                                                      0x80) as((state: ParserState, context: Context) => Token)[];
 
 export function mapToToken(token: Token): (state: ParserState) => Token {
   return state => {
@@ -97,7 +97,7 @@ table[Chars.Slash] = (s, context) => {
  const next = nextChar(s);
  if (next === Chars.Slash) {
    nextChar(s);
-    return skipSingleLineComment(s, context, 'SingleLine');
+   return skipSingleLineComment(s, context, 'SingleLine');
   } else if (next === Chars.Asterisk) {
     nextChar(s);
     return skipMultilineComment(s, context);
@@ -145,7 +145,7 @@ table[Chars.LessThan] = (state, context) => {
     } else if (context & Context.OptionsWebCompat && next === Chars.Exclamation &&
     nextChar(state) === Chars.Hyphen &&
     nextChar(state) === Chars.Hyphen) {
-    nextChar(state)
+    nextChar(state);
     return skipSingleHTMLComment(state, context, 'HTMLOpen');
   }
 }
@@ -160,7 +160,7 @@ table[Chars.GreaterThan] = s => {
   }
   if (s.currentChar !== Chars.GreaterThan) return Token.GreaterThan;
 
-  let next= nextChar(s);
+  const next = nextChar(s);
 
   if (next === Chars.GreaterThan) {
     nextChar(s);
@@ -246,7 +246,7 @@ table[Chars.Hyphen] = (s, context) => {
       if (nextChar(s) === Chars.GreaterThan &&
         context & Context.OptionsWebCompat &&
         (s.flags & Flags.LineTerminator || s.startIndex === 0)) {
-        nextChar(s)
+        nextChar(s);
         return skipSingleHTMLComment(s, context, 'HTMLClose');
       }
       return Token.Decrement;

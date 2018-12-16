@@ -1,10 +1,10 @@
 import { Chars } from '../chars';
-import { CommentType, Comment } from '../estree';
 import { Context, Flags } from '../common';
-import { nextChar } from './common';
 import { Errors, report } from '../errors';
+import { Comment, CommentType } from '../estree';
 import { Token } from '../token';
 import { ParserState } from '../types';
+import { nextChar } from './common';
 
 // TODO: Make sure this works, and add option to collect the comments
 
@@ -58,8 +58,8 @@ export function skipSingleLineComment(state: ParserState, context: Context, type
       }
     }
 
-    if (context & Context.OptionsCollectComments) addComment(state, type, start);
-    return Token.SingleComment;
+  if (context & Context.OptionsCollectComments) addComment(state, type, start);
+  return Token.SingleComment;
 }
 
 /**
@@ -76,7 +76,7 @@ export function skipMultilineComment(state: ParserState, context: Context): any 
       switch (state.source.charCodeAt(state.index)) {
           case Chars.Asterisk:
               if (nextChar(state) === Chars.Slash) {
-                  nextChar(state)
+                  nextChar(state);
                   if (context & Context.OptionsCollectComments) addComment(state, 'MultiLine', start);
                   return Token.MultiComment;
               }
@@ -96,7 +96,7 @@ export function skipMultilineComment(state: ParserState, context: Context): any 
                   state.line++;
                   lastIsCR = 0;
               }
-              nextChar(state)
+              nextChar(state);
       }
   }
 
