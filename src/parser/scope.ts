@@ -1,3 +1,7 @@
+
+/**
+ * Scope flags
+ */
 export const enum Scopee {
   Empty     = 0,
   For       = 1,
@@ -7,6 +11,9 @@ export const enum Scopee {
   Switch    = 16.
 }
 
+/**
+ * Create a scope
+ */
 export function createScope() {
   return {
     // A list of var-declared names in the current lexical scope

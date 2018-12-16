@@ -63,10 +63,6 @@ export function parseSource(
   // Scope
   const scope: Scope = createScope()
 
-  // let exportedNames = {}; // how other modules refer to something
-  // ASSERT(exportedNames._ = 'exported names');
-  // let exportedBindings = {}; // which binding an exported name refers to
-
   const body = (context & Context.Module) === Context.Module ?
       parseModuleItemList(state, context, scope) : parseStatementList(state, context, scope);
 
