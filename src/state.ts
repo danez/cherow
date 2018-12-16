@@ -1,5 +1,6 @@
 import { Flags } from './common';
 import { Token } from './token';
+import { Comment } from './estree';
 
 export class State {
   public index: number;
@@ -14,6 +15,7 @@ export class State {
   public tokens: Token[];
   public tokenRegExp: any;
   public tokenValue: any;
+  public comments: Comment[];
   public get tokenRaw(): string {
     return this.source.slice(this.startIndex, this.index);
   }
@@ -30,5 +32,6 @@ export class State {
       this.token = Token.EndOfSource;
       this.tokenRegExp = undefined;
       this.tokens = [];
+      this.comments = [];
   }
 }

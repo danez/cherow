@@ -100,14 +100,14 @@ table[Chars.CarriageReturn] = state => {
 table[Chars.DoubleQuote] = table[Chars.SingleQuote] = scanString;
 
 // `/`, `/=`, `/>`, '/*..*/'
-table[Chars.Slash] = s => {
+table[Chars.Slash] = (s, context) => {
  const next = nextChar(s);
  if (next === Chars.Slash) {
    nextChar(s);
-    return skipSingleLineComment(s);
+    return skipSingleLineComment(s, context, 'SingleLine');
   } else if (next === Chars.Asterisk) {
     nextChar(s);
-    return skipMultilineComment(s);
+    return skipMultilineComment(s, context);
   } else if (next === Chars.EqualSign) {
       nextChar(s);
       return Token.DivideAssign;
@@ -152,7 +152,7 @@ table[Chars.LessThan] = (s, context) => {
     } else if (context & Context.OptionsWebCompat && next === Chars.Exclamation &&
     nextChar(s) === Chars.Hyphen &&
     nextChar(s) === Chars.Hyphen) {
-    return skipSingleHTMLComment(s, context);
+    return skipSingleHTMLComment(s, context, 'HTMLOpen');
   }
 }
 
@@ -271,7 +271,7 @@ table[Chars.Hyphen] = (s, context) => {
       if (nextChar(s) === Chars.GreaterThan &&
           context & Context.OptionsWebCompat &&
           (s.flags & Flags.LineTerminator || s.startIndex === 0)) {
-          return skipSingleHTMLComment(s, context);
+          return skipSingleHTMLComment(s, context, 'HTMLClose');
       }
       return Token.Decrement;
     }

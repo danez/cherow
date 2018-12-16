@@ -1,4 +1,5 @@
 import { Chars } from '../chars';
+import { CommentType, Comment } from '../estree';
 import { Context, Flags } from '../common';
 import { nextChar } from './common';
 import { Errors, report } from '../errors';
@@ -13,10 +14,10 @@ import { ParserState } from '../types';
  * @param parser Parser Object
  * @param context Context masks.
  */
-export function skipSingleHTMLComment(state: ParserState, context: Context): Token {
+export function skipSingleHTMLComment(state: ParserState, context: Context, type: CommentType): Token {
   // ES 2015 B.1.3 -  HTML comments are only allowed when parsing non-module code.
   if (context & Context.Module) report(state, Errors.Unexpected);
-  return skipSingleLineComment(state);
+  return skipSingleLineComment(state, context, type);
 }
 
 /**
@@ -29,10 +30,10 @@ export function skipSingleHTMLComment(state: ParserState, context: Context): Tok
  * @param state Parser object
  * @param returnToken Token to be returned
  */
-export function skipSingleLineComment(state: ParserState): Token {
+export function skipSingleLineComment(state: ParserState, context: Context, type: CommentType): Token {
 
   let lastIsCR = 0;
-
+  const start = state.index;
   while (state.index < state.length) {
       const next = state.source.charCodeAt(state.index);
       if ((next & 0x53) < 3 && (
@@ -56,7 +57,9 @@ export function skipSingleLineComment(state: ParserState): Token {
           ++state.column;
       }
     }
-   return Token.SingleComment;
+
+    if (context & Context.OptionsCollectComments) addComment(state, type, start);
+    return Token.SingleComment;
 }
 
 /**
@@ -66,14 +69,15 @@ export function skipSingleLineComment(state: ParserState): Token {
  *
  * @param state Parser instance
  */
-export function skipMultilineComment(state: ParserState): any {
+export function skipMultilineComment(state: ParserState, context: Context): any {
   let lastIsCR = 0;
-
+  const start = state.index;
   while (state.index < state.length) {
       switch (state.source.charCodeAt(state.index)) {
           case Chars.Asterisk:
               if (nextChar(state) === Chars.Slash) {
-                    nextChar(state)
+                  nextChar(state)
+                  if (context & Context.OptionsCollectComments) addComment(state, 'MultiLine', start);
                   return Token.MultiComment;
               }
               break;
@@ -96,6 +100,22 @@ export function skipMultilineComment(state: ParserState): any {
       }
   }
 
+  // Unclosed multiline comment
+  report(state, Errors.Unexpected);
+}
 
+/**
+ * Add comments
+ *
+ * @param parser Parser object
+ * @param context Context masks
+ * @param type  Comment type
+ * @param commentStart Start position of comment
+ */
 
+export function addComment(state: ParserState, type: CommentType, start: number): void {
+  state.comments.push({
+      type,
+      value: state.source.slice(start, type === 'MultiLine' ? state.index - 2 : state.index),
+  });
 }

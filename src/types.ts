@@ -72,6 +72,7 @@ export interface ParserState {
     tokenValue: any;
     tokenRegExp: any;
     tokens: Token[];
+    comments: Comment[];
 }
 
 /**
