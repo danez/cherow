@@ -1,5 +1,5 @@
-import { unicodeLookup } from './unicode';
 import { State } from './state';
+import { unicodeLookup } from './unicode';
 
 /*@internal*/
 export const enum CharType {

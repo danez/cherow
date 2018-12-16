@@ -1,8 +1,8 @@
-import { Context, Flags } from '../common';
-import { ParserState } from '../types';
-import { Token } from '../token';
 import { Chars } from '../chars';
-import { report, Errors } from '../errors';
+import { Context, Flags } from '../common';
+import { Errors, report } from '../errors';
+import { Token } from '../token';
+import { ParserState } from '../types';
 
 // TODO: Make sure this works, and add option to collect the comments
 

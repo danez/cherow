@@ -1,5 +1,5 @@
-import { parseSource, parse, parseModule, parseScript } from './parser/parser';
 import * as ESTree from './estree';
+import { parse, parseModule, parseScript, parseSource } from './parser/parser';
 
 export const version = '__VERSION__';
 

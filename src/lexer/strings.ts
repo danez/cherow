@@ -1,9 +1,9 @@
-import { nextChar, nextUnicodeChar, fromCodePoint, toHex } from './common';
-import { ParserState } from '../types';
-import { Token } from '../token';
 import { Chars } from '../chars';
-import { report, Errors } from '../errors';
 import { Context, Flags } from '../common';
+import { Errors, report } from '../errors';
+import { Token } from '../token';
+import { ParserState } from '../types';
+import { fromCodePoint, nextChar, nextUnicodeChar, toHex } from './common';
 
 export const enum InvalidEscapeType {
   Empty = -1,
@@ -11,6 +11,10 @@ export const enum InvalidEscapeType {
   EightOrNine = -3,
   InvalidHex = -4,
   OutOfRange = -5,
+}
+
+const enum Constants {
+  Size = 128,
 }
 
 export const table = new Array < (state: ParserState, context: Context) => number > (128).fill(nextUnicodeChar);
@@ -122,7 +126,6 @@ if (lo < 0) return InvalidEscapeType.InvalidHex;
 return hi * 16 + lo;
 };
 
-
 // Unicode character specification.
 table[Chars.LowerU] = state => {
   if (nextChar(state) === Chars.LeftBrace) {
@@ -164,20 +167,15 @@ table[Chars.LowerU] = state => {
  */
 export function scanString(state: ParserState, context: Context): Token {
 const quote = state.currentChar;
-
 nextChar(state);
-
 let start = state.index;
 let ret = '';
 
 while (state.index < state.length) {
-  if (state.currentChar === quote) {
-      break;
-  } else
   if (state.currentChar === Chars.Backslash) {
     ret += state.source.slice(start, state.index);
     nextChar(state);
-    if (state.currentChar >= 0x80) {
+    if (state.currentChar >= Constants.Size) {
      ret += fromCodePoint(state.currentChar);
     } else {
        const code = table[state.currentChar](state, context);
@@ -186,18 +184,21 @@ while (state.index < state.length) {
        else reportInvalidEscapeError(state, code as InvalidEscapeType);
        start = state.index;
     }
+  } else if (state.currentChar === quote) {
+    if (start < state.index) ret += state.source.slice(start, state.index);
+    break;
   } else if ((state.currentChar & 0x53) < 3 &&
             (state.currentChar === Chars.CarriageReturn ||
              state.currentChar === Chars.LineFeed)) {
-    report(state, Errors.Unexpected);
+            report(state, Errors.Unexpected);
   } else {
     nextChar(state);
   }
 }
-  if (state.currentChar !== quote) report(state, Errors.Unexpected);
-  state.tokenValue = ret + state.source.slice(start, state.index);
-  nextChar(state);
-  return Token.StringLiteral;
+if (state.currentChar !== quote) report(state, Errors.Unexpected);
+nextChar(state); // Consume terminating quote.
+state.tokenValue = ret;
+return Token.StringLiteral;
 }
 
 /**

@@ -1,8 +1,8 @@
+import { Errors, report } from './errors';
 import * as ESTree from './estree';
-import { Token, KeywordDescTable } from './token';
 import { nextToken } from './lexer/scan';
-import { ParserState, Location } from './types';
-import { report, Errors } from './errors';
+import { KeywordDescTable, Token } from './token';
+import { Location, ParserState } from './types';
 
 export const enum Context {
   Empty                  = 0,

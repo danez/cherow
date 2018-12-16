@@ -1,14 +1,14 @@
-import { Context, Flags } from '../common';
-import { nextChar, fromCodePoint } from './common';
-import { ParserState } from '../types';
-import { Token } from '../token';
 import { Chars } from '../chars';
-import { report, Errors } from '../errors';
+import { Context, Flags } from '../common';
+import { Errors, report } from '../errors';
+import { Token } from '../token';
+import { ParserState } from '../types';
+import { fromCodePoint, nextChar } from './common';
 import { scanIdentifier } from './identifiers';
 import { scanNumber } from './numbers';
 import { scanString } from './strings';
 
-import { skipSingleHTMLComment, skipSingleLineComment, skipMultilineComment } from './comments';
+import { skipMultilineComment, skipSingleHTMLComment, skipSingleLineComment } from './comments';
 
 export const whiteSpaceMap: Function[] = new Array(0xFEFF);
 
@@ -24,7 +24,7 @@ whiteSpaceMap[Chars.ParagraphSeparator] = whiteSpaceMap[Chars.LineSeparator] = (
   state.line++;
   state.flags |= Flags.LineTerminator;
   return Token.WhiteSpace;
-}
+};
 
 const unexpectedCharacter: (state: ParserState) => void =
 (state: ParserState) => report(state, Errors.Unexpected, String.fromCharCode(state.currentChar));
@@ -33,7 +33,7 @@ const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80).fill((state: 
   if (whiteSpaceMap[state.currentChar](state)) return Token.WhiteSpace;
   // TODO: Identifier special cases
   return Token.WhiteSpace;
-}, 0x80) as((state: ParserState, context: Context) => Token)[];
+},                                                                      0x80) as((state: ParserState, context: Context) => Token)[];
 
 export function mapToToken(token: Token): (state: ParserState) => Token {
   return state => {
@@ -76,7 +76,7 @@ table[Chars.VerticalTab] = s => {
   ++s.index;
   ++s.column;
   return Token.WhiteSpace;
-}
+};
 
 // Linefeed
 table[Chars.LineFeed] = state => {
@@ -85,7 +85,7 @@ table[Chars.LineFeed] = state => {
   ++state.line;
   state.flags |= Flags.LineTerminator;
   return Token.WhiteSpace;
-}
+};
 
 // Cr
 table[Chars.CarriageReturn] = state => {
@@ -98,17 +98,15 @@ table[Chars.CarriageReturn] = state => {
       ++state.index;
   }
   return Token.WhiteSpace;
-}
-
-table[Chars.DoubleQuote] =
-table[Chars.SingleQuote] = (s, context) => {
-  return scanString(s, context);
 };
+
+// String literal
+table[Chars.DoubleQuote] = table[Chars.SingleQuote] = scanString;
 
 // `/`, `/=`, `/>`, '/*..*/'
 table[Chars.Slash] = s => {
  const next = nextChar(s);
-  if (next === Chars.Slash) {
+ if (next === Chars.Slash) {
     return skipSingleLineComment(s);
   } else if (next === Chars.Asterisk) {
     return skipMultilineComment(s);
@@ -120,7 +118,7 @@ table[Chars.Slash] = s => {
       return Token.JSXAutoClose;
   }
 
-  return Token.Divide;
+ return Token.Divide;
 };
 
 // `=`, `==`, `===`, `=>`
@@ -131,7 +129,7 @@ table[Chars.EqualSign] = s => {
         nextChar(s);
         return Token.StrictEqual;
       }
-    return Token.LooseEqual;
+      return Token.LooseEqual;
   } else if (next === Chars.GreaterThan) {
     nextChar(s);
     return Token.Arrow;
@@ -144,15 +142,15 @@ table[Chars.LessThan] = (s, context) => {
   if (s.index < s.source.length) {
     const next = nextChar(s);
     if (next === Chars.EqualSign) {
-      nextChar(s)
-        return Token.LessThanOrEqual;
+      nextChar(s);
+      return Token.LessThanOrEqual;
     } else if (next === Chars.LessThan) {
-      nextChar(s)
-        if (s.currentChar === Chars.EqualSign) {
-          nextChar(s)
+      nextChar(s);
+      if (s.currentChar === Chars.EqualSign) {
+          nextChar(s);
           return Token.ShiftLeftAssign;
         }
-        return Token.ShiftLeft;
+      return Token.ShiftLeft;
     } else if (context & Context.OptionsWebCompat && next === Chars.Exclamation &&
     nextChar(s) === Chars.Hyphen &&
     nextChar(s) === Chars.Hyphen) {
@@ -160,7 +158,7 @@ table[Chars.LessThan] = (s, context) => {
   }
 }
 
-return Token.LessThan;
+  return Token.LessThan;
 };
 
 // `>`, `>=`, `>>`, `>>>`, `>>=`, `>>>=`
@@ -168,27 +166,27 @@ table[Chars.GreaterThan] = s => {
   let next = nextChar(s);
 
   if (next === Chars.EqualSign) {
-    nextChar(s)
-      return Token.GreaterThanOrEqual;
+    nextChar(s);
+    return Token.GreaterThanOrEqual;
   }
 
   if (next !== Chars.GreaterThan) return Token.GreaterThan;
-  nextChar(s)
+  nextChar(s);
 
   if (s.index < s.length) {
       next = s.currentChar;
 
       if (next === Chars.GreaterThan) {
-        nextChar(s)
-          if (s.currentChar === Chars.EqualSign) {
-            nextChar(s)
-              return Token.LogicalShiftRightAssign;
+        nextChar(s);
+        if (s.currentChar === Chars.EqualSign) {
+            nextChar(s);
+            return Token.LogicalShiftRightAssign;
           } else {
               return Token.LogicalShiftRight;
           }
       } else if (next === Chars.EqualSign) {
-        nextChar(s)
-          return Token.ShiftRightAssign;
+        nextChar(s);
+        return Token.ShiftRightAssign;
       }
   }
   return Token.ShiftRight;
@@ -211,26 +209,26 @@ table[Chars.Exclamation] = s => {
 table[Chars.Asterisk] = s => {
   const next = nextChar(s);
   if (next === Chars.EqualSign) {
-    nextChar(s)
-      return Token.MultiplyAssign;
+    nextChar(s);
+    return Token.MultiplyAssign;
   }
   if (next !== Chars.Asterisk) return Token.Multiply;
   if (nextChar(s) !== Chars.EqualSign) return Token.Exponentiate;
-  nextChar(s)
+  nextChar(s);
   return Token.ExponentiateAssign;
 };
 
 // `%`, `%=`
 table[Chars.Percent] = s => {
   if (nextChar(s) !== Chars.EqualSign) return Token.Modulo;
-  nextChar(s)
-    return Token.ModuloAssign;
+  nextChar(s);
+  return Token.ModuloAssign;
 };
 
 // `^`, `^=`
 table[Chars.Caret] = s => {
   if (nextChar(s) !== Chars.EqualSign) return Token.BitwiseXor;
-  nextChar(s)
+  nextChar(s);
   return Token.BitwiseXorAssign;
 };
 
@@ -239,13 +237,13 @@ table[Chars.Ampersand] = s => {
   const next = nextChar(s);
 
   if (next === Chars.Ampersand) {
-    nextChar(s)
-      return Token.LogicalAnd;
+    nextChar(s);
+    return Token.LogicalAnd;
   }
 
   if (next === Chars.EqualSign) {
-    nextChar(s)
-      return Token.BitwiseAndAssign;
+    nextChar(s);
+    return Token.BitwiseAndAssign;
   }
 
   return Token.BitwiseAnd;
@@ -256,13 +254,13 @@ table[Chars.Plus] = s => {
   const next = nextChar(s);
 
   if (next === Chars.Plus) {
-    nextChar(s)
-      return Token.Increment;
+    nextChar(s);
+    return Token.Increment;
   }
 
   if (next === Chars.EqualSign) {
-    nextChar(s)
-      return Token.AddAssign;
+    nextChar(s);
+    return Token.AddAssign;
   }
 
   return Token.Add;
@@ -271,17 +269,17 @@ table[Chars.Plus] = s => {
 // `-`, `--`, `-=`
 table[Chars.Hyphen] = (s, context) => {
   const next = nextChar(s);
-    if (next === Chars.Hyphen) {
+  if (next === Chars.Hyphen) {
       if (nextChar(s) === Chars.GreaterThan &&
           context & Context.OptionsWebCompat &&
           (s.flags & Flags.LineTerminator || s.startIndex === 0)) {
           return skipSingleHTMLComment(s, context);
       }
-       return Token.Decrement;
+      return Token.Decrement;
     }
 
-    if (next === Chars.EqualSign) {
-        nextChar(s)
+  if (next === Chars.EqualSign) {
+        nextChar(s);
         return Token.SubtractAssign;
     }
   return Token.Subtract;
@@ -292,11 +290,11 @@ table[Chars.VerticalBar] = s => {
   const next = nextChar(s);
 
   if (next === Chars.VerticalBar) {
-    nextChar(s)
-      return Token.LogicalOr;
+    nextChar(s);
+    return Token.LogicalOr;
   } else if (next === Chars.EqualSign) {
-    nextChar(s)
-      return Token.BitwiseOrAssign;
+    nextChar(s);
+    return Token.BitwiseOrAssign;
   }
 
   return Token.BitwiseOr;
@@ -308,9 +306,9 @@ table[Chars.Period] = (s: ParserState, context: Context) => {
     return scanNumber(s, context, true);
   }
 
-    if (nextChar(s) !== Chars.Period) return Token.Period;
-    s.column++;
-      return Token.Ellipsis;
+  if (nextChar(s) !== Chars.Period) return Token.Period;
+  s.column++;
+  return Token.Ellipsis;
 };
 
 /**

@@ -1,5 +1,5 @@
-import { Token } from './token';
 import { Flags } from './common';
+import { Token } from './token';
 
 export class State {
   public index: number;

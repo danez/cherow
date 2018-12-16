@@ -1,8 +1,8 @@
-import { Options, EcmaVersion } from '../types';
 import { Context } from '../common';
 import * as ESTree from '../estree';
-import { State } from '../state';
 import { skipHashBang } from '../lexer/common';
+import { State } from '../state';
+import { EcmaVersion, Options } from '../types';
 
 /**
  * Parse source
@@ -20,8 +20,8 @@ export function parseSource(
 
   if (options !== undefined) {
       // The option to specify ecamVersion
-      let ecmaVersion = options.ecmaVersion || 10;
-      options.ecmaVersion = <EcmaVersion>(ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion)
+      const ecmaVersion = options.ecmaVersion || 10;
+      options.ecmaVersion = <EcmaVersion>(ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion);
       // The flag to enable module syntax support
       if (options.module) context |= Context.Module;
       // The flag to enable stage 3 support (ESNext)

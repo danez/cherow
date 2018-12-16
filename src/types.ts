@@ -1,6 +1,6 @@
-import { Token } from './token';
 import { Flags } from './common';
 import { Comment } from './estree';
+import { Token } from './token';
 
 /**
  * `ECMAScript version

@@ -1,10 +1,10 @@
+import { AsciiLookup, Chars, CharType } from '../chars';
 import { Context, Flags } from '../common';
-import { nextChar, toHex, fromCodePoint } from './common';
-import { ParserState } from '../types';
+import { Errors, report } from '../errors';
 import { Token } from '../token';
-import { Chars, AsciiLookup, CharType } from '../chars';
-import { report, Errors } from '../errors';
+import { ParserState } from '../types';
 import { unicodeLookup } from '../unicode';
+import { fromCodePoint, nextChar, toHex } from './common';
 
 /**
  *  Scans numeric and decimal literal literal
@@ -25,7 +25,7 @@ export function scanNumber(
 
     // Hot path - fast path for decimal digits that fits into 4 bytes
     const maxDigits = 10;
-    let digit = maxDigits - 1;
+    const digit = maxDigits - 1;
     state.tokenValue = state.currentChar - Chars.Zero;
     while (digit >= 0 && nextChar(state) <= Chars.Nine && state.currentChar >= Chars.Zero) {
       state.tokenValue = state.tokenValue * 10 + state.currentChar  - Chars.Zero;
@@ -70,14 +70,11 @@ export function scanNumber(
 }
 
 // Numbers can't be followed by  an identifier start
-if ((AsciiLookup[state.currentChar] & CharType.IDStart) > 0 ||
+  if ((AsciiLookup[state.currentChar] & CharType.IDStart) > 0 ||
     (unicodeLookup[(state.currentChar >>> 5) + 34816] >>> state.currentChar & 31 & 1) > 0) {
     report(state, Errors.Unexpected);
 }
 
-
   state.tokenValue = state.source.slice(state.startIndex, state.index);
   return isBigInt ? Token.BigInt : Token.NumericLiteral;
 }
-
-
