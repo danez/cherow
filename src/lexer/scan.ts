@@ -19,10 +19,7 @@ whiteSpaceMap.fill(truthFn, 0x2000, 0x200A + 1);
 whiteSpaceMap[0xA0] = whiteSpaceMap[0x1680] =
 whiteSpaceMap[0x202F] = whiteSpaceMap[0x205F] = whiteSpaceMap[0x3000] = whiteSpaceMap[0xFEFF] = truthFn;
 whiteSpaceMap[Chars.ParagraphSeparator] = whiteSpaceMap[Chars.LineSeparator] = (state: ParserState) => {
-  state.column = 0;
-  state.index++;
-  state.line++;
-  state.flags |= Flags.LineTerminator;
+  advanceNewLine(state);
   return Token.WhiteSpace;
 };
 
@@ -33,13 +30,20 @@ const table = new Array(0xFFFF).fill(unexpectedCharacter, 0, 0x80).fill((state: 
   if (whiteSpaceMap[state.currentChar](state)) return Token.WhiteSpace;
   // TODO: Identifier special cases
   return Token.WhiteSpace;
-},                                                                      0x80) as((state: ParserState, context: Context) => Token)[];
+}, 0x80) as((state: ParserState, context: Context) => Token)[];
 
 export function mapToToken(token: Token): (state: ParserState) => Token {
   return state => {
       nextChar(state);
       return token;
   };
+}
+
+export function advanceNewLine(state: ParserState) {
+  state.column = 0;
+  state.currentChar = state.source.charCodeAt(++state.index);
+  ++state.line;
+  state.flags |= Flags.LineTerminator;
 }
 
 // `,`, `~`, `?`, `[`, `]`, `{`, `}`, `:`, `;`, `(` ,`)`, `"`, `'`, `@`
@@ -73,29 +77,21 @@ table[Chars.Space] =
 table[Chars.Tab] =
 table[Chars.FormFeed] =
 table[Chars.VerticalTab] = s => {
-  ++s.index;
-  ++s.column;
+    nextChar(s);
   return Token.WhiteSpace;
 };
 
 // Linefeed
 table[Chars.LineFeed] = state => {
-  state.column = 0;
-  ++state.index;
-  ++state.line;
-  state.flags |= Flags.LineTerminator;
+  advanceNewLine(state);
   return Token.WhiteSpace;
 };
 
 // Cr
 table[Chars.CarriageReturn] = state => {
-  state.column = 0;
-  ++state.index;
-  ++state.line;
-  state.flags |= Flags.LineTerminator;
-   // If it's a \r\n sequence, consume it as a single EOL.
-  if (state.index < state.length && nextChar(state) === Chars.LineFeed) {
-      ++state.index;
+  advanceNewLine(state);
+  if (state.index < state.length && state.currentChar === Chars.LineFeed) {
+    state.currentChar = state.source.charCodeAt(++state.index);
   }
   return Token.WhiteSpace;
 };
@@ -105,12 +101,14 @@ table[Chars.DoubleQuote] = table[Chars.SingleQuote] = scanString;
 
 // `/`, `/=`, `/>`, '/*..*/'
 table[Chars.Slash] = s => {
- const next = nextChar(s);
+ let next = s.currentChar;
  if (next === Chars.Slash) {
     return skipSingleLineComment(s);
-  } else if (next === Chars.Asterisk) {
+  } else if (s.currentChar === Chars.Asterisk) {
     return skipMultilineComment(s);
-  } else if (next === Chars.EqualSign) {
+  }
+  next = nextChar(s);
+  if (next === Chars.EqualSign) {
       nextChar(s);
       return Token.DivideAssign;
   } else if (next === Chars.GreaterThan) {

@@ -71,7 +71,7 @@ export interface ParserState {
     token: Token;
     tokenValue: any;
     tokenRegExp: any;
-    tokens: Array<Token>;
+    tokens: Token[];
 }
 
 /**

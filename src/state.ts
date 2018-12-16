@@ -11,7 +11,7 @@ export class State {
   public currentChar: number;
   public flags: Flags;
   public token: Token;
-  public tokens: Array<Token>;
+  public tokens: Token[];
   public tokenRegExp: any;
   public tokenValue: any;
   public get tokenRaw(): string {
