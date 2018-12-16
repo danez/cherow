@@ -2,9 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/cherow.svg?style=flat-square)](https://www.npmjs.com/package/cherow)
 [![Gitter chat](https://img.shields.io/gitter/room/Cherow/cherow.svg?style=flat-square)](https://gitter.im/cherow/cherow)
-[![Build status](https://img.shields.io/appveyor/ci/Kflash/cherow/master.svg?style=flat-square&logo=appveyor)](https://ci.appveyor.com/project/Kflash/cherow/branch/master)
 [![CircleCI](https://img.shields.io/circleci/project/github/cherow/cherow/master.svg?style=flat-square)](https://circleci.com/gh/cherow/cherow)
-[![build status](https://img.shields.io/travis/cherow/cherow/master.svg?style=flat-square)](https://travis-ci.org/cherow/cherow)
 [![Coverage Status](https://img.shields.io/coveralls/github/cherow/cherow/master.svg?style=flat-square)](https://coveralls.io/github/cherow/cherow?branch=master)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/cherow/cherow.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cherow/cherow/context:javascript)
