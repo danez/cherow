@@ -110,7 +110,6 @@ export function parseBlockStatement(state: ParserState, context: Context, scope:
  */
 export function parseTryStatement(state: ParserState, context: Context, scope: ScopeState): ESTree.TryStatement {
   nextToken(state, context);
-  console.log(createChildScope(scope, ScopeFlags.Block))
   const block = parseBlockStatement(state, context, createChildScope(scope, ScopeFlags.Block));
   const handler = state.currentToken === Token.CatchKeyword ? parseCatchBlock(state, context, scope) : null;
   const finalizer = optional(state, context, Token.FinallyKeyword) ? parseBlockStatement(state, context, scope) : null;
