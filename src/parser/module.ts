@@ -1,5 +1,5 @@
 import * as ESTree from '../estree';
-import { ParserState, Location } from '../types';
+import { ParserState, Scope, Location } from '../types';
 import { nextToken } from '../lexer/scan';
 import { Token, KeywordDescTable } from '../token';
 import {
@@ -16,11 +16,11 @@ import {
  * @param context Context masks
  */
 
-export function parseModuleItemList(state: ParserState, context: Context): ESTree.Statement[] {
+export function parseModuleItemList(state: ParserState, context: Context, scope: Scope): ESTree.Statement[] {
   nextToken(state, context);
   const statements: ESTree.Statement[] = [];
   while (state.token !== Token.EndOfSource) {
-      statements.push(parseModuleItem());
+      statements.push(parseModuleItem(state, context, scope));
   }
 
   return statements;
@@ -34,6 +34,9 @@ export function parseModuleItemList(state: ParserState, context: Context): ESTre
  * @param parser  Parser instance
  * @param context Context masks
  */
-function parseModuleItem(): any {
+function parseModuleItem(state: ParserState, context: Context, scope: Scope): any {
+  const s = state;
+  const c = context;
+  const sc = scope;
   return ['TODO!'];
 }

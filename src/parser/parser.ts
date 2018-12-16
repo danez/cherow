@@ -2,9 +2,10 @@ import { Context } from '../common';
 import * as ESTree from '../estree';
 import { skipHashBang } from '../lexer/common';
 import { State } from '../state';
-import { EcmaVersion, Options } from '../types';
+import { EcmaVersion, Options, Scope } from '../types';
 import { parseStatementList } from './statements';
 import { parseModuleItemList } from './module';
+import { createScope } from './scope';
 
 /**
  * Parse source
@@ -19,11 +20,13 @@ export function parseSource(
   /*@internal*/
   context: Context): any {
   let sourceFile: string = '';
+  let version: number;
 
   if (options !== undefined) {
       // The option to specify ecamVersion
       const ecmaVersion = options.ecmaVersion || 10;
       options.ecmaVersion = <EcmaVersion>(ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion);
+
       // The flag to enable module syntax support
       if (options.module) context |= Context.Module;
       // The flag to enable stage 3 support (ESNext)
@@ -57,8 +60,15 @@ export function parseSource(
   // Stage 3 - HashBang grammar
   skipHashBang(state, context);
 
+  // Scope
+  const scope: Scope = createScope()
+
+  // let exportedNames = {}; // how other modules refer to something
+  // ASSERT(exportedNames._ = 'exported names');
+  // let exportedBindings = {}; // which binding an exported name refers to
+
   const body = (context & Context.Module) === Context.Module ?
-      parseModuleItemList(state, context) : parseStatementList(state, context);
+      parseModuleItemList(state, context, scope) : parseStatementList(state, context, scope);
 
   return {
       type: 'Program',

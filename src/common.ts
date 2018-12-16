@@ -32,6 +32,17 @@ export const enum Context {
   RequireIdentifier      = 1 << 24,
   DisallowGenerator      = 1 << 25,
   InJSXChild             = 1 << 26,
+  //
+  Exponentation           = 1 << 27, // ECMAScript 7
+  TrailingComma           = 1 << 28, // ECMAScript 8
+  AsyncFunctions          = 1 << 29, // ECMAScript 8
+  AsyncGenerators         = 1 << 30, // ECMAScript 9
+  RevistedTemplate        = 1 << 31, // ECMAScript 9
+  ObjectSpread            = 1 << 32, // ECMAScript 9
+
+  ES7            = Exponentation,
+  ES8            = Exponentation | TrailingComma | AsyncFunctions  | TrailingComma,
+  Next = Exponentation | TrailingComma | AsyncFunctions | AsyncGenerators | RevistedTemplate | ObjectSpread
 }
 
 export const enum Flags {
