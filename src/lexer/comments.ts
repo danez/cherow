@@ -1,5 +1,6 @@
 import { Chars } from '../chars';
 import { Context, Flags } from '../common';
+import { nextChar } from './common';
 import { Errors, report } from '../errors';
 import { Token } from '../token';
 import { ParserState } from '../types';
@@ -29,9 +30,11 @@ export function skipSingleHTMLComment(state: ParserState, context: Context): Tok
  * @param returnToken Token to be returned
  */
 export function skipSingleLineComment(state: ParserState): Token {
+
   let lastIsCR = 0;
+
   while (state.index < state.length) {
-      const next = state.currentChar;
+      const next = state.source.charCodeAt(state.index);
       if ((next & 0x53) < 3 && (
               next === Chars.LineFeed ||
               next === Chars.CarriageReturn ||
@@ -39,7 +42,8 @@ export function skipSingleLineComment(state: ParserState): Token {
               next === Chars.ParagraphSeparator)) {
           if (next === Chars.CarriageReturn) lastIsCR = 2;
           if (!--lastIsCR) ++state.line;
-          state.flags |= (Flags.LineTerminator | Flags.ConsumedComment);
+          state.flags |= Flags.LineTerminator;
+          ++state.index;
           state.column = 0;
           ++state.line;
           break;
@@ -48,13 +52,11 @@ export function skipSingleLineComment(state: ParserState): Token {
               ++state.line;
               lastIsCR = 0;
           }
+          ++state.index;
           ++state.column;
       }
-
-      state.currentChar = state.source.charCodeAt(state.index++);
-  }
-
-  return Token.SingleComment;
+    }
+   return Token.SingleComment;
 }
 
 /**
@@ -62,38 +64,38 @@ export function skipSingleLineComment(state: ParserState): Token {
  *
  * @see [Link](https://tc39.github.io/ecma262/#prod-annexB-MultiLineComment)
  *
- * @param state Parser object
+ * @param state Parser instance
  */
-export function skipMultilineComment(state: ParserState): Token {
+export function skipMultilineComment(state: ParserState): any {
   let lastIsCR = 0;
+
   while (state.index < state.length) {
-    let currentChar = state.currentChar;
-    state.currentChar = state.source.charCodeAt(state.index++);
-    while (currentChar === Chars.Asterisk) {
-      if (state.index >= state.length) {
-        return Token.Invalid;
+      switch (state.source.charCodeAt(state.index)) {
+          case Chars.Asterisk:
+              if (nextChar(state) === Chars.Slash) {
+                    nextChar(state)
+                  return Token.MultiComment;
+              }
+              break;
+          case Chars.CarriageReturn:
+              lastIsCR = 2;
+          case Chars.LineFeed: // falls through
+          case Chars.LineSeparator: // falls through
+          case Chars.ParagraphSeparator:
+              if (!--lastIsCR) state.line++;
+              state.flags |= Flags.LineTerminator;
+              state.index++;
+              state.column = 0;
+              break;
+          default:
+              if (lastIsCR) {
+                  state.line++;
+                  lastIsCR = 0;
+              }
+              nextChar(state)
       }
-      currentChar = state.currentChar;
-      state.currentChar = state.source.charCodeAt(state.index++);
-      if (currentChar === Chars.Slash) {
-        return Token.MultiComment;
-      }
-    }
-    if ((currentChar & 0x53) < 3 && (currentChar === Chars.CarriageReturn ||
-       (currentChar === Chars.LineFeed ||
-        currentChar === Chars.ParagraphSeparator ||
-        currentChar === Chars.LineSeparator))) {
-          if (currentChar === Chars.CarriageReturn) lastIsCR = 2;
-          if (!--lastIsCR) ++state.line;
-          state.flags |= (Flags.LineTerminator | Flags.ConsumedComment);
-          state.column = 0;
-    } else {
-      if (lastIsCR) {
-          ++state.line;
-          lastIsCR = 0;
-      }
-      ++state.column;
-    }
   }
-  return Token.Invalid;
+
+
+
 }

@@ -23,6 +23,26 @@ describe('Lexer - Whitespace', () => {
         });
     }
 
+    function passAll(name: (lt: string) => string, opts: (lt: string) => any) {
+      pass(name("line feed"), opts("\n"));
+      pass(name("carriage return"), opts("\r"));
+      pass(name("Windows newline"), opts("\r"));
+      pass(name("line separators"), opts("\u2028"));
+      pass(name("paragraph separators"), opts("\u2029"));
+   }
+
+   passAll(lt => `skips ${lt}s`, lt => ({
+    source: `${lt}${lt}${lt}${lt}${lt}${lt}${lt}${lt}`,
+    hasNext: false,
+    line: 9, column: 0, index: 8
+  }));
+
+  pass("skips mixed whitespace", {
+    source: "    \t \r\n \n\r \v\f\t ",
+    hasNext: false,
+    line: 4, column: 5, index: 16
+  });
+
   pass('should skip nothing', {
     source: '',
     line: 1, column: 0, index: 0
@@ -57,7 +77,6 @@ describe('Lexer - Whitespace', () => {
       source: '\v\v\v\v\v\v\v\v',
       line: 1, column: 8, index: 8
   });
-
 
    pass('should skip line separator', {
     source: '\u2028',

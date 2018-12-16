@@ -101,14 +101,14 @@ table[Chars.DoubleQuote] = table[Chars.SingleQuote] = scanString;
 
 // `/`, `/=`, `/>`, '/*..*/'
 table[Chars.Slash] = s => {
- let next = s.currentChar;
+ const next = nextChar(s);
  if (next === Chars.Slash) {
+   nextChar(s);
     return skipSingleLineComment(s);
-  } else if (s.currentChar === Chars.Asterisk) {
+  } else if (next === Chars.Asterisk) {
+    nextChar(s);
     return skipMultilineComment(s);
-  }
-  next = nextChar(s);
-  if (next === Chars.EqualSign) {
+  } else if (next === Chars.EqualSign) {
       nextChar(s);
       return Token.DivideAssign;
   } else if (next === Chars.GreaterThan) {
