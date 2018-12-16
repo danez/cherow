@@ -7,6 +7,7 @@ import { advanceNewLine, fromCodePoint, nextChar } from './common';
 import { scanIdentifier } from './identifiers';
 import { scanNumber } from './numbers';
 import { scanString } from './strings';
+import { scanTemplate } from './template';
 
 import { skipMultilineComment, skipSingleHTMLComment, skipSingleLineComment } from './comments';
 
@@ -59,11 +60,14 @@ for (let i = Chars.UpperA; i <= Chars.UpperZ; i++) table[i] = scanIdentifier;
 // `a`...z`
 for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
 
+// `1`...`9`
+for (let i = Chars.One; i <= Chars.Nine; i++) table[i] = (s, context) => scanNumber(s, context, false);
+
 // `$foo`, `_var`
 table[Chars.Dollar] = table[Chars.Underscore] = scanIdentifier;
 
-// `1`...`9`
-for (let i = Chars.One; i <= Chars.Nine; i++) table[i] = (s, context) => scanNumber(s, context, false);
+// `foo`
+table[Chars.Backtick] = scanTemplate;
 
 // Whitespace
 table[Chars.Space] =
