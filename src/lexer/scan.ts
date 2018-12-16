@@ -3,7 +3,7 @@ import { Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import { Token } from '../token';
 import { ParserState } from '../types';
-import { nextChar, advanceNewLine } from './common';
+import { nextChar, advanceNewLine, fromCodePoint } from './common';
 import { scanIdentifier } from './identifiers';
 import { scanNumber } from './numbers';
 import { scanString } from './strings';
@@ -129,23 +129,24 @@ table[Chars.EqualSign] = s => {
 };
 
 // `<`, `<=`, `<<`, `<<=`, `</`,  <!--
-table[Chars.LessThan] = (s, context) => {
-  if (s.index < s.source.length) {
-    const next = nextChar(s);
+table[Chars.LessThan] = (state, context) => {
+  if (state.index < state.source.length) {
+    const next = nextChar(state);
     if (next === Chars.EqualSign) {
-      nextChar(s);
+      nextChar(state);
       return Token.LessThanOrEqual;
     } else if (next === Chars.LessThan) {
-      nextChar(s);
-      if (s.currentChar === Chars.EqualSign) {
-          nextChar(s);
+      nextChar(state);
+      if (state.currentChar === Chars.EqualSign) {
+          nextChar(state);
           return Token.ShiftLeftAssign;
         }
       return Token.ShiftLeft;
     } else if (context & Context.OptionsWebCompat && next === Chars.Exclamation &&
-    nextChar(s) === Chars.Hyphen &&
-    nextChar(s) === Chars.Hyphen) {
-    return skipSingleHTMLComment(s, context, 'HTMLOpen');
+    nextChar(state) === Chars.Hyphen &&
+    nextChar(state) === Chars.Hyphen) {
+    nextChar(state)
+    return skipSingleHTMLComment(state, context, 'HTMLOpen');
   }
 }
   return Token.LessThan;
@@ -243,9 +244,10 @@ table[Chars.Hyphen] = (s, context) => {
   const next = nextChar(s);
   if (next === Chars.Hyphen) {
       if (nextChar(s) === Chars.GreaterThan &&
-          context & Context.OptionsWebCompat &&
-          (s.flags & Flags.LineTerminator || s.startIndex === 0)) {
-          return skipSingleHTMLComment(s, context, 'HTMLClose');
+        context & Context.OptionsWebCompat &&
+        (s.flags & Flags.LineTerminator || s.startIndex === 0)) {
+        nextChar(s)
+        return skipSingleHTMLComment(s, context, 'HTMLClose');
       }
       return Token.Decrement;
     }
@@ -265,17 +267,30 @@ table[Chars.VerticalBar] = s => {
     nextChar(s);
     return Token.BitwiseOrAssign;
   }
-
   return Token.BitwiseOr;
 };
 
 // `.`, `...`, `.123` (numeric literal)
-table[Chars.Period] = (s: ParserState, context: Context) => {
-  if (nextChar(s) <= Chars.Nine && s.currentChar >= Chars.Zero) {
-    return scanNumber(s, context, true);
-  }
-  if (nextChar(s) !== Chars.Period) return Token.Period;
-  return Token.Ellipsis;
+table[Chars.Period] = (state, context) => {
+  let index = state.index + 1;
+  if (index < state.source.length) {
+      const next = state.source.charCodeAt(index);
+      if (next === Chars.Period) {
+          index++;
+          if (index < state.source.length &&
+              state.source.charCodeAt(index) === Chars.Period) {
+              state.index = index + 1;
+              state.column += 3;
+              return Token.Ellipsis;
+          }
+      } else if (next >= Chars.Zero && next <= Chars.Nine) {
+          // Rewind the initial token.
+          scanNumber(state, context, true);
+          return Token.NumericLiteral;
+      }
+    }
+  nextChar(state);
+  return Token.Period;
 };
 
 /**
