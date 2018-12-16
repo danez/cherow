@@ -83,6 +83,8 @@ export interface ParserState {
     tokenRegExp: any;
     tokens: Token[];
     comments: Comment[];
+    exportedNames: any;
+    exportedBindings: any;
 }
 
 /**

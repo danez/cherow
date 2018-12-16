@@ -16,9 +16,12 @@ export class State {
   public tokenRegExp: any;
   public tokenValue: any;
   public comments: Comment[];
+  public exportedNames: any;
+  public exportedBindings: any;
   public get tokenRaw(): string {
     return this.source.slice(this.startIndex, this.index);
   }
+
   constructor(source: string) {
       this.index = 0;
       this.column = 0;
@@ -33,5 +36,7 @@ export class State {
       this.tokenRegExp = undefined;
       this.tokens = [];
       this.comments = [];
+      this.exportedNames = {};
+      this.exportedBindings = {};
   }
 }
