@@ -4,6 +4,13 @@ import { Errors, report } from '../errors';
 import { Token } from '../token';
 import { ParserState } from '../types';
 
+export function advanceNewLine(state: ParserState) {
+  state.column = 0;
+  state.currentChar = state.source.charCodeAt(++state.index);
+  ++state.line;
+  state.flags |= Flags.LineTerminator;
+}
+
 export function fromCodePoint (code: Chars): string {
   return code <= 0xFFFF ?
       String.fromCharCode(code) :

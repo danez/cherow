@@ -3,7 +3,7 @@ import { Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import { Token } from '../token';
 import { ParserState } from '../types';
-import { fromCodePoint, nextChar } from './common';
+import { nextChar, advanceNewLine } from './common';
 import { scanIdentifier } from './identifiers';
 import { scanNumber } from './numbers';
 import { scanString } from './strings';
@@ -39,13 +39,6 @@ export function mapToToken(token: Token): (state: ParserState) => Token {
   };
 }
 
-export function advanceNewLine(state: ParserState) {
-  state.column = 0;
-  state.currentChar = state.source.charCodeAt(++state.index);
-  ++state.line;
-  state.flags |= Flags.LineTerminator;
-}
-
 // `,`, `~`, `?`, `[`, `]`, `{`, `}`, `:`, `;`, `(` ,`)`, `"`, `'`, `@`
 table[Chars.Comma] = mapToToken(Token.Comma);
 table[Chars.Tilde] = mapToToken(Token.Complement);
@@ -77,7 +70,7 @@ table[Chars.Space] =
 table[Chars.Tab] =
 table[Chars.FormFeed] =
 table[Chars.VerticalTab] = s => {
-    nextChar(s);
+  nextChar(s);
   return Token.WhiteSpace;
 };
 
@@ -155,50 +148,39 @@ table[Chars.LessThan] = (s, context) => {
     return skipSingleHTMLComment(s, context, 'HTMLOpen');
   }
 }
-
   return Token.LessThan;
 };
 
 // `>`, `>=`, `>>`, `>>>`, `>>=`, `>>>=`
 table[Chars.GreaterThan] = s => {
-  let next = nextChar(s);
-
-  if (next === Chars.EqualSign) {
+  if (nextChar(s) === Chars.EqualSign) {
     nextChar(s);
     return Token.GreaterThanOrEqual;
   }
+  if (s.currentChar !== Chars.GreaterThan) return Token.GreaterThan;
 
-  if (next !== Chars.GreaterThan) return Token.GreaterThan;
-  nextChar(s);
+  let next= nextChar(s);
 
-  if (s.index < s.length) {
-      next = s.currentChar;
-
-      if (next === Chars.GreaterThan) {
+  if (next === Chars.GreaterThan) {
+    nextChar(s);
+    if (s.currentChar === Chars.EqualSign) {
         nextChar(s);
-        if (s.currentChar === Chars.EqualSign) {
-            nextChar(s);
-            return Token.LogicalShiftRightAssign;
-          } else {
-              return Token.LogicalShiftRight;
-          }
-      } else if (next === Chars.EqualSign) {
-        nextChar(s);
-        return Token.ShiftRightAssign;
-      }
+        return Token.LogicalShiftRightAssign;
+    } else {
+        return Token.LogicalShiftRight;
+    }
+   } else if (next === Chars.EqualSign) {
+      nextChar(s);
+      return Token.ShiftRightAssign;
   }
-  return Token.ShiftRight;
 
+  return Token.ShiftRight;
 };
 
 // `!`, `!=`, `!==`
 table[Chars.Exclamation] = s => {
-  if (nextChar(s) !== Chars.EqualSign) {
-  return Token.Negate;
-  }
-  if (nextChar(s) !== Chars.EqualSign) {
-    return Token.LooseNotEqual;
-  }
+  if (nextChar(s) !== Chars.EqualSign) return Token.Negate;
+  if (nextChar(s) !== Chars.EqualSign) return Token.LooseNotEqual;
   nextChar(s);
   return Token.StrictNotEqual;
 };
@@ -233,34 +215,26 @@ table[Chars.Caret] = s => {
 // `&`, `&&`, `&=`
 table[Chars.Ampersand] = s => {
   const next = nextChar(s);
-
   if (next === Chars.Ampersand) {
     nextChar(s);
     return Token.LogicalAnd;
   }
-
-  if (next === Chars.EqualSign) {
-    nextChar(s);
-    return Token.BitwiseAndAssign;
-  }
-
-  return Token.BitwiseAnd;
+  if (next !== Chars.EqualSign) return Token.BitwiseAnd;
+  nextChar(s);
+  return Token.BitwiseAndAssign;
  };
 
 // `+`, `++`, `+=`
 table[Chars.Plus] = s => {
   const next = nextChar(s);
-
   if (next === Chars.Plus) {
     nextChar(s);
     return Token.Increment;
   }
-
   if (next === Chars.EqualSign) {
     nextChar(s);
     return Token.AddAssign;
   }
-
   return Token.Add;
 };
 
@@ -276,17 +250,14 @@ table[Chars.Hyphen] = (s, context) => {
       return Token.Decrement;
     }
 
-  if (next === Chars.EqualSign) {
-        nextChar(s);
-        return Token.SubtractAssign;
-    }
-  return Token.Subtract;
+  if (next !== Chars.EqualSign) return Token.Subtract;
+  nextChar(s);
+  return Token.SubtractAssign;
 };
 
 // `|`, `||`, `|=`
 table[Chars.VerticalBar] = s => {
   const next = nextChar(s);
-
   if (next === Chars.VerticalBar) {
     nextChar(s);
     return Token.LogicalOr;
@@ -303,9 +274,7 @@ table[Chars.Period] = (s: ParserState, context: Context) => {
   if (nextChar(s) <= Chars.Nine && s.currentChar >= Chars.Zero) {
     return scanNumber(s, context, true);
   }
-
   if (nextChar(s) !== Chars.Period) return Token.Period;
-  s.column++;
   return Token.Ellipsis;
 };
 
