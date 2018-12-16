@@ -40,13 +40,9 @@ export function scanNumber(
   if (isFloat || state.currentChar === Chars.Period) {
     if (!isFloat) {
       nextChar(state);
+      isFloat = true;
     }
-    const start = state.index;
-    let value = state.currentChar - Chars.Zero;
-    while (nextChar(state) <= Chars.Nine && state.currentChar >= Chars.Zero) {
-      value = value * 10 + state.currentChar  - Chars.Zero;
-    }
-    state.tokenValue = state.tokenValue + value / 10 ** (state.index - start);
+    while (nextChar(state) <= Chars.Nine && state.currentChar >= Chars.Zero) {}
   }
 
   let isBigInt = false;
@@ -57,6 +53,30 @@ export function scanNumber(
       nextChar(state);
   }
 
+  // Consume any exponential notation
+  if (state.currentChar === Chars.UpperE || state.currentChar === Chars.LowerE) {
+    nextChar(state);
+    if (state.currentChar === Chars.Plus || state.currentChar === Chars.Hyphen) {
+        nextChar(state);
+    }
+
+    // Exponential notation must contain at least one digit
+    if (!(state.currentChar >= Chars.Zero && state.currentChar <= Chars.Nine)) {
+        report(state, Errors.Unexpected);
+    }
+
+    // Consume exponential digits.
+    while (nextChar(state) <= Chars.Nine && state.currentChar >= Chars.Zero) {}
+}
+
+// Numbers can't be followed by  an identifier start
+if ((AsciiLookup[state.currentChar] & CharType.IDStart) > 0 ||
+    (unicodeLookup[(state.currentChar >>> 5) + 34816] >>> state.currentChar & 31 & 1) > 0) {
+    report(state, Errors.Unexpected);
+}
+
+
+  state.tokenValue = state.source.slice(state.startIndex, state.index);
   return isBigInt ? Token.BigInt : Token.NumericLiteral;
 }
 

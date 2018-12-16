@@ -35,7 +35,7 @@ describe('Lexer - Whitespace', () => {
 
     pass('should skip crlf', {
       source: '\r\n',
-      line: 2, column: 0, index: 2
+      line: 2, column: 1, index: 2
     });
 
     pass('should skip non breaking space', {
