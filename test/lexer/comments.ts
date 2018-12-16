@@ -51,7 +51,7 @@ describe('Lexer - Comments', () => {
     line: 7, column: 0, index: 12
   });
 
-    pass('should skip slash in a comment', {
+  pass('should skip slash in a comment', {
     source: `// /`,
     line: 1, column: 4, index: 4
   });
@@ -61,18 +61,17 @@ describe('Lexer - Comments', () => {
     line: 1, column: 23, index: 23
   });
 
-
   pass('should skip single line comment with multi line paragrap', {
     source: `// \u2028\u2028`,
     line: 3, column: 0, index: 5
   });
 
-    pass('should skip single line comment with line feed', {
+  pass('should skip single line comment with line feed', {
     source: `// \r`,
     line: 1, column: 4, index: 4
   });
 
-    pass('should skip single line with newline and line feed', {
+  pass('should skip single line with newline and line feed', {
     source: `// \r\n`,
     line: 3, column: 0, index: 5
   });
@@ -82,12 +81,12 @@ describe('Lexer - Comments', () => {
     line: 1, column: 5, index: 5
   });
 
-    pass('should handle multiline comment with carriage return and newline', {
+  pass('should handle multiline comment with carriage return and newline', {
     source: `/**\r\n*/`,
     line: 2, column: 0, index: 7
   });
 
-    pass('should handle multiline comment with multiple carriage return and newline', {
+  pass('should handle multiline comment with multiple carriage return and newline', {
     source: `/**\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\n*/`,
     line: 2, column: 0, index: 49
   });
@@ -97,7 +96,7 @@ describe('Lexer - Comments', () => {
     line: 2, column: 0, index: 35
   });
 
-    pass('should handle multiline comment with carriage return and newline, paragrap separator and line separator', {
+  pass('should handle multiline comment with carriage return and newline, paragrap separator and line separator', {
     source: `/**\r\n\u2028\u2029*/`,
     line: 2, column: 0, index: 9
   });
@@ -107,7 +106,7 @@ describe('Lexer - Comments', () => {
     line: 2, column: 1, index: 9
   });
 
-    pass('single line comment escaped newlines are ignored', {
+  pass('single line comment escaped newlines are ignored', {
     source: `//\\n \\r \\x0a \\u000a still comment`,
     line: 1, column: 33, index: 33
   });
@@ -117,26 +116,25 @@ describe('Lexer - Comments', () => {
     line: 1, column: 36, index: 36
   });
 
-    pass('should skip Mongolian Vowel Separator in multi line comments', {
+  pass('should skip Mongolian Vowel Separator in multi line comments', {
     source: `// U+180E in comments; UTF8(0x180E) = 0xE1 0xA0 0x8E`,
     line: 1, column: 52, index: 52
   });
 
-    pass('should handle correct interpretation of single line comments', {
+  pass('should handle correct interpretation of single line comments', {
           source: `//FOO
           ///`,
           line: 15, column: 0, index: 19
       });
 
-
-      pass('should insert Single line comment into Multi line comment', {
+  pass('should insert Single line comment into Multi line comment', {
         source: `/* var
         //x
         */`,
         line: 3, column: 8, index: 29
     });
 
-    pass('single and Multi line comments are used together', {
+  pass('single and Multi line comments are used together', {
       source: `// var /* x */`,
       line: 1, column: 14, index: 14
   });
@@ -156,19 +154,17 @@ describe('Lexer - Comments', () => {
     line: 1, column: 40, index: 43
   });
 
-
   pass('should skip singleline comment with surrogate', {
     source: '// 😍',
     line: 1, column: 5, index: 5
   });
-
 
   pass('should skip paragraph separators', {
     source: '    \t \u2029 ',
     line: 1, column: 8, index: 8
   });
 
-    pass('should skip multiline comments with nothing', {
+  pass('should skip multiline comments with nothing', {
       source: '  \t /* foo * /* bar */  ',
       line: 1, column: 24, index: 24
   });

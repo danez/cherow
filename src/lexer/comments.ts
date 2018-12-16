@@ -93,7 +93,7 @@ export function skipMultilineComment(state: ParserState): Token {
           lastIsCR = 0;
       }
       ++state.column;
-  }
+    }
   }
   return Token.Invalid;
 }

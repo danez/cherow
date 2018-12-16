@@ -23,40 +23,40 @@ describe('Lexer - Whitespace', () => {
         });
     }
 
-    pass('should skip nothing', {
-      source: '',
-      line: 1, column: 0, index: 0
-    });
+  pass('should skip nothing', {
+    source: '',
+    line: 1, column: 0, index: 0
+  });
 
-    pass('should skip newline', {
+  pass('should skip newline', {
       source: '\r',
-      line: 2, column: 0, index: 1
-    });
+    line: 2, column: 0, index: 1
+  });
 
-    pass('should skip crlf', {
-      source: '\r\n',
-      line: 2, column: 1, index: 2
-    });
+  pass('should skip crlf', {
+    source: '\r\n',
+    line: 2, column: 1, index: 2
+  });
 
-    pass('should skip non breaking space', {
-      source: '\xA0',
-      line: 1, column: 1, index: 1
-    });
+  pass('should skip non breaking space', {
+    source: '\xA0',
+    line: 1, column: 1, index: 1
+  });
 
-    pass('should skip newline', {
-      source: '\n',
-      line: 2, column: 0, index: 1
-    });
+  pass('should skip newline', {
+    source: '\n',
+    line: 2, column: 0, index: 1
+  });
 
-    pass('should skip tabs', {
-      source: '\t\t\t\t\t\t\t\t',
-      line: 1, column: 8, index: 8
-    });
+  pass('should skip tabs', {
+    source: '\t\t\t\t\t\t\t\t',
+    line: 1, column: 8, index: 8
+  });
 
-    pass('should skip vertical tabs', {
+  pass('should skip vertical tabs', {
       source: '\v\v\v\v\v\v\v\v',
       line: 1, column: 8, index: 8
-    });
+  });
 
 
    pass('should skip line separator', {

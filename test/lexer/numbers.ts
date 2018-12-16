@@ -37,7 +37,7 @@ describe('Lexer - Numbers', () => {
         });
     }
 
-      pass('scans \'9\'', {
+    pass('scans \'9\'', {
       source: '9',
       value: 9,
       raw: '9',
@@ -128,7 +128,6 @@ describe('Lexer - Numbers', () => {
       column: 3,
     });
 
-
    pass('scans \'2.3', {
       source: '2.3',
       value: 2.3,
@@ -137,6 +136,7 @@ describe('Lexer - Numbers', () => {
       line: 1,
       column: 3,
     });
+
     pass('scans \'1234567890.0987654321', {
       source: '1234567890.0987654321',
       value: 1234567890.0987654321,
@@ -145,6 +145,4 @@ describe('Lexer - Numbers', () => {
       line: 1,
       column: 21,
     });
-
-
-  });
+});

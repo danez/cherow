@@ -157,14 +157,14 @@ table[Chars.LowerU] = state => {
   }
 };
 
-  /**
- * Scan a string literal
- *
- * @see [Link](https://tc39.github.io/ecma262/#sec-literals-string-literals)
- *
- * @param state Parser instance
- * @param context Context masks
- */
+ /**
+  * Scan a string literal
+  *
+  * @see [Link](https://tc39.github.io/ecma262/#sec-literals-string-literals)
+  *
+  * @param state Parser instance
+  * @param context Context masks
+  */
 export function scanString(state: ParserState, context: Context): Token {
 const quote = state.currentChar;
 nextChar(state);
@@ -207,7 +207,7 @@ return Token.StringLiteral;
  * @param state state object
  * @param context Context masks
  */
-export function reportInvalidEscapeError(state: ParserState, type: InvalidEscapeType): any {
+export function reportInvalidEscapeError(state: ParserState, type: InvalidEscapeType): void {
   switch (type) {
     case InvalidEscapeType.StrictOctal: report(state, Errors.Unexpected); // falls through
     case InvalidEscapeType.EightOrNine: report(state, Errors.Unexpected); // falls through

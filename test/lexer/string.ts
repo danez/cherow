@@ -19,7 +19,6 @@ export const enum Chars {
       Nine = 0x39,
 }
 
-
 describe('Lexer - String literal', () => {
 
   function pass(name: string, opts: any) {
@@ -70,9 +69,9 @@ describe('Lexer - String literal', () => {
     test(`${name}`, Context.Empty, true);
 }
 
- fail('should fail on \'', '\'');
- fail('should fail on \'', '\0');
- fail('should fail on "', '"');
+fail('should fail on \'', '\'');
+fail('should fail on \'', '\0');
+fail('should fail on "', '"');
 fail('should fail on \'\\x0g\'', '\'\\x0g\'');
 fail('should fail on \'\\xg0\'', '\'\\xg0\'');
 fail('should fail on \'\\xgg\'', '\'\\xgg\'');
