@@ -3,6 +3,8 @@ import * as ESTree from '../estree';
 import { skipHashBang } from '../lexer/common';
 import { State } from '../state';
 import { EcmaVersion, Options } from '../types';
+import { parseStatementList } from './statements';
+import { parseModuleItemList } from './module';
 
 /**
  * Parse source
@@ -55,15 +57,14 @@ export function parseSource(
   // Stage 3 - HashBang grammar
   skipHashBang(state, context);
 
-  const body = {};
+  const body = (context & Context.Module) === Context.Module ?
+      parseModuleItemList(state, context) : parseStatementList(state, context);
 
-  const node: ESTree.Program = {
+  return {
       type: 'Program',
       sourceType: context & Context.Module ? 'module' : 'script',
       body: body as ESTree.Statement[],
   };
-
-  return node;
 
   }
 
