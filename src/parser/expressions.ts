@@ -42,3 +42,12 @@ export function parseAssignmentExpression(state: ParserState, context: Context):
   nextToken(state, context);
   return ['TODO!'];
 }
+
+export function parseIdentifier(state: ParserState, context: Context): ESTree.Identifier {
+  const tokenValue = state.tokenValue;
+  nextToken(state, context);
+  return {
+      type: 'Identifier',
+      name: tokenValue
+  };
+}
