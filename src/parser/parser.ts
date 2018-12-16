@@ -5,8 +5,9 @@ import { State } from '../state';
 import { EcmaVersion, Options, ScopeState } from '../types';
 import { parseStatementList } from './statements';
 import { parseModuleItemList } from './module';
-import { Scope } from '../scope';
+import { createBlockScope } from '../scope';
 import { Errors, report } from '../errors';
+
 /**
  * Parse source
  *
@@ -61,7 +62,7 @@ export function parseSource(
   skipHashBang(state, context);
 
   // Scope
-  const scope: ScopeState = new Scope();
+  const scope: ScopeState = createBlockScope();
 
   const body = (context & Context.Module) === Context.Module ?
       parseModuleItemList(state, context, scope) : parseStatementList(state, context, scope);
