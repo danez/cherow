@@ -78,13 +78,15 @@ export interface ParserState {
     flags: Flags;
     length: number;
     currentChar: number;
-    token: Token;
+    previousToken: Token;
+    currentToken: Token;
     tokenValue: any;
     tokenRegExp: any;
     tokens: Token[];
     comments: Comment[];
     exportedNames: any;
     exportedBindings: any;
+    assignable: boolean;
 }
 
 /**

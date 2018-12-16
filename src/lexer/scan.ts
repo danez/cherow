@@ -306,11 +306,11 @@ table[Chars.Period] = (state, context) => {
 export function nextToken(state: ParserState, context: Context): Token {
   while (state.index < state.length) {
       state.startIndex = state.index;
-      if (((state.token = table[state.currentChar](state, context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
-        if (context & Context.OptionsTokenize) state.tokens.push(state.token);
-        return state.token;
+      if (((state.currentToken = table[state.currentChar](state, context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
+        if (context & Context.OptionsTokenize) state.tokens.push(state.currentToken);
+        return state.currentToken;
       }
   }
 
-  return state.token = Token.EndOfSource;
+  return state.currentToken = Token.EndOfSource;
 }

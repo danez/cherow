@@ -6,7 +6,7 @@ import { EcmaVersion, Options, ScopeState } from '../types';
 import { parseStatementList } from './statements';
 import { parseModuleItemList } from './module';
 import { Scope } from '../scope';
-
+import { Errors, report } from '../errors';
 /**
  * Parse source
  *
@@ -65,6 +65,17 @@ export function parseSource(
 
   const body = (context & Context.Module) === Context.Module ?
       parseModuleItemList(state, context, scope) : parseStatementList(state, context, scope);
+
+  // Validate exported bindings
+  if (context & Context.Module) {
+    for (let key in state.exportedBindings) {
+      if (key[0] === '#' && key !== '#default' &&
+         (scope.vars[key] === undefined &&
+          scope.lexical[key] === undefined)) {
+        report(state, Errors.Unexpected);
+      }
+    }
+  }
 
   return {
       type: 'Program',
