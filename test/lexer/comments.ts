@@ -47,7 +47,7 @@ pass('should skip a simple single with Mongolian Vowel Separator', {
   pass('should skip a simple single line comment', {
   source: `// `,
   line: 1, column: 3, index: 3
-});
+  });
 
   pass('should handle correct interpretation of single line comments', {
     source: `///`,

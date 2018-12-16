@@ -11,7 +11,7 @@ import { ParserState } from '../types';
 /**
  * Skips single HTML comments. Same behavior as in V8.
  *
- * @param parser Parser Object
+ * @param parser Parser instance
  * @param context Context masks.
  */
 export function skipSingleHTMLComment(state: ParserState, context: Context, type: CommentType): Token {
@@ -27,7 +27,7 @@ export function skipSingleHTMLComment(state: ParserState, context: Context, type
  *  @see [Link](https://tc39.github.io/ecma262/#prod-annexB-SingleLineHTMLOpenComment)
  *  @see [Link](https://tc39.github.io/ecma262/#prod-annexB-SingleLineHTMLCloseComment)
  *
- * @param state Parser object
+ * @param state Parser instance
  * @param returnToken Token to be returned
  */
 export function skipSingleLineComment(state: ParserState, context: Context, type: CommentType): Token {
