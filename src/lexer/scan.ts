@@ -95,7 +95,6 @@ table[Chars.CarriageReturn] = state => {
   state.flags |= Flags.LineTerminator;
    // If it's a \r\n sequence, consume it as a single EOL.
   if (state.index < state.length && nextChar(state) === Chars.LineFeed) {
-      nextChar(state);
       ++state.index;
   }
   return Token.WhiteSpace;

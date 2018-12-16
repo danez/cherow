@@ -12,6 +12,18 @@ export function fromCodePoint (code: Chars): string {
           ((code - 0x10000) & (1024 - 1)) + 0xDC00);
 }
 
+export function nextUnicodeChar(state: ParserState): number {
+  let { index } = state;
+  const hi = state.source.charCodeAt(index++);
+
+  if (hi < 0xD800 || hi > 0xDBFF) return hi;
+  if (index === state.source.length) return hi;
+  const lo = state.source.charCodeAt(index);
+
+  if (lo < 0xDC00 || lo > 0xDFFF) return hi;
+  return (hi & 0x3FF) << 10 | lo & 0x3FF | 0x10000;
+}
+
 export function toHex(code: number): number {
   code -= Chars.Zero;
   if (code <= 9) return code;
