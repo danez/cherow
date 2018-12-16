@@ -101,8 +101,8 @@ table[Chars.CarriageReturn] = state => {
 }
 
 table[Chars.DoubleQuote] =
-table[Chars.SingleQuote] = s => {
-  return scanString(s);
+table[Chars.SingleQuote] = (s, context) => {
+  return scanString(s, context);
 };
 
 // `/`, `/=`, `/>`, '/*..*/'
