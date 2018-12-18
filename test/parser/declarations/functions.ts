@@ -5,6 +5,11 @@ describe('Declarations - Functions', () => {
 
     const inValids: Array < [string, Context] > = [
 
+      // Acorn
+
+      ['let foo = 1; function x(foo) {} { var foo = 1; }', Context.Empty],
+      ['var foo = 1; function x() {} let foo = 1;', Context.Empty],
+
       // Duplicate function args in strct mode
 
       ['function f(a, a) {}', Context.Strict],
