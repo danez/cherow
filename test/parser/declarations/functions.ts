@@ -26,9 +26,9 @@ describe('Declarations - Functions', () => {
 
       // Block scope
 
-      ['{ function f() {} { var f; } }', Context.Empty],
-      ['{ function* f() {} function f() {} }', Context.Empty],
-      ['{ function f() {} var f; }', Context.Empty],
+      ['{ function f() {} { var f; } }', Context.OptionDisablesWebCompat],
+      ['{ function* f() {} function f() {} }', Context.OptionDisablesWebCompat],
+      ['{ function f() {} var f; }', Context.OptionDisablesWebCompat],
 
       // Duplicate function args with explicit directive
 
@@ -47,7 +47,7 @@ describe('Declarations - Functions', () => {
 
       // General
 
-     ['{ function f(){} function f(){} }', Context.Empty],
+     ['{ function f(){} function f(){} }', Context.OptionDisablesWebCompat],
       // ['function f(x) { let x }', Context.Empty],
       // ['function f(x) { const x = y }', Context.Empty],
       ['function f(){ let x; var x; }', Context.Empty],
@@ -55,10 +55,10 @@ describe('Declarations - Functions', () => {
       ['function f(){ const x = y; var x; }', Context.Empty],
       ['function f(){ var x; const x = y; }', Context.Empty],
       ['function f(){ let x; function x(){} }', Context.Empty],
-      ['function f(){ function x(){} let x; }', Context.Empty],
+      ['function f(){ function x(){} let x; }', Context.OptionDisablesWebCompat],
       ['function f(){ const x = y; function x(){} }', Context.Empty],
-      ['function f(){ function x(){} const x = y; }', Context.Empty],
-      ['{ function f() {} ; function f() {} }', Context.Empty], // Fails only Without AnnexB
+      ['function f(){ function x(){} const x = y; }', Context.OptionDisablesWebCompat],
+      ['{ function f() {} ; function f() {} }', Context.OptionDisablesWebCompat], // Fails only Without AnnexB
       ['function f() {} ; function f() {}', Context.Strict], // Fails only Without AnnexB and in strict mode
       ['{ function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
   ];
@@ -870,7 +870,7 @@ describe('Declarations - Functions', () => {
   ],
   "sourceType": "script"
 }],
-['function f(){} function f(){}', Context.OptionDisablesWebCompat, {
+['function f(){} function f(){}', Context.Empty, {
   "type": "Program",
   "body": [
       {

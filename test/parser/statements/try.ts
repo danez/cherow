@@ -7,10 +7,10 @@ describe('Statements - Try', () => {
 
       // Bindings - Acorn
 
-      ['try {} catch (foo) { var foo; }', Context.Empty],
+      ['try {} catch (foo) { var foo; }', Context.OptionDisablesWebCompat],
       ['try {} catch (foo) { let foo; }', Context.Empty],
-      ['try {} catch (foo) { try {} catch (_) { var foo; } }', Context.Empty],
-      ['try {} catch ([foo]) { var foo; }', Context.OptionDisablesWebCompat],
+      ['try {} catch (foo) { try {} catch (_) { var foo; } }', Context.OptionDisablesWebCompat],
+      ['try {} catch ([foo]) { var foo; }', Context.Empty],
       ['try {} catch ({ foo }) { var foo; }', Context.Empty],
       ['try {} catch ({ a: foo, b: { c: [foo] } }) {}', Context.Empty],
       ['try {} catch (foo) { function foo() {} }', Context.Empty],
@@ -19,8 +19,8 @@ describe('Statements - Try', () => {
 
       ['try {} catch (e) { const e = x; }', Context.Empty],
       ['try {} catch (e) { const e = x; }', Context.Empty],
-      ['try {} catch (e) { var e = x; }', Context.Empty],
-      ['try {} catch (e) { let e = x; }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { var e = x; }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { let e = x; }', Context.Empty],
       ['try { var foo = 1; } catch (e) {} let foo = 1;', Context.Empty],
       ['try {} catch (foo) { let foo = 1; }', Context.Empty],
       ['try {} catch (e) { const e = x; }', Context.Empty],
