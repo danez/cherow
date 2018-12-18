@@ -18,6 +18,8 @@ describe('Declarations - Const', () => {
     // Bindings - Blockstatement
 
     ['const x; { let x; var y; }', Context.Empty],
+    ['{ const f = a; let f; }', Context.Empty],
+    ['{ const f = a; function f() {} }', Context.Empty],
 
     // General
 

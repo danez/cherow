@@ -211,7 +211,57 @@ describe('Statements - Try', () => {
       ],
       "sourceType": "script"
   }],
-    ['try {} catch (foo) { function x(foo) {} }', Context.Empty, {
+
+    ['try { } catch (a) { { let a = b; } }', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "TryStatement",
+              "block": {
+                  "type": "BlockStatement",
+                  "body": []
+              },
+              "handler": {
+                  "type": "CatchClause",
+                  "param": {
+                      "type": "Identifier",
+                      "name": "a"
+                  },
+                  "body": {
+                      "type": "BlockStatement",
+                      "body": [
+                          {
+                              "type": "BlockStatement",
+                              "body": [
+                                  {
+                                      "type": "VariableDeclaration",
+                                      "declarations": [
+                                          {
+                                              "type": "VariableDeclarator",
+                                              "id": {
+                                                  "type": "Identifier",
+                                                  "name": "a"
+                                              },
+                                              "init": {
+                                                  "type": "Identifier",
+                                                  "name": "b"
+                                              }
+                                          }
+                                      ],
+                                      "kind": "let"
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              },
+              "finalizer": null
+          }
+      ],
+      "sourceType": "script"
+  }],
+
+  ['try {} catch (foo) { function x(foo) {} }', Context.Empty, {
       "type": "Program",
       "body": [
           {

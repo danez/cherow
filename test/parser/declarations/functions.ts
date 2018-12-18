@@ -19,13 +19,16 @@ describe('Declarations - Functions', () => {
       ['function f(b, a, b, a) {}', Context.Strict],
       ['function f(b, a, b, a = x) {}', Context.Strict],
 
+      // General
 
       ['let x = a; function x(){};', Context.Empty],
       ['const x = a; function x(){};', Context.Empty],
-      ['function f(a, a) {}', Context.Strict],
-      ['function f(a, a) {}', Context.Strict],
-      ['function f(a, a) {}', Context.Strict],
-      ['function f(a, a) {}', Context.Strict],
+
+      // Block scope
+
+      ['{ function f() {} { var f; } }', Context.Empty],
+      ['{ function* f() {} function f() {} }', Context.Empty],
+      ['{ function f() {} var f; }', Context.Empty],
 
       // Duplicate function args with explicit directive
 
