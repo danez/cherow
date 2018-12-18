@@ -96,7 +96,7 @@ export function parseStatement(state: ParserState, context: Context, scope: Scop
     case Token.Semicolon:
         return parseEmptyStatement(state, context);
     case Token.LeftBrace:
-        return parseBlockStatement(state, context, createChildScope(scope, ScopeFlags.Block));
+        return parseBlockStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, createChildScope(scope, ScopeFlags.Block));
     case Token.FunctionKeyword:
         report(state, context & Context.Strict ? Errors.StrictFunction : Errors.SloppyFunction);
         // falls through
@@ -430,7 +430,7 @@ export function parseTryStatement(state: ParserState, context: Context, scope: S
   nextToken(state, context);
   const block = parseBlockStatement(state, context, createChildScope(scope, ScopeFlags.Block));
   const handler = optional(state, context, Token.CatchKeyword)  ? parseCatchBlock(state, context, scope) : null;
-  const finalizer = optional(state, context, Token.FinallyKeyword) ? parseBlockStatement(state, context, createChildScope(scope, ScopeFlags.Block)) : null;
+  const finalizer = optional(state, context, Token.FinallyKeyword) ? parseBlockStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, createChildScope(scope, ScopeFlags.Block)) : null;
   if (!handler && !finalizer)  report(state, Errors.Unexpected);
   return {
       type: 'TryStatement',

@@ -67,7 +67,7 @@ describe('Declarations - Functions', () => {
 
   // valid tests
   const valids: Array < [string, Context, any] > = [
-/*
+
     ['var x = a; function x(){};', Context.Empty, {
       "type": "Program",
       "body": [
@@ -109,7 +109,7 @@ describe('Declarations - Functions', () => {
       ],
       "sourceType": "script"
   }],
-*/
+
     ['function f(x) {var x}', Context.Empty, {
       "type": "Program",
       "body": [
