@@ -18,6 +18,7 @@ describe('Declarations - Let', () => {
     ['var x; let x;', Context.Empty],
     ['let x; var x;', Context.Empty],
     ['let x; { var x; }', Context.Empty],
+    ['let x; {var x}', Context.Empty],
     ['{ let f; let f; }', Context.Empty],
     ['{ let f; function f() {} }', Context.Empty],
     ['{ let f; const f = b; }', Context.Empty],

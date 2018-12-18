@@ -141,7 +141,7 @@ export function parseIfStatement(state: ParserState, context: Context, scope: Sc
 */
 
 function parseConsequentOrAlternate(state: ParserState, context: Context, scope: ScopeState): any {
-  return (context & Context.OptionsWebCompat) === 0 ||
+  return context & Context.OptionDisablesWebCompat ||
           context & Context.Strict || state.currentToken !== Token.FunctionKeyword ?
       parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope) :
       parseFunctionDeclaration(state, context | Context.DisallowGenerator, scope, true);

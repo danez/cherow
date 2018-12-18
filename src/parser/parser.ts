@@ -1,12 +1,12 @@
 import { Context } from '../common';
+import { Errors, report } from '../errors';
 import * as ESTree from '../estree';
 import { skipHashBang } from '../lexer/common';
+import { createBlockScope } from '../scope';
 import { State } from '../state';
 import { EcmaVersion, Options, ScopeState } from '../types';
-import { parseStatementList } from './statements';
 import { parseModuleItemList } from './module';
-import { createBlockScope } from '../scope';
-import { Errors, report } from '../errors';
+import { parseStatementList } from './statements';
 
 /**
  * Parse source
@@ -21,7 +21,6 @@ export function parseSource(
   /*@internal*/
   context: Context): any {
   let sourceFile: string = '';
-  let version: number;
 
   if (options !== undefined) {
       // The option to specify ecamVersion
@@ -53,9 +52,10 @@ export function parseSource(
       // The flag to enable tokenizing
       if (options.tokenize) context |= Context.OptionsTokenize;
       // The flag to disable web compability (AnnexB)
-      if (options.disableWebCompat) context &= ~Context.OptionsWebCompat;
+      if (options.disableWebCompat) context &= ~Context.OptionDisablesWebCompat;
   }
 
+  // Parser insdtance
   const state = new State(source);
 
   // Stage 3 - HashBang grammar
@@ -67,23 +67,11 @@ export function parseSource(
   const body = (context & Context.Module) === Context.Module ?
       parseModuleItemList(state, context, scope) : parseStatementList(state, context, scope);
 
-  // Validate exported bindings
-  if (context & Context.Module) {
-    for (let key in state.exportedBindings) {
-      if (key[0] === '#' && key !== '#default' &&
-         (scope.vars[key] === undefined &&
-          scope.lexical[key] === undefined)) {
-        report(state, Errors.Unexpected);
-      }
-    }
-  }
-
   return {
       type: 'Program',
       sourceType: context & Context.Module ? 'module' : 'script',
-      body: body as ESTree.Statement[],
-  };
-
+      body: body,
+    };
   }
 
 /**
@@ -110,7 +98,7 @@ export function parse(source: string, options?: Options): ESTree.Program {
  * @param options parser options
  */
 export function parseScript(source: string, options?: Options): ESTree.Program {
-  return parseSource(source, options, Context.OptionsWebCompat);
+  return parseSource(source, options, Context.Empty);
 }
 
 /**
@@ -122,5 +110,5 @@ export function parseScript(source: string, options?: Options): ESTree.Program {
  * @param options parser options
  */
 export function parseModule(source: string, options?: Options): ESTree.Program {
-  return parseSource(source, options, Context.Strict | Context.Module | Context.OptionsWebCompat);
+  return parseSource(source, options, Context.Strict | Context.Module);
 }

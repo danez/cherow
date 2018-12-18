@@ -45,10 +45,9 @@ describe('Declarations - Functions', () => {
       ['let x; { var x; }', Context.Empty],
       ['{ var x; } let x;', Context.Empty],
 
+      // General
 
      ['{ function f(){} function f(){} }', Context.Empty],
-
-
       // ['function f(x) { let x }', Context.Empty],
       // ['function f(x) { const x = y }', Context.Empty],
       ['function f(){ let x; var x; }', Context.Empty],
@@ -56,28 +55,15 @@ describe('Declarations - Functions', () => {
       ['function f(){ const x = y; var x; }', Context.Empty],
       ['function f(){ var x; const x = y; }', Context.Empty],
       ['function f(){ let x; function x(){} }', Context.Empty],
-      ['let x; {var x}', Context.Empty],
       ['function f(){ function x(){} let x; }', Context.Empty],
       ['function f(){ const x = y; function x(){} }', Context.Empty],
-      ['unction f(){ function x(){} const x = y; }', Context.Empty],
+      ['function f(){ function x(){} const x = y; }', Context.Empty],
       ['{ function f() {} ; function f() {} }', Context.Empty], // Fails only Without AnnexB
       ['function f() {} ; function f() {}', Context.Strict], // Fails only Without AnnexB and in strict mode
       ['{ function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
   ];
 
   fail('Declarations - Functions (fail)', inValids);
-
-/*
-  ['function f(a, a) {}', Context.Empty],
-      // Explicit directive
-
-      ['function f(a, a) {"use strict"}', Context.Empty],
-      ['function f(a, b, a) {"use strict"}', Context.Empty],
-      ['function f(b, a, a) {"use strict"}', Context.Empty],
-      ['function f(a, a, b) {"use strict"}', Context.Empty],
-      ['function f(b, a, b, a) {"use strict"}', Context.Empty],
-      ['function f(b, a, b, a = x) {"use strict"}', Context.Empty],
-      */
 
   // valid tests
   const valids: Array < [string, Context, any] > = [
@@ -884,7 +870,7 @@ describe('Declarations - Functions', () => {
   ],
   "sourceType": "script"
 }],
-['function f(){} function f(){}', Context.OptionsWebCompat, {
+['function f(){} function f(){}', Context.OptionDisablesWebCompat, {
   "type": "Program",
   "body": [
       {

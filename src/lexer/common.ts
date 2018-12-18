@@ -1,7 +1,5 @@
 import { Chars } from '../chars';
 import { Context, Flags } from '../common';
-import { Errors, report } from '../errors';
-import { Token } from '../token';
 import { ParserState } from '../types';
 
 export function advanceNewLine(state: ParserState) {

@@ -3,7 +3,7 @@ import { Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import { Token } from '../token';
 import { ParserState } from '../types';
-import { advanceNewLine, fromCodePoint, nextChar } from './common';
+import { advanceNewLine, nextChar } from './common';
 import { scanIdentifier } from './identifiers';
 import { scanNumber } from './numbers';
 import { scanString } from './strings';
@@ -146,7 +146,7 @@ table[Chars.LessThan] = (state, context) => {
           return Token.ShiftLeftAssign;
         }
       return Token.ShiftLeft;
-    } else if (context & Context.OptionsWebCompat && next === Chars.Exclamation &&
+    } else if ((context & Context.OptionDisablesWebCompat) === 0 && next === Chars.Exclamation &&
     nextChar(state) === Chars.Hyphen &&
     nextChar(state) === Chars.Hyphen) {
     nextChar(state);
@@ -248,7 +248,7 @@ table[Chars.Hyphen] = (s, context) => {
   const next = nextChar(s);
   if (next === Chars.Hyphen) {
       if (nextChar(s) === Chars.GreaterThan &&
-        context & Context.OptionsWebCompat &&
+        (context & Context.OptionDisablesWebCompat) === 0 &&
         (s.flags & Flags.LineTerminator || s.startIndex === 0)) {
         nextChar(s);
         return skipSingleHTMLComment(s, context, 'HTMLClose');

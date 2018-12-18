@@ -7,7 +7,7 @@ describe('Statements - Block', () => {
 
     // Bindings
 
-    ['if (a) function(){}', Context.Empty],
+    ['if (a) function(){}', Context.OptionDisablesWebCompat],
 ];
 
 fail('Statements - Switch (fail)', inValids);
@@ -16,7 +16,7 @@ fail('Statements - Switch (fail)', inValids);
 const valids: Array < [string, Context, any] > = [
 
 // Should only pass with AnnexB
-['if (a) function a(){}', Context.OptionsWebCompat, {
+['if (a) function a(){}', Context.Empty, {
   "type": "Program",
   "sourceType": "script",
   "body": [
@@ -45,7 +45,7 @@ const valids: Array < [string, Context, any] > = [
     }
   ]
 }],/*
-  ['if (foo) bar;', Context.OptionsWebCompat, {
+  ['if (foo) bar;', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -66,7 +66,7 @@ const valids: Array < [string, Context, any] > = [
     ],
     "sourceType": "script"
 }],
-  ['if (foo) bar; else doo;', Context.OptionsWebCompat, {
+  ['if (foo) bar; else doo;', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -93,7 +93,7 @@ const valids: Array < [string, Context, any] > = [
     ],
     "sourceType": "script"
 }],*/
-  //['if (foo) a; if (bar) b; else c;', Context.OptionsWebCompat, {}]
+  //['if (foo) a; if (bar) b; else c;', Context.OptionDisablesWebCompat, {}]
 ];
 
 pass('Statements - Block (pass)', valids);

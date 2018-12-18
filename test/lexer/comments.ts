@@ -8,7 +8,7 @@ describe('Lexer - Comments', () => {
   function pass(name: string, opts: any): void {
       it(name, () => {
           const state = new State(opts.source);
-          nextToken(state, Context.OptionsWebCompat);
+          nextToken(state, Context.Empty);
           t.deepEqual({
               // index: state.index,
               line: state.line,
