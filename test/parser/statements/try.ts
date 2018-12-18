@@ -13,19 +13,15 @@ describe('Statements - Try', () => {
       ['try {} catch ([foo]) { var foo; }', Context.Empty],
       ['try {} catch ({ foo }) { var foo; }', Context.Empty],
       ['try {} catch ({ a: foo, b: { c: [foo] } }) {}', Context.Empty],
-      ['try {} catch (foo) { function foo() {} }', Context.Empty],
+      ['try {} catch (foo) { function foo() {} }', Context.OptionDisablesWebCompat],
 
       // Bindings - Acorn
 
-      ['try {} catch (e) { const e = x; }', Context.Empty],
       ['try {} catch (e) { const e = x; }', Context.Empty],
       ['try {} catch (e) { var e = x; }', Context.OptionDisablesWebCompat],
       ['try {} catch (e) { let e = x; }', Context.Empty],
       ['try { var foo = 1; } catch (e) {} let foo = 1;', Context.Empty],
       ['try {} catch (foo) { let foo = 1; }', Context.Empty],
-      ['try {} catch (e) { const e = x; }', Context.Empty],
-      ['try {} catch (e) { const e = x; }', Context.Empty],
-      ['try {} catch (e) { const e = x; }', Context.Empty],
   ];
 
   fail('Statements - Try (fail)', inValids);

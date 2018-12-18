@@ -65,7 +65,7 @@ export function parseSource(
   const scope: ScopeState = createBlockScope();
 
   const body = (context & Context.Module) === Context.Module ?
-      parseModuleItemList(state, context, scope) : parseStatementList(state, context, scope);
+      parseModuleItemList(state, context | Context.ScopeRoot, scope) : parseStatementList(state, context | Context.ScopeRoot, scope);
 
   return {
       type: 'Program',
