@@ -43,7 +43,7 @@ export function parseStatementList(state: ParserState, context: Context, scope: 
 export function parseStatementListItem(state: ParserState, context: Context, scope: ScopeState): any {
   switch (state.currentToken) {
     case Token.FunctionKeyword:
-        return parseFunctionDeclaration(state, context, scope);
+        return parseFunctionDeclaration(state, context, scope, false);
    /* case Token.ClassKeyword:
         return parseClassDeclaration(state, context);*/
     case Token.ConstKeyword:
@@ -98,6 +98,11 @@ export function parseStatement(state: ParserState, context: Context, scope: Scop
         return parseEmptyStatement(state, context);
     case Token.LeftBrace:
         return parseBlockStatement(state, context, createChildScope(scope, ScopeFlags.Block));
+    case Token.FunctionKeyword:
+        report(state, context & Context.Strict ? Errors.StrictFunction : Errors.SloppyFunction);
+        // falls through
+    case Token.ClassKeyword:
+      report(state, Errors.Unexpected);
     default:
       return parseExpressionOrLabelledStatement(state, context);
   }
@@ -136,9 +141,10 @@ export function parseIfStatement(state: ParserState, context: Context, scope: Sc
 */
 
 function parseConsequentOrAlternate(state: ParserState, context: Context, scope: ScopeState): any {
-  return context & Context.Strict || state.currentToken !== Token.FunctionKeyword ?
+  return (context & Context.OptionsWebCompat) === 0 ||
+          context & Context.Strict || state.currentToken !== Token.FunctionKeyword ?
       parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope) :
-      parseFunctionDeclaration(state, context | Context.DisallowGenerator, scope);
+      parseFunctionDeclaration(state, context | Context.DisallowGenerator, scope, true);
 }
 
 /**

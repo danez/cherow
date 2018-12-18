@@ -3,6 +3,10 @@ import { ParserState } from './types';
 /*@internal*/
 export const enum Errors {
   Unexpected,
+  AlreadyDeclared,
+  LexicalAlreadyDeclared,
+  InvalidCatchVarBinding,
+  InvalidBoundToParam,
  }
 
 /*@internal*/
@@ -10,6 +14,10 @@ export const errorMessages: {
   [key: string]: string;
 } = {
   [Errors.Unexpected]: 'Unexpected token',
+  [Errors.AlreadyDeclared]: 'Identifier \'%0\' has already been declared',
+  [Errors.LexicalAlreadyDeclared]: 'Lexical binding \'%0\' has already been declared',
+  [Errors.InvalidCatchVarBinding]: 'The `catch` var \'%0\' can\'t be redefined',
+  [Errors.InvalidBoundToParam]: '`let` or `const` can\'t be used with the same name as bound to a parameter',
  };
 
 export function constructError(index: number, line: number, column: number, description: string): void {
