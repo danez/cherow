@@ -23,7 +23,6 @@ import { parseBindingIdentifierOrPattern } from './pattern';
 export function parseStatementList(state: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
   nextToken(state, context);
   const statements: ESTree.Statement[] = [];
-  const isStrict = !!(context & Context.Strict);
   while (state.currentToken !== Token.EndOfSource) {
     statements.push(parseStatementListItem(state, context, scope));
   }
@@ -47,9 +46,9 @@ export function parseStatementListItem(state: ParserState, context: Context, sco
    /* case Token.ClassKeyword:
         return parseClassDeclaration(state, context);*/
     case Token.ConstKeyword:
-        return parseVariableStatement(state, context, BindingType.Const, BindingOrigin.Statement, scope);
+        return parseLexicalDeclaration(state, context, BindingType.Const, BindingOrigin.Statement, scope);
     case Token.LetKeyword:
-        return parseVariableStatement(state, context, BindingType.Let, BindingOrigin.Statement, scope);
+        return parseLexicalDeclaration(state, context, BindingType.Let, BindingOrigin.Statement, scope);
     /*case Token.LetKeyword:
         return parseLetOrExpressionStatement(state, context);
     case Token.AsyncKeyword:
@@ -521,9 +520,6 @@ export function parseVariableStatement(
   const { currentToken } = state;
   nextToken(state, context);
   const declarations = parseVariableDeclarationList(state, context, type, origin, false, scope);
-  if (type !== BindingType.Variable) {
-    if (verifyLexicalBindings(state, context, scope)) report(state, Errors.Unexpected);
-  }
   consumeSemicolon(state, context);
   return {
     type: 'VariableDeclaration',
@@ -531,3 +527,36 @@ export function parseVariableStatement(
     declarations
   } as any;
 }
+
+
+  /**
+ * Parses lexical declaration
+ *
+ * @see [Link](https://tc39.github.io/ecma262/#prod-VariableStatement)
+ *
+ * @param state Parser instance
+ * @param context Context masks
+ * @param type Binding type
+ * @param origin Binding origin
+ * @param scope Scope instance
+ */
+export function parseLexicalDeclaration(
+  state: ParserState,
+  context: Context,
+  type: BindingType,
+  origin: BindingOrigin,
+  scope: ScopeState
+): ESTree.VariableDeclaration {
+  const { currentToken } = state;
+  nextToken(state, context);
+  const declarations = parseVariableDeclarationList(state, context, type, origin, false, scope);
+  if (verifyLexicalBindings(state, context, scope)) report(state, Errors.Unexpected);
+  consumeSemicolon(state, context);
+  return {
+    type: 'VariableDeclaration',
+    kind: KeywordDescTable[currentToken & Token.Type],
+    declarations
+  } as any;
+}
+
+
