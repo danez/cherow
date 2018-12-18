@@ -458,16 +458,20 @@ export function parseCatchBlock(state: ParserState, context: Context, scope: Sco
   nextToken(state, context);
   expect(state, context, Token.LeftParen);
   let param: any = null;
-  let catchBodyScoop: any = null;
-  const catchHeadScoop = createChildScope(scope, ScopeFlags.Catch);
-  if (state.currentToken === Token.RightParen) report(state, Errors.Unexpected);
-  param = parseBindingIdentifierOrPattern(state, context, BindingType.Arguments, BindingOrigin.Catch, false, catchHeadScoop);
-  if (state.currentToken === Token.Assign)  report(state, Errors.Unexpected);
-  if (verifyLexicalBindings(state, context, catchHeadScoop, true))  report(state, Errors.Unexpected);
-  catchBodyScoop = createChildScope(catchHeadScoop, ScopeFlags.Block);
-  expect(state, context, Token.RightParen);
+  // NOTE: The 'second scope' is set to the scope we passed in as a try / catch binding workaround.
+  // It will only be overwritten if there exist a left parenthesis
+  let secondScope: any = scope;
+  if (optional(state, context, Token.LeftParen)) {
+    const firstCatchScope = createChildScope(scope, ScopeFlags.Catch);
+    if (state.currentToken === Token.RightParen) report(state, Errors.Unexpected);
+    param = parseBindingIdentifierOrPattern(state, context, BindingType.Arguments, BindingOrigin.Catch, false, firstCatchScope);
+    if (state.currentToken === Token.Assign)  report(state, Errors.Unexpected);
+    if (verifyLexicalBindings(state, context, firstCatchScope, true))  report(state, Errors.Unexpected);
+    secondScope = createChildScope(firstCatchScope, ScopeFlags.Block);
+    expect(state, context, Token.RightParen);
+  }
 
-  const body = parseBlockStatement(state, context, createChildScope(catchBodyScoop, ScopeFlags.Block));
+  const body = parseBlockStatement(state, context, createChildScope(secondScope, ScopeFlags.Block));
 
   return {
       type: 'CatchClause',
