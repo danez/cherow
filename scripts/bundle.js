@@ -1,22 +1,19 @@
-const path = require('path');
+const { join } = require('path');
 const rollup = require('rollup');
 const typescript2 = require('rollup-plugin-typescript2');
 const { terser } = require('rollup-plugin-terser');
 const ts = require('typescript');
-
-const root = path.resolve(__dirname, '..');
-const src = path.join(root, 'src');
-const dist = path.join(root, 'dist');
+const project = require('./project');
 
 async function createBundle() {
   for (const type of ['normal', 'minified']) {
     console.log(`creating ${type} bundle`);
 
     const bundle = await rollup.rollup({
-      input: path.join(src, 'cherow.ts'),
+      input: project.entry.path,
       plugins: [
         typescript2({
-          tsconfig: path.join(root, 'tsconfig.json'),
+          tsconfig: project['tsconfig.json'].path,
           typescript: ts
         }),
         ...(type === 'minified' ? [terser()] : [])
@@ -28,7 +25,7 @@ async function createBundle() {
     //'amd' | 'cjs' | 'system' | 'es' | 'esm' | 'iife' | 'umd'
 
     for (const format of ['esm', 'system', 'cjs']) {
-      const fileName = path.join(dist, `cherow.${format}${suffix}.js`);
+      const fileName = join(project.dist.path, `cherow.${format}${suffix}.js`);
 
       console.log(`writing ${fileName}`);
 
@@ -40,7 +37,7 @@ async function createBundle() {
     }
 
     for (const format of ['umd', 'amd', 'iife']) {
-      const fileName = path.join(dist, `cherow.${format}${suffix}.js`);
+      const fileName = join(project.dist.path, `cherow.${format}${suffix}.js`);
 
       console.log(`writing ${fileName}`);
 
