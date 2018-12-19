@@ -14,7 +14,7 @@
     "noImplicitThis": true,
     "noUnusedParameters": true,
     "outDir": "dist",
-    "preserveConstEnums": true,
+    "preserveConstEnums": false,
     "preserveWatchOutput": true,
     "pretty": true,
     "removeComments": true,
