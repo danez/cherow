@@ -8,14 +8,14 @@
       "**/test/**"
     ]
   },
-  "defaultSeverity": "warning",
+  "defaultSeverity": "error",
   "rules": {
     /**
      * Security Rules. The following rules should be turned on because they find security issues
      * or are recommended in the Microsoft Secure Development Lifecycle (SDL)
      */
     "insecure-random": true,
-    "no-banned-terms": true,
+    "no-banned-terms": false,
     "no-cookies": true,
     "no-delete-expression": true,
     "no-disable-auto-sanitization": true,
@@ -32,7 +32,7 @@
     "no-string-based-set-interval": true,
     "no-string-based-set-timeout": true,
     "non-literal-require": true,
-    "possible-timing-attack": true,
+    "possible-timing-attack": false,
     "react-anchor-blank-noopener": true,
     "react-iframe-missing-sandbox": true,
     "react-no-dangerous-html": true,
@@ -63,7 +63,7 @@
     "no-empty": false,
     "no-floating-promises": true,
     "no-for-in-array": true,
-    "no-implicit-dependencies": [true, "dev"],
+    "no-implicit-dependencies": false,
     "no-import-side-effect": false,
     "no-increment-decrement": false,
     "no-invalid-regexp": true,
@@ -123,12 +123,12 @@
     "chai-vague-errors": false,
     "class-name": false,
     "comment-format": true,
-    "completed-docs": [true, "classes"],
+    "completed-docs": false,
     "export-name": false,
     "function-name": false,
-    "import-name": true,
+    "import-name": false,
     "interface-name": false,
-    "jsdoc-format": true,
+    "jsdoc-format": false,
     "max-classes-per-file": false,  // we generally recommend making one public class per file
     "max-file-line-count": false,
     "max-func-body-length": false,
@@ -170,7 +170,7 @@
     "object-literal-sort-keys": false, // turn object-literal-sort-keys off and sort keys in a meaningful manner
     "one-variable-per-declaration": false,
     "only-arrow-functions": false,  // there are many valid reasons to declare a function
-    "ordered-imports": true,
+    "ordered-imports": false,
     "prefer-array-literal": false,
     "prefer-const": true,
     "prefer-for-of": false,
@@ -254,22 +254,6 @@
     "prefer-switch": false, // more of a style preference
     "prefer-type-cast": false, // pick either type-cast format and use it consistently
     "return-undefined": false, // this actually affect the readability of the code
-    "space-before-function-paren": false, // turn this on if this is really your coding standard
-
-    /**
-     * Deprecated rules.  The following rules are deprecated for various reasons.
-     */
-    "missing-optional-annotation": false, // now supported by TypeScript compiler
-    //"no-duplicate-case": true,
-    "no-duplicate-parameter-names": false, // now supported by TypeScript compiler
-    "no-empty-interfaces": false, // use tslint no-empty-interface rule instead
-    "no-missing-visibility-modifiers": false, // use tslint member-access rule instead
-    "no-multiple-var-decl": false, // use tslint one-variable-per-declaration rule instead
-    //"no-stateless-class": true,
-    "no-switch-case-fall-through": false, // now supported by TypeScript compiler
-    //"no-var-self": true,
-    "react-tsx-curly-spacing": true,
-    "typeof-compare": false, // the valid-typeof rule is currently superior to this version
-    "valid-typeof": true
+    "space-before-function-paren": false // turn this on if this is really your coding standard
   }
 }
