@@ -560,7 +560,17 @@ export function parseLexicalDeclaration(
   } as any;
 }
 
-function parseForStatement(state: ParserState, context: Context, scope: ScopeState): any {
+/**
+ * Parses either For, ForIn or ForOf statement
+ *
+ * @see [Link](https://tc39.github.io/ecma262/#sec-for-statement)
+ * @see [Link](https://tc39.github.io/ecma262/#sec-for-in-and-for-of-statements)
+ *
+ * @param parser  Parser object
+ * @param context Context masks
+ */
+
+function parseForStatement(state: ParserState, context: Context, scope: ScopeState): ESTree.ForStatement | ESTree.ForInStatement | ESTree.ForOfStatement {
 
   nextToken(state, context);
 
@@ -579,7 +589,7 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
 
   if (state.currentToken !== Token.Semicolon) {
       if (optional(state, context, Token.VarKeyword)) {
-        declarations = parseVariableDeclarationList(state, context, BindingType.Variable, BindingOrigin.For, /* checkForDuplicates */ false, scope);
+        declarations = parseVariableDeclarationList(state, context, BindingType.Variable, BindingOrigin.For, false, scope);
         init = { type: 'VariableDeclaration', kind: 'var', declarations };
       } else if (state.currentToken === Token.LetKeyword) {
           let tokenValue = state.tokenValue;
@@ -588,17 +598,23 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
           if (context & Context.Strict) report(state, Errors.Unexpected);
           init = { type: 'Identifier', name: tokenValue   };
         } else {
-          declarations = parseVariableDeclarationList(state, context, BindingType.Let, BindingOrigin.For, /* checkForDuplicates */ true, scope);
+          declarations = parseVariableDeclarationList(state, context, BindingType.Let, BindingOrigin.For, true, scope);
           init = { type: 'VariableDeclaration', kind: 'let', declarations };
         }
       } else if (optional(state, context, Token.ConstKeyword)) {
-        declarations = parseVariableDeclarationList(state, context, BindingType.Const, BindingOrigin.For, /* checkForDuplicates */ true, scope);
+        declarations = parseVariableDeclarationList(state, context, BindingType.Const, BindingOrigin.For, true, scope);
         init = { type: 'VariableDeclaration', kind: 'const', declarations };
       } else {
         isPattern = state.currentToken === Token.LeftBracket || state.currentToken === Token.LeftBrace;
         init = parseExpression(state, context);
       }
   }
+
+  /**
+ * ForStatement
+ *
+ * https://tc39.github.io/ecma262/#sec-for-statement
+ */
 
   if (forAwait ? expect(state, context, Token.OfKeyword) : optional(state, context, Token.OfKeyword)) {
     if (state.catch) report(state, Errors.Unexpected);
@@ -613,8 +629,14 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
         right,
         await: forAwait
     };
-
   }
+
+  /**
+   * ForIn statement
+   *
+   * https://tc39.github.io/ecma262/#sec-for-in-and-for-of-statements
+   *
+   */
 
   if (optional(state, context, Token.InKeyword)) {
     if (isPattern) reinterpret(init);
