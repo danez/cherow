@@ -581,9 +581,16 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
       if (optional(state, context, Token.VarKeyword)) {
         declarations = parseVariableDeclarationList(state, context, BindingType.Variable, BindingOrigin.For, /* checkForDuplicates */ false, scope);
         init = { type: 'VariableDeclaration', kind: 'var', declarations };
-      } else if (optional(state, context, Token.LetKeyword)) {
-        declarations = parseVariableDeclarationList(state, context, BindingType.Let, BindingOrigin.For, /* checkForDuplicates */ true, scope);
-        init = { type: 'VariableDeclaration', kind: 'let', declarations };
+      } else if (state.currentToken === Token.LetKeyword) {
+          let tokenValue = state.tokenValue;
+          nextToken(state, context);
+        if (state.currentToken === Token.InKeyword) {
+          if (context & Context.Strict) report(state, Errors.Unexpected);
+          init = { type: 'Identifier', name: tokenValue   };
+        } else {
+          declarations = parseVariableDeclarationList(state, context, BindingType.Let, BindingOrigin.For, /* checkForDuplicates */ true, scope);
+          init = { type: 'VariableDeclaration', kind: 'let', declarations };
+        }
       } else if (optional(state, context, Token.ConstKeyword)) {
         declarations = parseVariableDeclarationList(state, context, BindingType.Const, BindingOrigin.For, /* checkForDuplicates */ true, scope);
         init = { type: 'VariableDeclaration', kind: 'const', declarations };

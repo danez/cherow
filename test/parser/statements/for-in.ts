@@ -7,6 +7,7 @@ describe('Statements - For in', () => {
 
     // Bindings
 
+   ['for (let in x) {}', Context.Strict],
    ['for (let x;;) { var x; }', Context.OptionDisablesWebCompat],
    ['for (const x = y;;) { var x; }', Context.OptionDisablesWebCompat],
    ['for (let x in y) { var x; }', Context.OptionDisablesWebCompat],
@@ -145,8 +146,29 @@ const valids: Array < [string, Context, any] > = [
             },
             "body": {
                 "type": "EmptyStatement"
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+
+   ['for (let in x) {}', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ForInStatement",
+            "left": {
+                "type": "Identifier",
+                "name": "let"
             },
-            "each": false
+            "right": {
+                "type": "Identifier",
+                "name": "x"
+            },
+            "body": {
+                "type": "BlockStatement",
+                "body": []
+            }
         }
     ],
     "sourceType": "script"
@@ -179,8 +201,7 @@ const valids: Array < [string, Context, any] > = [
             },
             "body": {
                 "type": "EmptyStatement"
-            },
-            "each": false
+            }
         }
     ],
     "sourceType": "script"
