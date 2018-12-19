@@ -14,6 +14,16 @@ describe('Statements - Try', () => {
       ['try {} catch ({ foo }) { var foo; }', Context.Empty],
       ['try {} catch ({ a: foo, b: { c: [foo] } }) {}', Context.Empty],
       ['try {} catch (foo) { function foo() {} }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { for (var e;;) {} }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { for (var e in y) {} }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { for (var e of y) {} }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { let e = x; }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { const e = x; }', Context.OptionDisablesWebCompat],
+      ['try {} catch (e) { for (var e of y) {} }', Context.Empty],
+      ['try {} catch (e) { let e = x; }', Context.Empty],
+      ['try {} catch (e) { const e = x; }', Context.Empty],
+      ['try {} catch (e) { for (var e of y) {} }', Context.Empty],
+      ['try {} catch (e) { for (var e of y) {} }', Context.Empty],
 
       // Bindings - Acorn
 
@@ -449,6 +459,513 @@ describe('Statements - Try', () => {
           }
       ],
       "sourceType": "script"
+  }],
+  ['try {} catch (e) { for (const e = y;;) {} }', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "TryStatement",
+            "block": {
+                "type": "BlockStatement",
+                "body": []
+            },
+            "handler": {
+                "type": "CatchClause",
+                "param": {
+                    "type": "Identifier",
+                    "name": "e"
+                },
+                "body": {
+                    "type": "BlockStatement",
+                    "body": [
+                        {
+                            "type": "ForStatement",
+                            "init": {
+                                "type": "VariableDeclaration",
+                                "declarations": [
+                                    {
+                                        "type": "VariableDeclarator",
+                                        "id": {
+                                            "type": "Identifier",
+                                            "name": "e"
+                                        },
+                                        "init": {
+                                            "type": "Identifier",
+                                            "name": "y"
+                                        }
+                                    }
+                                ],
+                                "kind": "const"
+                            },
+                            "test": null,
+                            "update": null,
+                            "body": {
+                                "type": "BlockStatement",
+                                "body": []
+                            }
+                        }
+                    ]
+                }
+            },
+            "finalizer": null
+        }
+    ],
+    "sourceType": "script"
+}],
+  ['try {} catch (e) { for (let e in y) {} }', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForInStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "let",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { for (const e in y) {} }', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForInStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "const",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { for (let e of y) {} }', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForOfStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "let",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                },
+                "await": false
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { for (const e of y) {} }', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForOfStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "const",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                },
+                "await": false
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { for (const e in y) {} }', Context.Empty, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForInStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "const",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { for (let e of y) {} }', Context.Empty, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForOfStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "let",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                },
+                "await": false
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { for (const e of y) {} }', Context.Empty, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForOfStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "const",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                },
+                "await": false
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { for (var e in y) {} }', Context.Empty, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ForInStatement",
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "left": {
+                  "type": "VariableDeclaration",
+                  "kind": "var",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "init": null,
+                      "id": {
+                        "type": "Identifier",
+                        "name": "e"
+                      }
+                    }
+                  ]
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
+  }],
+  ['try {} catch (e) { var e = x; }', Context.Empty, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "TryStatement",
+        "block": {
+          "type": "BlockStatement",
+          "body": []
+        },
+        "handler": {
+          "type": "CatchClause",
+          "param": {
+            "type": "Identifier",
+            "name": "e"
+          },
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "VariableDeclaration",
+                "kind": "var",
+                "declarations": [
+                  {
+                    "type": "VariableDeclarator",
+                    "init": {
+                      "type": "Identifier",
+                      "name": "x"
+                    },
+                    "id": {
+                      "type": "Identifier",
+                      "name": "e"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "finalizer": null
+      }
+    ]
   }],
   ];
 
