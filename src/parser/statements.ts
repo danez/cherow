@@ -2,10 +2,10 @@ import { BindingOrigin, BindingType, Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
-import { createChildScope, verifyLexicalBindings, ScopeFlags } from '../scope';
+import { createChildScope, ScopeFlags, verifyLexicalBindings } from '../scope';
 import { KeywordDescTable, Token } from '../token';
 import { ParserState, ScopeState } from '../types';
-import { consumeSemicolon, expect, optional } from './common';
+import { consumeSemicolon, expect, optional, reinterpret } from './common';
 import { parseFunctionDeclaration, parseVariableDeclarationList } from './declarations';
 import { parseAssignmentExpression, parseExpression, parseIdentifier } from './expressions';
 import { parseBindingIdentifierOrPattern } from './pattern';
@@ -97,6 +97,8 @@ export function parseStatement(state: ParserState, context: Context, scope: Scop
         return parseEmptyStatement(state, context);
     case Token.LeftBrace:
         return parseBlockStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, createChildScope(scope, ScopeFlags.Block));
+    case Token.ForKeyword:
+       return parseForStatement(state, context, scope);
     case Token.FunctionKeyword:
         report(state, context & Context.Strict ? Errors.StrictFunction : Errors.SloppyFunction);
         // falls through
@@ -528,7 +530,6 @@ export function parseVariableStatement(
   } as any;
 }
 
-
   /**
  * Parses lexical declaration
  *
@@ -545,7 +546,7 @@ export function parseLexicalDeclaration(
   context: Context,
   type: BindingType,
   origin: BindingOrigin,
-  scope: ScopeState
+  scope: ScopeState,
 ): ESTree.VariableDeclaration {
   const { currentToken } = state;
   nextToken(state, context);
@@ -559,4 +560,87 @@ export function parseLexicalDeclaration(
   } as any;
 }
 
+function parseForStatement(state: ParserState, context: Context, scope: ScopeState): any {
 
+  nextToken(state, context);
+
+  const forAwait = optional(state, context, Token.AwaitKeyword);
+
+  scope = createChildScope(scope, ScopeFlags.For);
+
+  expect(state, context, Token.LeftParen);
+
+  let init: any = null;
+  let declarations: any = null;
+  let test: ESTree.Expression | null = null;
+  let update: ESTree.Expression | null = null;
+  let right;
+  let isPattern = false;
+
+  if (state.currentToken !== Token.Semicolon) {
+      if (optional(state, context, Token.VarKeyword)) {
+        declarations = parseVariableDeclarationList(state, context, BindingType.Variable, BindingOrigin.For, /* checkForDuplicates */ false, scope);
+        init = { type: 'VariableDeclaration', kind: 'var', declarations };
+      } else if (optional(state, context, Token.LetKeyword)) {
+        declarations = parseVariableDeclarationList(state, context, BindingType.Let, BindingOrigin.For, /* checkForDuplicates */ true, scope);
+        init = { type: 'VariableDeclaration', kind: 'let', declarations };
+      } else if (optional(state, context, Token.ConstKeyword)) {
+        declarations = parseVariableDeclarationList(state, context, BindingType.Const, BindingOrigin.For, /* checkForDuplicates */ true, scope);
+        init = { type: 'VariableDeclaration', kind: 'const', declarations };
+      } else {
+        isPattern = state.currentToken === Token.LeftBracket || state.currentToken === Token.LeftBrace;
+        init = parseExpression(state, context);
+      }
+  }
+
+  if (forAwait ? expect(state, context, Token.OfKeyword) : optional(state, context, Token.OfKeyword)) {
+    if (state.catch) report(state, Errors.Unexpected);
+    if (isPattern) reinterpret(init);
+    right = parseAssignmentExpression(state, context);
+    expect(state, context, Token.RightParen);
+    const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+    return {
+        type: 'ForOfStatement',
+        body,
+        left: init,
+        right,
+        await: forAwait
+    };
+
+  }
+
+  if (optional(state, context, Token.InKeyword)) {
+    if (isPattern) reinterpret(init);
+    right = parseExpression(state, context);
+    expect(state, context, Token.RightParen);
+    const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+    return {
+      type: 'ForInStatement',
+      body,
+      left: init,
+      right
+    };
+  }
+
+  expect(state, context, Token.Semicolon);
+
+  if (state.currentToken !== Token.Semicolon) {
+    test = parseExpression(state, context);
+  }
+
+  expect(state, context, Token.Semicolon);
+
+  if (state.currentToken !== Token.RightParen) update = parseExpression(state, context);
+
+  expect(state, context, Token.RightParen);
+
+  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+
+  return {
+          type: 'ForStatement',
+          body,
+          init,
+          test,
+          update
+      };
+}
