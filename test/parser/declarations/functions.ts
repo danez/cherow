@@ -59,7 +59,7 @@ describe('Declarations - Functions', () => {
       ['function f(){ const x = y; function x(){} }', Context.Empty],
       ['function f(){ function x(){} const x = y; }', Context.OptionDisablesWebCompat],
       ['{ function f() {} ; function f() {} }', Context.OptionDisablesWebCompat], // Fails only Without AnnexB
-      ['function f() {} ; function f() {}', Context.Strict], // Fails only Without AnnexB and in strict mode
+      // ['function f() {} ; function f() {}', Context.OptionDisablesWebCompat | Context.Strict], // Fails only Without AnnexB and in strict mode
       ['{ function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
   ];
 
@@ -68,6 +68,119 @@ describe('Declarations - Functions', () => {
   // valid tests
   const valids: Array < [string, Context, any] > = [
 
+    ['function f(){ var f = 123; if (abc) function f(){} }', Context.Empty, {
+      "type": "Program",
+      "sourceType": "script",
+      "body": [
+        {
+          "type": "FunctionDeclaration",
+          "params": [],
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "VariableDeclaration",
+                "kind": "var",
+                "declarations": [
+                  {
+                    "type": "VariableDeclarator",
+                    "init": {
+                      "type": "Literal",
+                      "value": 123
+                    },
+                    "id": {
+                      "type": "Identifier",
+                      "name": "f"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "IfStatement",
+                "test": {
+                  "type": "Identifier",
+                  "name": "abc"
+                },
+                "consequent": {
+                  "type": "FunctionDeclaration",
+                  "params": [],
+                  "body": {
+                    "type": "BlockStatement",
+                    "body": []
+                  },
+                  "async": false,
+                  "generator": false,
+                  "expression": false,
+                  "id": {
+                    "type": "Identifier",
+                    "name": "f"
+                  }
+                },
+                "alternate": null
+              }
+            ]
+          },
+          "async": false,
+          "generator": false,
+          "expression": false,
+          "id": {
+            "type": "Identifier",
+            "name": "f"
+          }
+        }
+      ]
+    }],
+    ['{ var f = 123; if (abc) function f(){} }', Context.Empty, {
+      "type": "Program",
+      "sourceType": "script",
+      "body": [
+        {
+          "type": "BlockStatement",
+          "body": [
+            {
+              "type": "VariableDeclaration",
+              "kind": "var",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "init": {
+                    "type": "Literal",
+                    "value": 123
+                  },
+                  "id": {
+                    "type": "Identifier",
+                    "name": "f"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "IfStatement",
+              "test": {
+                "type": "Identifier",
+                "name": "abc"
+              },
+              "consequent": {
+                "type": "FunctionDeclaration",
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "body": []
+                },
+                "async": false,
+                "generator": false,
+                "expression": false,
+                "id": {
+                  "type": "Identifier",
+                  "name": "f"
+                }
+              },
+              "alternate": null
+            }
+          ]
+        }
+      ]
+    }],
     ['var x = a; function x(){};', Context.Empty, {
       "type": "Program",
       "body": [

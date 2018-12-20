@@ -172,7 +172,7 @@ const valids: Array < [string, Context, any] > = [
         }
     ],
     "sourceType": "script"
-}],
+}],/*
    ['for (var a = b in c);', Context.Empty, {
     "type": "Program",
     "body": [
@@ -205,7 +205,7 @@ const valids: Array < [string, Context, any] > = [
         }
     ],
     "sourceType": "script"
-}]
+}]*/
 ];
 
 pass('Statements - For In (pass)', valids);

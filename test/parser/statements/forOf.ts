@@ -13,39 +13,6 @@ fail('Statements - For (fail)', inValids);
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
-  ['for (var a = b in c);', Context.Empty, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
-      {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "VariableDeclaration",
-          "kind": "var",
-          "declarations": [
-            {
-              "type": "VariableDeclarator",
-              "init": {
-                "type": "Identifier",
-                "name": "b"
-              },
-              "id": {
-                "type": "Identifier",
-                "name": "a"
-              }
-            }
-          ]
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "c"
-        }
-      }
-    ]
-  }],
   ['for (a of b);', Context.Empty, {
     "type": "Program",
     "sourceType": "script",

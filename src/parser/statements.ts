@@ -105,7 +105,7 @@ export function parseStatement(state: ParserState, context: Context, scope: Scop
     case Token.ClassKeyword:
       report(state, Errors.Unexpected);
     default:
-      return parseExpressionOrLabelledStatement(state, context);
+      return parseExpressionOrLabelledStatement(state, context, scope);
   }
 }
 
@@ -497,9 +497,24 @@ export function parseCatchBlock(state: ParserState, context: Context, scope: Sco
  */
 export function parseExpressionOrLabelledStatement(
   state: ParserState,
-  context: Context): any {
-    return parseAssignmentExpression(state, context);
+  context: Context,
+  scope: ScopeState
+): ESTree.ExpressionStatement | ESTree.LabeledStatement {
+    const token = state.currentToken;
+    const expr: ESTree.Expression = parseExpression(state, context);
+    if (token & Token.Keyword && state.currentToken === Token.Colon) {
+      return {
+        type: 'LabeledStatement',
+        label: expr as ESTree.Identifier,
+        body: parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope)
+    };
   }
+  consumeSemicolon(state, context);
+  return {
+    type: 'ExpressionStatement',
+    expression: expr
+  };
+}
 
   /**
  * Parses variable statement

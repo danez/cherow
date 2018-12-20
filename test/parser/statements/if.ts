@@ -44,8 +44,8 @@ const valids: Array < [string, Context, any] > = [
       "alternate": null
     }
   ]
-}],/*
-  ['if (foo) bar;', Context.OptionDisablesWebCompat, {
+}],
+  ['if (foo) bar;', Context.Empty, {
     "type": "Program",
     "body": [
         {
@@ -66,7 +66,7 @@ const valids: Array < [string, Context, any] > = [
     ],
     "sourceType": "script"
 }],
-  ['if (foo) bar; else doo;', Context.OptionDisablesWebCompat, {
+  ['if (foo) bar; else doo;', Context.Empty, {
     "type": "Program",
     "body": [
         {
@@ -92,7 +92,7 @@ const valids: Array < [string, Context, any] > = [
         }
     ],
     "sourceType": "script"
-}],*/
+}],
   //['if (foo) a; if (bar) b; else c;', Context.OptionDisablesWebCompat, {}]
 ];
 

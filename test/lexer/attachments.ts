@@ -8,7 +8,7 @@ describe('Lexer - Attach comments', () => {
   function pass(name: string, opts: any): void {
       it(name, () => {
           const state = new State(opts.source);
-          nextToken(state, Context.OptionsWebCompat | Context.OptionsCollectComments);
+          nextToken(state, Context.OptionsCollectComments);
           t.deepEqual({
               comment: state.comments[0].value,
               type: state.comments[0].type,
