@@ -285,6 +285,7 @@ table[Chars.Period] = (state, context) => {
               state.source.charCodeAt(index) === Chars.Period) {
               state.index = index + 1;
               state.column += 3;
+              state.currentChar = state.source.charCodeAt(state.index);
               return Token.Ellipsis;
           }
       } else if (next >= Chars.Zero && next <= Chars.Nine) {

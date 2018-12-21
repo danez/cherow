@@ -7,12 +7,17 @@ describe('Expressions - Arrows', () => {
 
     // Duplicate arrow function args
 
-   ['(a, a) => {}', Context.Strict],
-   ['(a, b, a) => {}', Context.Strict],
-   ['(b, a, a) => {}', Context.Strict],
-   ['(a, a, b) => {}', Context.Strict],
-   ['(b, a, b, a) => {}', Context.Strict],
-   ['(b, a, b, a = x) => {}', Context.Strict],
+   ['(a, a) => {}', Context.Empty],
+   ['(a, b, a) => {}', Context.Empty],
+   ['(b, a, a) => {}', Context.Empty],
+   ['(a, a, b) => {}', Context.Empty],
+   ['(b, a, b, a) => {}', Context.Empty],
+   ['(b, a, b, a = x) => {}', Context.Empty],
+
+   // Rest element
+   ['(a, ...a) => {}', Context.Empty],
+
+   // ['(x) => { let x }', Context.Empty],
 ];
 
 fail('Expressions - Functions', inValids);
@@ -20,6 +25,68 @@ fail('Expressions - Functions', inValids);
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
+  [`(a, ...b) => {}`, Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "ArrowFunctionExpression",
+                "id": null,
+                "params": [
+                    {
+                        "type": "Identifier",
+                        "name": "a"
+                    },
+                    {
+                        "type": "RestElement",
+                        "argument": {
+                            "type": "Identifier",
+                            "name": "b"
+                        }
+                    }
+                ],
+                "body": {
+                    "type": "BlockStatement",
+                    "body": []
+                },
+                "generator": false,
+                "expression": false,
+                "async": false
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+  [`(...a) => {}`, Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "ArrowFunctionExpression",
+                "id": null,
+                "params": [
+                    {
+                        "type": "RestElement",
+                        "argument": {
+                            "type": "Identifier",
+                            "name": "a"
+                        }
+                    }
+                ],
+                "body": {
+                    "type": "BlockStatement",
+                    "body": []
+                },
+                "generator": false,
+                "expression": false,
+                "async": false
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
   ['(a) => {}', Context.Empty, {
     "type": "Program",
     "sourceType": "script",
@@ -36,6 +103,39 @@ const valids: Array < [string, Context, any] > = [
             {
               "type": "Identifier",
               "name": "a"
+            }
+          ],
+          "id": null,
+          "async": false,
+          "generator": false,
+          "expression": false
+        }
+      }
+    ]
+  }],
+  ['(a = 1) => {}', Context.Empty, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ArrowFunctionExpression",
+          "body": {
+            "type": "BlockStatement",
+            "body": []
+          },
+          "params": [
+            {
+              "type": "AssignmentPattern",
+              "left": {
+                "type": "Identifier",
+                "name": "a"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 1
+              }
             }
           ],
           "id": null,
