@@ -25,8 +25,18 @@ describe('Expressions - Functions', () => {
 
     ['(function eval() {"use strict";})', Context.Empty],
 
+    // General
+    // ['"use strict"; (function eval(){})', Context.Empty],
+    // ['"use strict"; (function eval(){})', Context.Empty],
+
+    ['(function arguments(){ "use strict"; })', Context.Empty],
+    ['(function arguments(){ "use strict"; })', Context.Empty],
+    // ['(function f(x) { let x })', Context.Empty],
+
+
     // Future reserved words
-    ['(function package() {})', Context.Strict],
+    //['(function package() {})', Context.Strict],
+    //['(function package() {})', Context.Strict | Context.Module],
     // ['(function package() {"use strict";})', Context.Empty],
 ];
 
@@ -129,6 +139,197 @@ const valids: Array < [string, Context, any] > = [
       }
     }
   ]
+}],
+['foo(function f(){})', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "ExpressionStatement",
+          "expression": {
+              "type": "CallExpression",
+              "callee": {
+                  "type": "Identifier",
+                  "name": "foo"
+              },
+              "arguments": [
+                  {
+                      "type": "FunctionExpression",
+                      "id": {
+                          "type": "Identifier",
+                          "name": "f"
+                      },
+                      "params": [],
+                      "body": {
+                          "type": "BlockStatement",
+                          "body": []
+                      },
+                      "generator": false,
+                      "expression": false,
+                      "async": false
+                  }
+              ]
+          }
+      }
+  ],
+  "sourceType": "script"
+}],
+['foo(function f(){})', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "ExpressionStatement",
+          "expression": {
+              "type": "CallExpression",
+              "callee": {
+                  "type": "Identifier",
+                  "name": "foo"
+              },
+              "arguments": [
+                  {
+                      "type": "FunctionExpression",
+                      "id": {
+                          "type": "Identifier",
+                          "name": "f"
+                      },
+                      "params": [],
+                      "body": {
+                          "type": "BlockStatement",
+                          "body": []
+                      },
+                      "generator": false,
+                      "expression": false,
+                      "async": false
+                  }
+              ]
+          }
+      }
+  ],
+  "sourceType": "script"
+}],
+ ['let f = function await() {}', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "VariableDeclaration",
+          "declarations": [
+              {
+                  "type": "VariableDeclarator",
+                  "id": {
+                      "type": "Identifier",
+                      "name": "f"
+                  },
+                  "init": {
+                      "type": "FunctionExpression",
+                      "id": {
+                          "type": "Identifier",
+                          "name": "await"
+                      },
+                      "params": [],
+                      "body": {
+                          "type": "BlockStatement",
+                          "body": []
+                      },
+                      "generator": false,
+                      "expression": false,
+                      "async": false
+                  }
+              }
+          ],
+          "kind": "let"
+      }
+  ],
+  "sourceType": "script"
+}],
+ ['function f(yield) {}', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "FunctionDeclaration",
+          "id": {
+              "type": "Identifier",
+              "name": "f"
+          },
+          "params": [
+              {
+                  "type": "Identifier",
+                  "name": "yield"
+              }
+          ],
+          "body": {
+              "type": "BlockStatement",
+              "body": []
+          },
+          "generator": false,
+          "expression": false,
+          "async": false
+      }
+  ],
+  "sourceType": "script"
+}],
+ ['function f(await) {}', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "FunctionDeclaration",
+          "id": {
+              "type": "Identifier",
+              "name": "f"
+          },
+          "params": [
+              {
+                  "type": "Identifier",
+                  "name": "await"
+              }
+          ],
+          "body": {
+              "type": "BlockStatement",
+              "body": []
+          },
+          "generator": false,
+          "expression": false,
+          "async": false
+      }
+  ],
+  "sourceType": "script"
+}],
+ ['let f = function f(yield) {}', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "VariableDeclaration",
+          "declarations": [
+              {
+                  "type": "VariableDeclarator",
+                  "id": {
+                      "type": "Identifier",
+                      "name": "f"
+                  },
+                  "init": {
+                      "type": "FunctionExpression",
+                      "id": {
+                          "type": "Identifier",
+                          "name": "f"
+                      },
+                      "params": [
+                          {
+                              "type": "Identifier",
+                              "name": "yield"
+                          }
+                      ],
+                      "body": {
+                          "type": "BlockStatement",
+                          "body": []
+                      },
+                      "generator": false,
+                      "expression": false,
+                      "async": false
+                  }
+              }
+          ],
+          "kind": "let"
+      }
+  ],
+  "sourceType": "script"
 }],
 ['(function(a, a) {})', Context.Empty, {
   "type": "Program",

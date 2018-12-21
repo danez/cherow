@@ -23,6 +23,11 @@ describe('Declarations - Functions', () => {
 
       ['let x = a; function x(){};', Context.Empty],
       ['const x = a; function x(){};', Context.Empty],
+//      ['"use strict"; function eval(){}', Context.Strict],
+      ['const x = a; function x(){};', Context.Empty],
+//      ['function yield() {}', Context.Strict],
+      // ['function f(,){}', Context.Empty],
+      // ['function f(,,){}', Context.Empty],
 
       // Block scope
 
@@ -48,7 +53,7 @@ describe('Declarations - Functions', () => {
       // General
 
      ['{ function f(){} function f(){} }', Context.OptionDisablesWebCompat],
-      // ['function f(x) { let x }', Context.Empty],
+     //['function f(x) { let x }', Context.Empty],
       // ['function f(x) { const x = y }', Context.Empty],
       ['function f(){ let x; var x; }', Context.Empty],
       ['function f(){ var x; let x; }', Context.Empty],
@@ -68,6 +73,225 @@ describe('Declarations - Functions', () => {
   // valid tests
   const valids: Array < [string, Context, any] > = [
 
+    ['function f(a,){}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [
+                  {
+                      "type": "Identifier",
+                      "name": "a"
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": []
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['function f(a = b,){}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [
+                  {
+                      "type": "AssignmentPattern",
+                      "left": {
+                          "type": "Identifier",
+                          "name": "a"
+                      },
+                      "right": {
+                          "type": "Identifier",
+                          "name": "b"
+                      }
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": []
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['function f(a=b){}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [
+                  {
+                      "type": "AssignmentPattern",
+                      "left": {
+                          "type": "Identifier",
+                          "name": "a"
+                      },
+                      "right": {
+                          "type": "Identifier",
+                          "name": "b"
+                      }
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": []
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['function f(a=b=c){}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [
+                  {
+                      "type": "AssignmentPattern",
+                      "left": {
+                          "type": "Identifier",
+                          "name": "a"
+                      },
+                      "right": {
+                          "type": "AssignmentExpression",
+                          "operator": "=",
+                          "left": {
+                              "type": "Identifier",
+                              "name": "b"
+                          },
+                          "right": {
+                              "type": "Identifier",
+                              "name": "c"
+                          }
+                      }
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": []
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['function f(){foo}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "ExpressionStatement",
+                          "expression": {
+                              "type": "Identifier",
+                              "name": "foo"
+                          }
+                      }
+                  ]
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['function f(){foo;bar}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "ExpressionStatement",
+                          "expression": {
+                              "type": "Identifier",
+                              "name": "foo"
+                          }
+                      },
+                      {
+                          "type": "ExpressionStatement",
+                          "expression": {
+                              "type": "Identifier",
+                              "name": "bar"
+                          }
+                      }
+                  ]
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],/*
+    ['function yield() {}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "yield"
+              },
+              "params": [],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": []
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],*/
     ['function f(){ var f = 123; if (abc) function f(){} }', Context.Empty, {
       "type": "Program",
       "sourceType": "script",
