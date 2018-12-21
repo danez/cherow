@@ -23,11 +23,8 @@ describe('Declarations - Functions', () => {
 
       ['let x = a; function x(){};', Context.Empty],
       ['const x = a; function x(){};', Context.Empty],
-//      ['"use strict"; function eval(){}', Context.Strict],
+      ['"use strict"; function eval(){}', Context.Strict],
       ['const x = a; function x(){};', Context.Empty],
-//      ['function yield() {}', Context.Strict],
-      // ['function f(,){}', Context.Empty],
-      // ['function f(,,){}', Context.Empty],
 
       // Block scope
 
@@ -52,9 +49,9 @@ describe('Declarations - Functions', () => {
 
       // General
 
-     ['{ function f(){} function f(){} }', Context.OptionDisablesWebCompat],
-     //['function f(x) { let x }', Context.Empty],
-      // ['function f(x) { const x = y }', Context.Empty],
+      ['{ function f(){} function f(){} }', Context.OptionDisablesWebCompat],
+      ['function f(x) { let x }', Context.OptionDisablesWebCompat],
+      ['function f(x) { const x = y }', Context.Empty],
       ['function f(){ let x; var x; }', Context.Empty],
       ['function f(){ var x; let x; }', Context.Empty],
       ['function f(){ const x = y; var x; }', Context.Empty],
@@ -64,7 +61,6 @@ describe('Declarations - Functions', () => {
       ['function f(){ const x = y; function x(){} }', Context.Empty],
       ['function f(){ function x(){} const x = y; }', Context.OptionDisablesWebCompat],
       ['{ function f() {} ; function f() {} }', Context.OptionDisablesWebCompat], // Fails only Without AnnexB
-      // ['function f() {} ; function f() {}', Context.OptionDisablesWebCompat | Context.Strict], // Fails only Without AnnexB and in strict mode
       ['{ function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
   ];
 
@@ -73,6 +69,47 @@ describe('Declarations - Functions', () => {
   // valid tests
   const valids: Array < [string, Context, any] > = [
 
+    ['function f(a){ var a }', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [
+                  {
+                      "type": "Identifier",
+                      "name": "a"
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "VariableDeclaration",
+                          "declarations": [
+                              {
+                                  "type": "VariableDeclarator",
+                                  "id": {
+                                      "type": "Identifier",
+                                      "name": "a"
+                                  },
+                                  "init": null
+                              }
+                          ],
+                          "kind": "var"
+                      }
+                  ]
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
     ['function f(a,){}', Context.Empty, {
       "type": "Program",
       "body": [

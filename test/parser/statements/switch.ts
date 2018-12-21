@@ -19,6 +19,7 @@ describe('Statements - Switch', () => {
       ['switch (x) { case 0: var foo = 1 } let foo = 1;', Context.OptionDisablesWebCompat],
       ['switch (x) {case a: const f = x; break; case b: function f(){}; break; }', Context.Empty],
       ['switch (x) {case a: function f(){}; break; case b: let f; break; }', Context.Empty],
+      ['switch (x) {case a: function f(){}; break; case b: let f; break; }', Context.OptionDisablesWebCompat],
   ];
 
   fail('Statements - Switch (fail)', inValids);

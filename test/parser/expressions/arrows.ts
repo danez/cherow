@@ -17,7 +17,11 @@ describe('Expressions - Arrows', () => {
    // Rest element
    ['(a, ...a) => {}', Context.Empty],
 
-   // ['(x) => { let x }', Context.Empty],
+   // General
+
+   ['(x) => { let x }', Context.Empty],
+   ['(x) => { const x = 1; }', Context.Empty],
+   ['(x) => { const x }', Context.Empty],
 ];
 
 fail('Expressions - Functions', inValids);

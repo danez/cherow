@@ -2,7 +2,7 @@ import { BindingOrigin, BindingType, Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
-import { createChildScope, ScopeFlags, verifyLexicalBindings } from '../scope';
+import { createChildScope, ScopeFlags, checkIfExistInLexicalBindings } from '../scope';
 import { KeywordDescTable, Token } from '../token';
 import { ParserState, ScopeState } from '../types';
 import { consumeSemicolon, expect, optional, reinterpret } from './common';
@@ -23,6 +23,12 @@ import { parseBindingIdentifierOrPattern } from './pattern';
 export function parseStatementList(state: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
   nextToken(state, context);
   const statements: ESTree.Statement[] = [];
+  while (state.currentToken & Token.StringLiteral) {
+    if (state.tokenValue.length === 10 && state.tokenValue === 'use strict') {
+        context |= Context.Strict;
+    }
+    statements.push(parseStatementListItem(state, context, scope));
+  }
   while (state.currentToken !== Token.EndOfSource) {
     statements.push(parseStatementListItem(state, context, scope));
   }
@@ -101,7 +107,6 @@ export function parseStatement(state: ParserState, context: Context, scope: Scop
        return parseForStatement(state, context, scope);
     case Token.FunctionKeyword:
         report(state, context & Context.Strict ? Errors.StrictFunction : Errors.SloppyFunction);
-        // falls through
     case Token.ClassKeyword:
       report(state, Errors.Unexpected);
     default:
@@ -472,7 +477,7 @@ export function parseCatchBlock(state: ParserState, context: Context, scope: Sco
     if (state.currentToken === Token.RightParen) report(state, Errors.Unexpected);
     param = parseBindingIdentifierOrPattern(state, context, BindingType.Arguments, BindingOrigin.Catch, false, catchScope);
     if (state.currentToken === Token.Assign)  report(state, Errors.Unexpected);
-    if (verifyLexicalBindings(state, context, catchScope, true))  report(state, Errors.Unexpected);
+    if (checkIfExistInLexicalBindings(state, context, catchScope, true))  report(state, Errors.Unexpected);
     expect(state, context, Token.RightParen);
     secondScope = createChildScope(catchScope, ScopeFlags.Block);
   }
@@ -509,6 +514,7 @@ export function parseExpressionOrLabelledStatement(
         body: parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope)
     };
   }
+
   consumeSemicolon(state, context);
   return {
     type: 'ExpressionStatement',
@@ -566,7 +572,7 @@ export function parseLexicalDeclaration(
   const { currentToken } = state;
   nextToken(state, context);
   const declarations = parseVariableDeclarationList(state, context, type, origin, false, scope);
-  if (verifyLexicalBindings(state, context, scope)) report(state, Errors.Unexpected);
+  if (checkIfExistInLexicalBindings(state, context, scope)) report(state, Errors.Unexpected);
   consumeSemicolon(state, context);
   return {
     type: 'VariableDeclaration',
@@ -617,11 +623,11 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
           init = { type: 'VariableDeclaration', kind: 'let', declarations };
         }
       } else if (optional(state, context, Token.ConstKeyword)) {
-        declarations = parseVariableDeclarationList(state, context, BindingType.Const, BindingOrigin.For, true, scope);
+        declarations = parseVariableDeclarationList(state, context, BindingType.Const, BindingOrigin.For, false, scope);
         init = { type: 'VariableDeclaration', kind: 'const', declarations };
       } else {
         isPattern = state.currentToken === Token.LeftBracket || state.currentToken === Token.LeftBrace;
-        init = parseExpression(state, context);
+        init = parseExpression(state, context | Context.DisallowIn);
       }
   }
 

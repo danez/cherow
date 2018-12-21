@@ -24,6 +24,7 @@ describe('Statements - Try', () => {
       ['try {} catch (e) { const e = x; }', Context.Empty],
       ['try {} catch (e) { for (var e of y) {} }', Context.Empty],
       ['try {} catch (e) { for (var e of y) {} }', Context.Empty],
+      ['try {} catch(e) { var e; }', Context.OptionDisablesWebCompat],
 
       // Bindings - Acorn
 
