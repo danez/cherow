@@ -1,53 +1,186 @@
-import * as ESTree from '../estree';
-import { ParserState, ScopeState } from '../types';
-import { nextToken } from '../lexer/scan';
-import { updateToken, optional } from './common';
-import { Token, KeywordDescTable } from '../token';
-import {
-  Context,
-  Flags,
-} from '../common';
 
-export function parseExpression(state: ParserState, context: Context): any {
-  const expr = parseAssignmentExpression(state, context);
-  if (state.currentToken !== Token.Comma) return expr;
-  return parseSequenceExpression(state, context, expr);
-}
+function parseObjectLiteral(state: ParserState, context: Context): any {
 
-/**
-* Parse secuence expression
-*
-* @param parser Parser object
-* @param context Context masks
-*/
+  nextToken(state, context);
+  context = (context | Context.DisallowIn) ^ Context.DisallowIn;
+  let constructors = 0;
+  let doubleDunderProto = 0;
+  let key: any;
+  let currentToken = state.currentToken;
+  let tokenValue = state.tokenValue;
+  let method = false;
+  let kind = 'init';
+  let computed = false;
+  let value: any;
+  let shorthand = false;
+  let isGenerator = false;
+  let isAsync = false;
+  const properties: any[] = [];
 
-export function parseSequenceExpression(
-  state: ParserState,
-  context: Context,
-  left: ESTree.Expression,
-): ESTree.SequenceExpression {
-  const expressions: ESTree.Expression[] = [left];
-  while (optional(state, context, Token.Comma)) {
-      expressions.push(parseAssignmentExpression(state, context));
+  while (state.currentToken !== Token.RightBrace) {
+
+    if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) { {
+        currentToken = state.currentToken;
+        tokenValue = state.tokenValue;
+        key = parseIdentifier(state, context);
+        if (state.currentToken === Token.Comma ||
+            state.currentToken === Token.RightBrace ||
+            state.currentToken === Token.Assign) {
+          if (optional(state, context, Token.Assign)) {
+              value = {
+                type: 'AssignmentExpression',
+                left: key,
+                operator: '=',
+                right: parseAssignmentExpression(state, context),
+             }
+             shorthand = true;
+          } else {
+            shorthand = true;
+            value = key
+          }
+
+        } else if (optional(state, context, Token.Colon)) {
+          shorthand = false;
+            if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) {
+              value = parseAssignmentExpression(state, context);
+            } else if (state.currentToken === Token.LeftBracket) {
+              // TODO!
+            } else if (state.currentToken === Token.LeftBrace) {
+              // TODO!
+            } else {
+                value = parseAssignmentExpression(state, context);
+            }
+
+        } else if (state.currentToken === Token.LeftBracket) {
+            key = parseComputedPropertyName(state, context);
+            if (currentToken === Token.GetKeyword) kind = 'get';
+            else if (currentToken === Token.SetKeyword) kind = 'set';
+            method = false;
+            computed = false;
+            if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
+            value = parseMethodDeclaration(state, context, isGenerator /* isGenerator */, isAsync);
+        } else if (state.currentToken === Token.LeftParen) {
+            isAsync = false;
+            isGenerator = false;
+            kind = 'init';
+            value = parseMethodDeclaration(state, context, isGenerator, isAsync);
+            method = true;
+        } else if (currentToken === Token.AsyncKeyword) {
+                if (optional(state, context, Token.Multiply)) isGenerator = true
+
+                if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) {
+                  key = parseIdentifier(state, context);
+                } else if (state.currentToken & (Token.Literal | Token.StringLiteral)) {
+                  key = parseLiteral(state, context);
+                } else if (state.currentToken === Token.LeftBracket) {
+                  key = parseComputedPropertyName(state, context);
+                } else {
+                  report(state, Errors.Unexpected);
+                }
+
+          if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
+          method = true;
+          isAsync = true;
+          kind = 'init';
+          value = parseMethodDeclaration(state, context, isGenerator /* isGenerator */, isAsync);
+        } else if (currentToken === Token.GetKeyword || currentToken === Token.SetKeyword) {
+
+              if (currentToken === Token.GetKeyword) kind = 'get';
+              else if (currentToken === Token.SetKeyword) kind = 'set';
+              else if (state.currentToken !== Token.AsyncKeyword) report(state, Errors.Unexpected);
+              if (optional(state, context, Token.Multiply)) report(state, Errors.Unexpected);
+              if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) {
+                key = parseIdentifier(state, context);
+              } else if (state.currentToken & (Token.Literal | Token.StringLiteral)) {
+                key = parseLiteral(state, context);
+              } else if (state.currentToken === Token.LeftBracket) {
+                key = parseComputedPropertyName(state, context);
+              } else {
+                report(state, Errors.Unexpected);
+              }
+              if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
+              isGenerator = false;
+              isAsync = false;
+              method = false;
+              value = parseMethodDeclaration(state, context, isGenerator /* isGenerator */, isAsync);
+        }
+      }
+
+    } else if (state.currentToken === Token.Ellipsis) {
+      // TODO!
+    } else if (state.currentToken & (Token.Literal | Token.StringLiteral)) {
+        key = parseLiteral(state, context);
+          if (optional(state, context, Token.Colon)) {
+            value = parseAssignmentExpression(state, context);
+          }  else {
+            if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
+            value = parseMethodDeclaration(state, context, false /* isGenerator */, isAsync);
+            method = true;
+          }
+
+    } else if (state.currentToken === Token.LeftBracket) {
+        key = parseComputedPropertyName(state, context);
+        computed = true;
+        isGenerator = false;
+        isAsync = false;
+        kind = 'init';
+        method = state.currentToken === Token.LeftParen;
+        if (state.currentToken === Token.Colon) {
+            nextToken(state, context);
+            value = parseAssignmentExpression(state, context);
+        } else {
+          if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
+          value = parseMethodDeclaration(state, context, false /* isGenerator */, isAsync);
+        }
+    } else if (state.currentToken  & Token.Multiply) {
+        nextToken(state, context)
+        if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) {
+          currentToken = state.currentToken;
+          key = parseIdentifier(state, context);
+            if (state.currentToken === Token.LeftParen) {
+              value = parseMethodDeclaration(state, context, true /* isGenerator */, isAsync);
+              method = true;
+              isGenerator = true;
+            } else {
+              if (currentToken === Token.AsyncKeyword) report(state, Errors.Unexpected);
+              if (currentToken === Token.GetKeyword || currentToken === Token.SetKeyword) report(state, Errors.Unexpected);
+              if (currentToken === Token.Colon) report(state, Errors.Unexpected);
+
+              report(state, Errors.Unexpected);
+                // TODO!
+            }
+        } else if (state.currentToken & (Token.Literal | Token.StringLiteral)) {
+          key = parseLiteral(state, context);
+          value = parseMethodDeclaration(state, context, true /* isGenerator */, isAsync);
+          method = true;
+          isAsync = false;
+          isGenerator = false;
+        } else if (state.currentToken & Token.LeftBracket) {
+          key = parseComputedPropertyName(state, context);
+          value = parseMethodDeclaration(state, context, true /* isGenerator */, isAsync);
+          method = true;
+          computed = true;
+        } else {
+          report(state, Errors.Unexpected);
+        }
+    } else {
+      report(state, Errors.Unexpected);
+    }
+    optional(state, context,Token.Comma);
+    properties.push({
+      type: 'Property',
+      key,
+      value,
+      kind,
+      computed,
+      method,
+      shorthand,
+    });
   }
-  return {
-      type: 'SequenceExpression',
-      expressions,
-  };
-}
+  expect(state, context, Token.RightBrace);
 
-export function parseAssignmentExpression(state: ParserState, context: Context): any {
-  let c = context;
-  if (state.assignable && state.currentToken & Token.IsAssignOp) {}
-  nextToken(state, context);
-  return ['TODO!'];
-}
-
-export function parseIdentifier(state: ParserState, context: Context): ESTree.Identifier {
-  const tokenValue = state.tokenValue;
-  nextToken(state, context);
   return {
-      type: 'Identifier',
-      name: tokenValue
+    type: 'ObjectExpression',
+    properties,
   };
 }
