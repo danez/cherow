@@ -21,12 +21,12 @@ function parseObjectLiteral(
   state: ParserState,
   context: Context,
   scope: ScopeState | number,
-  type: BindingType): any {
+  type: BindingType): ESTree.Expression {
 
   nextToken(state, context);
 
   let key: ESTree.Expression | null = null;
-  let currentToken = state.currentToken;
+  let token = state.currentToken;
   let tokenValue = state.tokenValue;
   let kind = 'init';
   let value: any;
@@ -41,19 +41,27 @@ function parseObjectLiteral(
       properties.push(parseSpreadElement(state, context));
     } else {
       if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) { {
-        currentToken = state.currentToken;
+        token = state.currentToken;
         tokenValue = state.tokenValue;
         objState = ObjectState.None;
         key = parseIdentifier(state, context);
         if (state.currentToken === Token.Comma ||
             state.currentToken === Token.RightBrace ||
             state.currentToken === Token.Assign) {
+              // PropertyDefinition
+              //    IdentifierReference
+              //    CoverInitializedName
+              //
+              // CoverInitializedName
+              //    IdentifierReference Initializer?
               objState |= ObjectState.Shorthand;
-              if (currentToken !== Token.Eval || currentToken !== Token.Arguments) {
-                isValidIdentifier(state, context, type, currentToken);
+              if (token !== Token.Eval || token !== Token.Arguments) {
+                validateExpression(state, context, type, token);
               }
+
               addVarOrLexicalName(state, context, scope, type, false, false, tokenValue);
-          if (optional(state, context, Token.Assign)) {
+
+            if (optional(state, context, Token.Assign)) {
               value = {
                 type: 'AssignmentExpression',
                 left: key,
@@ -61,7 +69,6 @@ function parseObjectLiteral(
                 right: parseAssignmentExpression(state, context),
              }
           } else {
-            isValidIdentifier(state, context, type, currentToken);
             value = key
           }
         } else if (optional(state, context, Token.Colon)) {
@@ -76,11 +83,11 @@ function parseObjectLiteral(
 
         } else if (state.currentToken === Token.LeftBracket) {
           key = parseComputedPropertyName(state, context);
-          if (currentToken === Token.AsyncKeyword) {
+          if (token === Token.AsyncKeyword) {
             objState |= (ObjectState.Async | ObjectState.Computed | ObjectState.Method);
           } else {
-            if (currentToken === Token.GetKeyword) kind = 'get';
-            else if (currentToken === Token.SetKeyword) kind = 'set';
+            if (token === Token.GetKeyword) kind = 'get';
+            else if (token === Token.SetKeyword) kind = 'set';
             objState |= ObjectState.Computed & ~ObjectState.Method
           }
 
@@ -90,7 +97,7 @@ function parseObjectLiteral(
             objState = objState | ObjectState.Method & ~(ObjectState.Async | ObjectState.Generator);
             kind = 'init';
             value = parseMethodDeclaration(state, context, objState);
-        } else if (currentToken === Token.AsyncKeyword) {
+        } else if (token === Token.AsyncKeyword) {
             objState |= ObjectState.Async;
             if (optional(state, context, Token.Multiply)) objState |= ObjectState.Generator
             if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) {
@@ -107,9 +114,9 @@ function parseObjectLiteral(
           objState |= ObjectState.Method | ObjectState.Async;
           kind = 'init';
           value = parseMethodDeclaration(state, context, objState);
-        } else if (currentToken === Token.GetKeyword || currentToken === Token.SetKeyword) {
-            if (currentToken === Token.GetKeyword) kind = 'get';
-            else if (currentToken === Token.SetKeyword) kind = 'set';
+        } else if (token === Token.GetKeyword || token === Token.SetKeyword) {
+            if (token === Token.GetKeyword) kind = 'get';
+            else if (token === Token.SetKeyword) kind = 'set';
             else if (state.currentToken !== Token.AsyncKeyword) report(state, Errors.Unexpected);
 
             if (optional(state, context, Token.Multiply)) report(state, Errors.Unexpected);
@@ -157,17 +164,16 @@ function parseObjectLiteral(
     } else if (state.currentToken  & Token.Multiply) {
         nextToken(state, context)
         if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) {
-          currentToken = state.currentToken;
+          token = state.currentToken;
           objState &= ~(ObjectState.Method | ObjectState.Async);
           key = parseIdentifier(state, context);
             if (state.currentToken === Token.LeftParen) {
               value = parseMethodDeclaration(state, context, objState | ObjectState.Generator);
-              objState |= ObjectState.Method;
-              objState |= ObjectState.Generator;
+              objState |= ObjectState.Method | ObjectState.Generator;
             } else {
-              if (currentToken === Token.AsyncKeyword) report(state, Errors.Unexpected);
-              if (currentToken === Token.GetKeyword || currentToken === Token.SetKeyword) report(state, Errors.Unexpected);
-              if (currentToken === Token.Colon) report(state, Errors.Unexpected);
+              if (token === Token.AsyncKeyword) report(state, Errors.Unexpected);
+              if (token === Token.GetKeyword || token === Token.SetKeyword) report(state, Errors.Unexpected);
+              if (token === Token.Colon) report(state, Errors.Unexpected);
               report(state, Errors.Unexpected);
             }
         } else if (state.currentToken & (Token.Literal | Token.StringLiteral)) {
@@ -185,9 +191,7 @@ function parseObjectLiteral(
       report(state, Errors.Unexpected);
     }
 
-    optional(state, context,Token.Comma);
-
-    if (state.flags & Flags.SeenPrototype)  ++protoCount;
+    if (state.flags & Flags.SeenPrototype) ++protoCount;
 
     properties.push({
       type: 'Property',
