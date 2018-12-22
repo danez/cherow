@@ -13,6 +13,8 @@ describe('Expressions - Arrows', () => {
    ['(a, a, b) => {}', Context.Empty],
    ['(b, a, b, a) => {}', Context.Empty],
    ['(b, a, b, a = x) => {}', Context.Empty],
+   ['(a, {a}) => {}', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
 
    // Rest element
    ['(a, ...a) => {}', Context.Empty],

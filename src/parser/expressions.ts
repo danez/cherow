@@ -1,4 +1,4 @@
-// Note! This is just an simple demo code. No validation is done!
+// Note! This is just an simple demo code.
 
 export const enum ObjectState {
   None      = 0,
@@ -9,7 +9,19 @@ export const enum ObjectState {
   Async     = 1 << 4
 }
 
-function parseObjectLiteral(state: ParserState, context: Context): any {
+/**
+ * Parses object literal
+ *
+ * @param state Parser state
+ * @param context Context masks
+ * @param scope Scope state
+ * @param type Binding type
+ */
+function parseObjectLiteral(
+  state: ParserState,
+  context: Context,
+  scope: ScopeState | number,
+  type: BindingType): any {
 
   nextToken(state, context);
 
@@ -37,6 +49,10 @@ function parseObjectLiteral(state: ParserState, context: Context): any {
             state.currentToken === Token.RightBrace ||
             state.currentToken === Token.Assign) {
               objState |= ObjectState.Shorthand;
+              if (currentToken !== Token.Eval || currentToken !== Token.Arguments) {
+                isValidIdentifier(state, context, type, currentToken);
+              }
+              addVarOrLexicalName(state, context, scope, type, false, false, tokenValue);
           if (optional(state, context, Token.Assign)) {
               value = {
                 type: 'AssignmentExpression',
@@ -45,14 +61,15 @@ function parseObjectLiteral(state: ParserState, context: Context): any {
                 right: parseAssignmentExpression(state, context),
              }
           } else {
+            isValidIdentifier(state, context, type, currentToken);
             value = key
           }
         } else if (optional(state, context, Token.Colon)) {
             if (tokenValue === '__proto__') state.flags |= Flags.SeenPrototype;
             if (state.currentToken & (Token.IdentifierOrContextual | Token.Keyword)) {
-              let isValidIdentifier = state.currentToken === Token.RightBrace || state.currentToken === Token.Comma || state.currentToken === Token.Assign;
+              tokenValue = state.tokenValue;
               value = parseAssignmentExpression(state, context);
-              if (isValidIdentifier) addVarOrLexicalName(state, context, -1, BindingType.Variable, false, false, tokenValue);
+              addVarOrLexicalName(state, context, scope, type, false, false, tokenValue);
             } else {
                 value = parseAssignmentExpression(state, context);
             }
@@ -118,7 +135,7 @@ function parseObjectLiteral(state: ParserState, context: Context): any {
         if (optional(state, context, Token.Colon)) {
           if (tokenValue === '__proto__') state.flags |= Flags.SeenPrototype;
           value = parseAssignmentExpression(state, context);
-          addVarOrLexicalName(state, context, -1, BindingType.Variable, false, false, tokenValue);
+          addVarOrLexicalName(state, context, scope, type, false, false, tokenValue);
         } else {
           if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
           value = parseMethodDeclaration(state, context, objState);
