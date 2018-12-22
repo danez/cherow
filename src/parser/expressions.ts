@@ -18,6 +18,7 @@ function parseObjectLiteral(state: ParserState, context: Context): any {
   let tokenValue = state.tokenValue;
   let kind = 'init';
   let value: any;
+  let protoCount = 0;
   const properties: any[] = [];
 
   let objState = ObjectState.None;
@@ -118,17 +119,18 @@ function parseObjectLiteral(state: ParserState, context: Context): any {
     } else if (state.currentToken === Token.Ellipsis) {
       // TODO!
     } else if (state.currentToken & (Token.Literal | Token.StringLiteral)) {
+        tokenValue = state.tokenValue;
         key = parseLiteral(state, context);
-          if (optional(state, context, Token.Colon)) {
-            tokenValue = state.tokenValue;
-            value = parseAssignmentExpression(state, context);
-            addVarOrLexicalName(state, context, -1, BindingType.Variable, false, false, tokenValue);
+        if (optional(state, context, Token.Colon)) {
+          if (tokenValue === '__proto__') state.flags |= Flags.SeenPrototype;
+          value = parseAssignmentExpression(state, context);
+          addVarOrLexicalName(state, context, -1, BindingType.Variable, false, false, tokenValue);
 
-          }  else {
-            if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
-            value = parseMethodDeclaration(state, context, objState);
-            objState |= ObjectState.Method;
-          }
+        } else {
+          if (state.currentToken !== Token.LeftParen) report(state, Errors.Unexpected);
+          value = parseMethodDeclaration(state, context, objState);
+          objState |= ObjectState.Method;
+        }
 
     } else if (state.currentToken === Token.LeftBracket) {
         key = parseComputedPropertyName(state, context);
@@ -174,6 +176,8 @@ function parseObjectLiteral(state: ParserState, context: Context): any {
 
     optional(state, context,Token.Comma);
 
+    if (state.flags & Flags.SeenPrototype)  ++protoCount;
+
     properties.push({
       type: 'Property',
       key,
@@ -186,6 +190,8 @@ function parseObjectLiteral(state: ParserState, context: Context): any {
   }
 
   expect(state, context, Token.RightBrace);
+
+  if (protoCount === 1) state.flags &= ~Flags.SeenPrototype;
 
   return {
     type: 'ObjectExpression',

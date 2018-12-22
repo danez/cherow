@@ -36,6 +36,15 @@ describe('Expressions - Object (fail)', () => {
     ['({*ident x(){}})', Context.Empty],
     ['({*async x(){}})', Context.Empty],
     ['({[fkleuver] 1(){}})', Context.Empty],
+
+    // Duplicate prototypes
+
+    ['({ "__proto__": "__proto__", "__proto__": "__proto__"})', Context.Empty],
+    ['({ "__proto__": b, "__proto__": c})', Context.Empty],
+    ['({ __proto__: b, __proto__: c})', Context.Empty],
+    ['({ "__proto__": b, __proto__: c})', Context.Empty],
+    ['({ __proto__: b, "__proto__": c})', Context.Empty],
+
 ];
 
 fail('Expressions - Object', inValids);
@@ -43,6 +52,35 @@ fail('Expressions - Object', inValids);
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
+  ['({ "__proto__": "__proto__"})', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "ObjectExpression",
+                "properties": [
+                    {
+                        "type": "Property",
+                        "key": {
+                            "type": "Literal",
+                            "value": "__proto__"
+                        },
+                        "computed": false,
+                        "value": {
+                            "type": "Literal",
+                            "value": "__proto__"
+                        },
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
+                    }
+                ]
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
   ['({f(x) { var x; }})', Context.Empty, {
     "type": "Program",
     "body": [
