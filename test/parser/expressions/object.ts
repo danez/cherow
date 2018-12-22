@@ -41,10 +41,15 @@ describe('Expressions - Object (fail)', () => {
 
     ['({ "__proto__": "__proto__", "__proto__": "__proto__"})', Context.Empty],
     ['({ "__proto__": b, "__proto__": c})', Context.Empty],
-    ['({ __proto__: b, __proto__: c})', Context.Empty],
-    ['({ "__proto__": b, __proto__: c})', Context.Empty],
+    ['x = {\'__proto__\': 1, "__proto__": 2}', Context.Empty],
+    ['x = {__proto__: 1, "__proto__": 2}', Context.Empty],
     ['({ __proto__: b, "__proto__": c})', Context.Empty],
-
+    ['({ __proto__: b, "__proto__": c})', Context.Empty],
+    ['({ __proto__: b, "__proto__": c})', Context.Empty],
+    ['x = {__proto__: 1, __proto__: 2}', Context.Empty],
+    ['x = {__proto__: 1, "__proto__": 2}', Context.Empty],
+    ['x = {__proto__: 1, "__proto__": 2}', Context.Empty],
+    ['x = {__proto__: 1, "__proto__": 2}', Context.Empty],
 ];
 
 fail('Expressions - Object', inValids);
@@ -52,6 +57,246 @@ fail('Expressions - Object', inValids);
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
+   ['({ __proto__: b, "__proto__": c})', Context.OptionDisablesWebCompat, {
+      "body": [
+        {
+          "expression": {
+            "properties": [
+              {
+                "computed": false,
+                "key": {
+                  "name": "__proto__",
+                  "type": "Identifier",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": {
+                  "name": "b",
+                  "type": "Identifier"
+                }
+              },
+              {
+                "computed": false,
+                "key": {
+                  "type": "Literal",
+                  "value": "__proto__",
+                },
+                "kind": "init",
+                "method": false,
+                "shorthand": false,
+                "type": "Property",
+                "value": {
+                  "name": "c",
+                  "type": "Identifier"
+                }
+              }
+            ],
+            "type": "ObjectExpression"
+          },
+          "type": "ExpressionStatement"
+        }
+      ],
+      "sourceType": "script",
+      "type": "Program"
+    }],
+   ['x = {__proto__(){}, __proto__: 2}', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "Identifier",
+                    "name": "x"
+                },
+                "right": {
+                    "type": "ObjectExpression",
+                    "properties": [
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "__proto__"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": []
+                                },
+                                "generator": false,
+                                "expression": false,
+                                "async": false
+                            },
+                            "kind": "init",
+                            "method": true,
+                            "shorthand": false
+                        },
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "__proto__"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "Literal",
+                                "value": 2,
+                            },
+                            "kind": "init",
+                            "method": false,
+                            "shorthand": false
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+   ['x = {__proto__(){}, __proto__(){}}', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "Identifier",
+                    "name": "x"
+                },
+                "right": {
+                    "type": "ObjectExpression",
+                    "properties": [
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "__proto__"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": []
+                                },
+                                "generator": false,
+                                "expression": false,
+                                "async": false
+                            },
+                            "kind": "init",
+                            "method": true,
+                            "shorthand": false
+                        },
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "__proto__"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": []
+                                },
+                                "generator": false,
+                                "expression": false,
+                                "async": false
+                            },
+                            "kind": "init",
+                            "method": true,
+                            "shorthand": false
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+   ['x = {async __proto__(){}, *__proto__(){}}', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "Identifier",
+                    "name": "x"
+                },
+                "right": {
+                    "type": "ObjectExpression",
+                    "properties": [
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "__proto__"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": []
+                                },
+                                "generator": false,
+                                "expression": false,
+                                "async": true
+                            },
+                            "kind": "init",
+                            "method": true,
+                            "shorthand": false
+                        },
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "__proto__"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": []
+                                },
+                                "generator": true,
+                                "expression": false,
+                                "async": false
+                            },
+                            "kind": "init",
+                            "method": true,
+                            "shorthand": false
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
   ['({ "__proto__": "__proto__"})', Context.Empty, {
     "type": "Program",
     "body": [
