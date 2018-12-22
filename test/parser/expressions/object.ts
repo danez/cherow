@@ -8,6 +8,28 @@ describe('Expressions - Object (fail)', () => {
     ['({a(b, b){ "use strict"; }})', Context.Empty],
     ['"use strict"; ({a(b, b){}})', Context.Empty],
 
+    ['o = {f(x) { let x }}', Context.Empty],
+    ['o = {f(x) { const x = y }}', Context.Empty],
+
+     // Duplicate arguments
+    ['({f(a, a) {}})', Context.Strict],
+    ['({f(a, b, a) {}})', Context.Empty],
+    ['({f(b, a, a) {}})', Context.Empty],
+    ['({f(a, a, b) {}})', Context.Empty],
+    ['({f(b, a, b, a) {}})', Context.Empty],
+    ['({f(b, a, b, a = x) {}})', Context.Empty],
+
+    // General
+
+    ['({f(){ let x; var x; }})', Context.Empty],
+    ['({f(){ var x; let x; }})', Context.Empty],
+    ['({f(){ const x = y; var x; }})', Context.Empty],
+    ['({f(){ var x; const x = y; }})', Context.Empty],
+    ['({f(){ let x; function x(){} }})', Context.Empty],
+    ['({f(){ function x(){} let x; }})', Context.Empty],
+    ['({f(){ const x = y; function x(){} }})', Context.Empty],
+    ['({f(){ function x(){} const x = y; }})', Context.Empty],
+
     ['({*get x(){}})', Context.Empty],
     ['({*set x(){}})', Context.Empty],
     ['({*ident: x})', Context.Empty],
@@ -21,6 +43,179 @@ fail('Expressions - Object', inValids);
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
+  ['({f(x) { var x; }})', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "ObjectExpression",
+                "properties": [
+                    {
+                        "type": "Property",
+                        "key": {
+                            "type": "Identifier",
+                            "name": "f"
+                        },
+                        "computed": false,
+                        "value": {
+                            "type": "FunctionExpression",
+                            "id": null,
+                            "params": [
+                                {
+                                    "type": "Identifier",
+                                    "name": "x"
+                                }
+                            ],
+                            "body": {
+                                "type": "BlockStatement",
+                                "body": [
+                                    {
+                                        "type": "VariableDeclaration",
+                                        "declarations": [
+                                            {
+                                                "type": "VariableDeclarator",
+                                                "id": {
+                                                    "type": "Identifier",
+                                                    "name": "x"
+                                                },
+                                                "init": null
+                                            }
+                                        ],
+                                        "kind": "var"
+                                    }
+                                ]
+                            },
+                            "generator": false,
+                            "expression": false,
+                            "async": false
+                        },
+                        "kind": "init",
+                        "method": true,
+                        "shorthand": false
+                    }
+                ]
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+  ['x = {f(f) { }}', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "Identifier",
+                    "name": "x"
+                },
+                "right": {
+                    "type": "ObjectExpression",
+                    "properties": [
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "f"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [
+                                    {
+                                        "type": "Identifier",
+                                        "name": "f"
+                                    }
+                                ],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": []
+                                },
+                                "generator": false,
+                                "expression": false,
+                                "async": false
+                            },
+                            "kind": "init",
+                            "method": true,
+                            "shorthand": false
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+  ['o = {f(x) { function x() {} }}', Context.Empty, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "Identifier",
+                    "name": "o"
+                },
+                "right": {
+                    "type": "ObjectExpression",
+                    "properties": [
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "f"
+                            },
+                            "computed": false,
+                            "value": {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [
+                                    {
+                                        "type": "Identifier",
+                                        "name": "x"
+                                    }
+                                ],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": [
+                                        {
+                                            "type": "FunctionDeclaration",
+                                            "id": {
+                                                "type": "Identifier",
+                                                "name": "x"
+                                            },
+                                            "params": [],
+                                            "body": {
+                                                "type": "BlockStatement",
+                                                "body": []
+                                            },
+                                            "generator": false,
+                                            "expression": false,
+                                            "async": false
+                                        }
+                                    ]
+                                },
+                                "generator": false,
+                                "expression": false,
+                                "async": false
+                            },
+                            "kind": "init",
+                            "method": true,
+                            "shorthand": false
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
   ['({15: bar});', Context.Empty, {
     "type": "Program",
     "body": [
@@ -63,7 +258,6 @@ const valids: Array < [string, Context, any] > = [
                         "key": {
                             "type": "Literal",
                             "value": 9,
-                            "raw": "9"
                         },
                         "computed": false,
                         "value": {
@@ -204,7 +398,6 @@ const valids: Array < [string, Context, any] > = [
     ],
     "sourceType": "script"
 }],
-  // ['({15: bar});', Context.Empty, {}],
   ['({ident: yield})', Context.Empty, {
     "type": "Program",
     "body": [
