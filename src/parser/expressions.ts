@@ -1,10 +1,9 @@
+// Note! This is just an simple demo code. No validation is done!
 
 function parseObjectLiteral(state: ParserState, context: Context): any {
 
   nextToken(state, context);
-  context = (context | Context.DisallowIn) ^ Context.DisallowIn;
-  let constructors = 0;
-  let doubleDunderProto = 0;
+
   let key: any;
   let currentToken = state.currentToken;
   let tokenValue = state.tokenValue;
