@@ -1304,6 +1304,7 @@ function parsePropertyDefinition(parser: Parser, context: Context): ESTree.Prope
     const pos = getLocation(parser);
     const flags = parser.flags;
     let value;
+    let computed = false;
     let state = consume(parser, context, Token.Multiply) ? ObjectState.Generator | ObjectState.Method : ObjectState.Method;
     const t = parser.token;
 
@@ -1314,12 +1315,15 @@ function parsePropertyDefinition(parser: Parser, context: Context): ESTree.Prope
             tolerant(parser, context, Errors.InvalidEscapedReservedWord);
         } else if (!(state & ObjectState.Generator) && t & Token.IsAsync && !(parser.flags & Flags.NewLine)) {
             state |= consume(parser, context, Token.Multiply) ? ObjectState.Generator | ObjectState.Async : ObjectState.Async;
+            if (parser.token === Token.LeftBracket) computed = true;
             key = parsePropertyName(parser, context);
         } else if (t === Token.GetKeyword) {
             state = state & ~ObjectState.Method | ObjectState.Getter;
+            if (parser.token === Token.LeftBracket) computed = true;
             key = parsePropertyName(parser, context);
         } else if (t === Token.SetKeyword) {
             state = state & ~ObjectState.Method | ObjectState.Setter;
+            if (parser.token === Token.LeftBracket) computed = true;
             key = parsePropertyName(parser, context);
         }
         if (state & (ObjectState.Getter | ObjectState.Setter)) {
@@ -1386,7 +1390,7 @@ function parsePropertyDefinition(parser: Parser, context: Context): ESTree.Prope
         key,
         value,
         kind: !(state & ObjectState.Getter | state & ObjectState.Setter) ? 'init' : (state & ObjectState.Setter) ? 'set' : 'get',
-        computed: t === Token.LeftBracket,
+        computed,
         method: !!(state & ObjectState.Method),
         shorthand: !!(state & ObjectState.Shorthand),
     });
