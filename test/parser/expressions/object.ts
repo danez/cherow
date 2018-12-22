@@ -57,6 +57,869 @@ fail('Expressions - Object', inValids);
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
+   ['x = {...y}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {x, ...y}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "name": "x"
+                },
+                "value": {
+                  "type": "Identifier",
+                  "name": "x"
+                },
+                "kind": "init",
+                "computed": false,
+                "method": false,
+                "shorthand": true
+              },
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {a, ...y, b}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "value": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "kind": "init",
+                "computed": false,
+                "method": false,
+                "shorthand": true
+              },
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              },
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "name": "b"
+                },
+                "value": {
+                  "type": "Identifier",
+                  "name": "b"
+                },
+                "kind": "init",
+                "computed": false,
+                "method": false,
+                "shorthand": true
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {...y, b}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              },
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "name": "b"
+                },
+                "value": {
+                  "type": "Identifier",
+                  "name": "b"
+                },
+                "kind": "init",
+                "computed": false,
+                "method": false,
+                "shorthand": true
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {...a,}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "a"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {...a=b}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "AssignmentExpression",
+                  "left": {
+                    "type": "Identifier",
+                    "name": "a"
+                  },
+                  "operator": "=",
+                  "right": {
+                    "type": "Identifier",
+                    "name": "b"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {...a + b}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "BinaryExpression",
+                  "left": {
+                    "type": "Identifier",
+                    "name": "a"
+                  },
+                  "right": {
+                    "type": "Identifier",
+                    "name": "b"
+                  },
+                  "operator": "+"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {...[a, b]}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    {
+                      "type": "Identifier",
+                      "name": "b"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {...{a, b}}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "value": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "kind": "init",
+                      "computed": false,
+                      "method": false,
+                      "shorthand": true
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "b"
+                      },
+                      "value": {
+                        "type": "Identifier",
+                        "name": "b"
+                      },
+                      "kind": "init",
+                      "computed": false,
+                      "method": false,
+                      "shorthand": true
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['x = {...a, ...b}', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "operator": "=",
+          "right": {
+            "type": "ObjectExpression",
+            "properties": [
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "a"
+                }
+              },
+              {
+                "type": "SpreadElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "b"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }],
+   ['({...a} = x)', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "ObjectPattern",
+            "properties": [
+              {
+                "type": "RestElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "a"
+                }
+              }
+            ]
+          },
+          "operator": "=",
+          "right": {
+            "type": "Identifier",
+            "name": "x"
+          }
+        }
+      }
+    ]
+  }],
+   ['({...[a, b]} = x)', Context.OptionDisablesWebCompat, {
+      "body": [
+        {
+         "expression": {
+            "left": {
+              "properties": [
+                {
+                  "argument": {
+                    "elements": [
+                      {
+                        "name": "a",
+                        "type": "Identifier"
+                      },
+                      {
+                       "name": "b",
+                        "type": "Identifier"
+                      }
+                    ],
+                    "type": "ArrayPattern"
+                  },
+                  "type": "RestElement"
+                }
+              ],
+              "type": "ObjectPattern"
+            },
+            "operator": "=",
+            "right": {
+              "name": "x",
+              "type": "Identifier"
+            },
+            "type": "AssignmentExpression"
+          },
+          "type": "ExpressionStatement"
+        }
+      ],
+      "sourceType": "script",
+      "type": "Program"
+    }],
+   ['({...[a, b]}) => x', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ArrowFunctionExpression",
+          "body": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "params": [
+            {
+              "type": "ObjectPattern",
+              "properties": [
+                {
+                  "type": "RestElement",
+                  "argument": {
+                    "type": "ArrayPattern",
+                    "elements": [
+                      {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      {
+                        "type": "Identifier",
+                        "name": "b"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "id": null,
+          "async": false,
+          "generator": false,
+          "expression": true
+        }
+      }
+    ]
+  }],
+   ['({...{a, b}}) => x', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ArrowFunctionExpression",
+          "body": {
+            "type": "Identifier",
+            "name": "x"
+          },
+          "params": [
+            {
+              "type": "ObjectPattern",
+              "properties": [
+                {
+                  "type": "RestElement",
+                  "argument": {
+                    "type": "ObjectPattern",
+                    "properties": [
+                      {
+                        "type": "Property",
+                        "key": {
+                          "type": "Identifier",
+                          "name": "a"
+                        },
+                        "value": {
+                          "type": "Identifier",
+                          "name": "a"
+                        },
+                        "kind": "init",
+                        "computed": false,
+                        "method": false,
+                        "shorthand": true
+                      },
+                      {
+                        "type": "Property",
+                        "key": {
+                          "type": "Identifier",
+                          "name": "b"
+                        },
+                        "value": {
+                          "type": "Identifier",
+                          "name": "b"
+                        },
+                        "kind": "init",
+                        "computed": false,
+                        "method": false,
+                        "shorthand": true
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "id": null,
+          "async": false,
+          "generator": false,
+          "expression": true
+        }
+      }
+    ]
+  }],
+   ['(z = {...x.y} = z) => z', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ArrowFunctionExpression",
+          "body": {
+            "type": "Identifier",
+            "name": "z"
+          },
+          "params": [
+            {
+              "type": "AssignmentPattern",
+              "left": {
+                "type": "Identifier",
+                "name": "z"
+              },
+              "right": {
+                "type": "AssignmentExpression",
+                "left": {
+                  "type": "ObjectPattern",
+                  "properties": [
+                    {
+                      "type": "RestElement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "Identifier",
+                          "name": "x"
+                        },
+                        "computed": false,
+                        "property": {
+                          "type": "Identifier",
+                          "name": "y"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "operator": "=",
+                "right": {
+                  "type": "Identifier",
+                  "name": "z"
+                }
+              }
+            }
+          ],
+          "id": null,
+          "async": false,
+          "generator": false,
+          "expression": true
+        }
+      }
+    ]
+  }],
+   ['({...x=y});', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ObjectExpression",
+          "properties": [
+            {
+              "type": "SpreadElement",
+              "argument": {
+                "type": "AssignmentExpression",
+                "left": {
+                  "type": "Identifier",
+                  "name": "x"
+                },
+                "operator": "=",
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }],
+   ['({...x+=y});', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ObjectExpression",
+          "properties": [
+            {
+              "type": "SpreadElement",
+              "argument": {
+                "type": "AssignmentExpression",
+                "left": {
+                  "type": "Identifier",
+                  "name": "x"
+                },
+                "operator": "+=",
+                "right": {
+                  "type": "Identifier",
+                  "name": "y"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }],
+   ['({...x, ...y});', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ObjectExpression",
+          "properties": [
+            {
+              "type": "SpreadElement",
+              "argument": {
+                "type": "Identifier",
+                "name": "x"
+              }
+            },
+            {
+              "type": "SpreadElement",
+              "argument": {
+                "type": "Identifier",
+                "name": "y"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }],
+   ['({...x.y} = z)', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "left": {
+            "type": "ObjectPattern",
+            "properties": [
+              {
+                "type": "RestElement",
+                "argument": {
+                  "type": "MemberExpression",
+                  "object": {
+                    "type": "Identifier",
+                    "name": "x"
+                  },
+                  "computed": false,
+                  "property": {
+                    "type": "Identifier",
+                    "name": "y"
+                  }
+                }
+              }
+            ]
+          },
+          "operator": "=",
+          "right": {
+            "type": "Identifier",
+            "name": "z"
+          }
+        }
+      }
+    ]
+  }],
+   ['({[foo]: x} = y)', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "ObjectPattern",
+                    "properties": [
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "foo"
+                            },
+                            "computed": true,
+                            "value": {
+                                "type": "Identifier",
+                                "name": "x"
+                            },
+                            "kind": "init",
+                            "method": false,
+                            "shorthand": false
+                        }
+                    ]
+                },
+                "right": {
+                    "type": "Identifier",
+                    "name": "y"
+                }
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+   ['({[foo]: bar} = baz)', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ExpressionStatement",
+            "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                    "type": "ObjectPattern",
+                    "properties": [
+                        {
+                            "type": "Property",
+                            "key": {
+                                "type": "Identifier",
+                                "name": "foo"
+                            },
+                            "computed": true,
+                            "value": {
+                                "type": "Identifier",
+                                "name": "bar"
+                            },
+                            "kind": "init",
+                            "method": false,
+                            "shorthand": false
+                        }
+                    ]
+                },
+                "right": {
+                    "type": "Identifier",
+                    "name": "baz"
+                }
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+    ['({...x});', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "ObjectExpression",
+          "properties": [
+            {
+              "type": "SpreadElement",
+              "argument": {
+                "type": "Identifier",
+                "name": "x"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }],
    ['({ __proto__: b, "__proto__": c})', Context.OptionDisablesWebCompat, {
       "body": [
         {
