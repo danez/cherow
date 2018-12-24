@@ -26,18 +26,18 @@ describe('Expressions - Functions', () => {
     ['(function eval() {"use strict";})', Context.Empty],
 
     // General
-    // ['"use strict"; (function eval(){})', Context.Empty],
-    // ['"use strict"; (function eval(){})', Context.Empty],
+    ['"use strict"; (function eval(){})', Context.Empty],
+    ['"use strict"; (function eval(){})', Context.Empty],
 
     ['(function arguments(){ "use strict"; })', Context.Empty],
     ['(function arguments(){ "use strict"; })', Context.Empty],
-    // ['(function f(x) { let x })', Context.Empty],
+    ['(function f(x) { let x })', Context.Empty],
 
 
     // Future reserved words
-    //['(function package() {})', Context.Strict],
-    //['(function package() {})', Context.Strict | Context.Module],
-    // ['(function package() {"use strict";})', Context.Empty],
+    ['(function package() {})', Context.Strict],
+    ['(function package() {})', Context.Strict | Context.Module],
+    ['(function package() {"use strict";})', Context.Empty],
 ];
 
 fail('Expressions - Functions', inValids);

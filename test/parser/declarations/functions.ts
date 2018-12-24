@@ -26,6 +26,18 @@ describe('Declarations - Functions', () => {
       ['"use strict"; function eval(){}', Context.Strict],
       ['const x = a; function x(){};', Context.Empty],
 
+      // ['function f([b, a], b) {}', Context.Empty],
+      // ['function f([b, a], {b}) {}', Context.Empty],
+      // ['function f([b, a], b=x) {}', Context.Empty],
+      // ['function f([b, a, b, a]) {}', Context.Empty],
+      // ['function f([a, a, b]) {}', Context.Empty],
+      // ['function f([b, a, a]) {}', Context.Empty],
+      // ['function f([a, b, a]) {}', Context.Empty],
+      // ['function f([a, a]) {}', Context.Empty],
+      // ['function f([a, b, a]) {}', Context.Empty],
+      // ['function f([a, b, a]) {}', Context.Empty],
+      // ['function f([b, a], ...b) {}', Context.Empty],
+
       // Block scope
 
       ['{ function f() {} { var f; } }', Context.OptionDisablesWebCompat],
@@ -40,6 +52,7 @@ describe('Declarations - Functions', () => {
       ['function f(a, a, b) {"use strict"}', Context.Empty],
       ['function f(b, a, b, a) {"use strict"}', Context.Empty],
       ['function f(b, a, b, a = x) {"use strict"}', Context.Empty],
+      ['function f(b, a, b, a, [foo]) {"use strict"}', Context.Empty],
 
       // Duplicate args with locale binding
 
@@ -62,6 +75,8 @@ describe('Declarations - Functions', () => {
       ['function f(){ function x(){} const x = y; }', Context.OptionDisablesWebCompat],
       ['{ function f() {} ; function f() {} }', Context.OptionDisablesWebCompat], // Fails only Without AnnexB
       ['{ function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
+      ['{ if (x) function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
+      ['switch (x) {case a: function f(){}; break; case b: function f(){}; break; }', Context.Strict | Context.Module], // throws if no AnnexB and in strict mode only
   ];
 
   fail('Declarations - Functions (fail)', inValids);
@@ -69,6 +84,141 @@ describe('Declarations - Functions', () => {
   // valid tests
   const valids: Array < [string, Context, any] > = [
 
+  // ['{ if (x) function f() {} ; function f() {} }', Context.Module, {}],
+    ['{ if (x) function f() {} ; function f() {} }', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "BlockStatement",
+              "body": [
+                  {
+                      "type": "IfStatement",
+                      "test": {
+                          "type": "Identifier",
+                          "name": "x"
+                      },
+                      "consequent": {
+                          "type": "FunctionDeclaration",
+                          "id": {
+                              "type": "Identifier",
+                              "name": "f"
+                          },
+                          "params": [],
+                          "body": {
+                              "type": "BlockStatement",
+                              "body": []
+                          },
+                          "generator": false,
+                          "expression": false,
+                          "async": false
+                      },
+                      "alternate": null
+                  },
+                  {
+                      "type": "EmptyStatement"
+                  },
+                  {
+                      "type": "FunctionDeclaration",
+                      "id": {
+                          "type": "Identifier",
+                          "name": "f"
+                      },
+                      "params": [],
+                      "body": {
+                          "type": "BlockStatement",
+                          "body": []
+                      },
+                      "generator": false,
+                      "expression": false,
+                      "async": false
+                  }
+              ]
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['function f([]){ var a }', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [
+                  {
+                      "type": "ArrayPattern",
+                      "elements": []
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "VariableDeclaration",
+                          "declarations": [
+                              {
+                                  "type": "VariableDeclarator",
+                                  "id": {
+                                      "type": "Identifier",
+                                      "name": "a"
+                                  },
+                                  "init": null
+                              }
+                          ],
+                          "kind": "var"
+                      }
+                  ]
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['function f({}){ var a }', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "FunctionDeclaration",
+              "id": {
+                  "type": "Identifier",
+                  "name": "f"
+              },
+              "params": [
+                  {
+                      "type": "ObjectPattern",
+                      "properties": []
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "VariableDeclaration",
+                          "declarations": [
+                              {
+                                  "type": "VariableDeclarator",
+                                  "id": {
+                                      "type": "Identifier",
+                                      "name": "a"
+                                  },
+                                  "init": null
+                              }
+                          ],
+                          "kind": "var"
+                      }
+                  ]
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      ],
+      "sourceType": "script"
+  }],
     ['function f(a){ var a }', Context.Empty, {
       "type": "Program",
       "body": [

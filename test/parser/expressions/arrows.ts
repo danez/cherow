@@ -16,6 +16,28 @@ describe('Expressions - Arrows', () => {
    ['(a, {a}) => {}', Context.Empty],
    ['(a, {a:a}) => {}', Context.Empty],
 
+   ['([a,b,c]) => { const c = x; }', Context.Empty],
+   ['([a,b,c]) => { var c }', Context.Empty],
+   ['x => { function x() {} }', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
+   ['(a, {a:a}) => {}', Context.Empty],
+
+   ['([a, a]) => {}', Context.Empty],
+   ['([a, b, a]) => {}', Context.Empty],
+   ['([b, a, a]) => {}', Context.Empty],
+   ['([a, a, b]) => {}', Context.Empty],
+   ['([b, a, b, a]) => {}', Context.Empty],
+   ['([b, a], b) => {}', Context.Empty],
+   ['([b, a], {b}) => {}', Context.Empty],
+   ['([b, a], b=x) => {}', Context.Empty],
+   ['([b, a], ...b) => {}', Context.Empty],
+   ['([b, a], b=x) => {}', Context.Empty],
+
    // Rest element
    ['(a, ...a) => {}', Context.Empty],
 

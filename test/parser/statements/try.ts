@@ -10,8 +10,8 @@ describe('Statements - Try', () => {
       ['try {} catch (foo) { var foo; }', Context.OptionDisablesWebCompat],
       ['try {} catch (foo) { let foo; }', Context.Empty],
       ['try {} catch (foo) { try {} catch (_) { var foo; } }', Context.OptionDisablesWebCompat],
-      ['try {} catch ([foo]) { var foo; }', Context.Empty],
-      ['try {} catch ({ foo }) { var foo; }', Context.Empty],
+      ['try {} catch ([foo]) { var foo; }', Context.OptionDisablesWebCompat],
+      ['try {} catch ({ foo }) { var foo; }', Context.OptionDisablesWebCompat],
       ['try {} catch ({ a: foo, b: { c: [foo] } }) {}', Context.Empty],
       ['try {} catch (foo) { function foo() {} }', Context.OptionDisablesWebCompat],
       ['try {} catch (e) { for (var e;;) {} }', Context.OptionDisablesWebCompat],
@@ -26,19 +26,57 @@ describe('Statements - Try', () => {
       ['try {} catch (e) { for (var e of y) {} }', Context.Empty],
       ['try {} catch(e) { var e; }', Context.OptionDisablesWebCompat],
 
-      // Bindings - Acorn
+      // Bindings
 
       ['try {} catch (e) { const e = x; }', Context.Empty],
       ['try {} catch (e) { var e = x; }', Context.OptionDisablesWebCompat],
       ['try {} catch (e) { let e = x; }', Context.Empty],
       ['try { var foo = 1; } catch (e) {} let foo = 1;', Context.Empty],
-      ['try {} catch (foo) { let foo = 1; }', Context.Empty],
+      ['try {} catch ([a,a]) { }', Context.Empty],
   ];
 
   fail('Statements - Try (fail)', inValids);
 
   // valid tests
   const valids: Array < [string, Context, any] > = [
+    ['try {} catch ([a,b,c]) { }', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "TryStatement",
+              "block": {
+                  "type": "BlockStatement",
+                  "body": []
+              },
+              "handler": {
+                  "type": "CatchClause",
+                  "param": {
+                      "type": "ArrayPattern",
+                      "elements": [
+                          {
+                              "type": "Identifier",
+                              "name": "a"
+                          },
+                          {
+                              "type": "Identifier",
+                              "name": "b"
+                          },
+                          {
+                              "type": "Identifier",
+                              "name": "c"
+                          }
+                      ]
+                  },
+                  "body": {
+                      "type": "BlockStatement",
+                      "body": []
+                  }
+              },
+              "finalizer": null
+          }
+      ],
+      "sourceType": "script"
+  }],
     ['try {} catch (foo) {} var foo;', Context.Empty, {
       "type": "Program",
       "body": [
