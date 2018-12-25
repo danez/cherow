@@ -3,14 +3,14 @@ import { parseSource } from '../../../src/parser/parser';
 import * as t from 'assert';
 
 for (const arg of [
-  "async()",
-  "async(async(async(async())))",
-  "async(bull_sjit)",
-  "function foo() {}; ",
-  "({ *method() { function() {} }})",
-  "{ var {foo=3} = {}; }; ",
-  "function foo() {}; ",
-  "(a)=>{};",
+  'async()',
+  'async(async(async(async())))',
+  'async(bull_sjit)',
+  'function foo() {}; ',
+  '({ *method() { function() {} }})',
+  '{ var {foo=3} = {}; }; ',
+  'function foo() {}; ',
+  '(a)=>{};',
   '(a, b => {}, a => a + 1)',
   '(a, []) => {}',
   '(x, y = 9, z) => {}',
@@ -80,7 +80,7 @@ for (const arg of [
   'typeof (1, a, 2)',
   '({ *a() {} })',
   'do {} while (false) a();',
-//  '({ __proto__: null, get __proto__(){} })',
+  //  '({ __proto__: null, get __proto__(){} })',
   'function a() { new.target; }',
   'a * b % c',
   '({set a(b) {}})',
@@ -298,20 +298,19 @@ function e() {
   'for (let {j}=x; j<10; ++j) { let [foo] = [j] }',
   'for (j in x) { let [foo] = [j] }',
   'for (let j in x) { let foo = j }',
-  'var {foo=3} = {}',
+  'var {foo=3} = {}'
 ]) {
-
   // With AnnexB
   it(`${arg}`, () => {
-      t.doesNotThrow(() => {
-          parseSource(`${arg}`, undefined, Context.Empty);
-      });
+    t.doesNotThrow(() => {
+      parseSource(`${arg}`, undefined, Context.Empty);
+    });
   });
 
   // Without AnnexB
   it(`${arg}`, () => {
     t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.OptionDisablesWebCompat);
+      parseSource(`${arg}`, undefined, Context.OptionDisablesWebCompat);
     });
-});
+  });
 }

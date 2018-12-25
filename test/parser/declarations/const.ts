@@ -2,9 +2,7 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Declarations - Const', () => {
-
-  const inValids: Array < [string, Context] > = [
-
+  const inValids: Array<[string, Context]> = [
     // Bindings
 
     ['const a = b, a = c', Context.Empty],
@@ -27,40 +25,41 @@ describe('Declarations - Const', () => {
     ['const a, b, c', Context.Empty],
     ['const a, b = c', Context.Empty],
     ['const class = foo', Context.Empty],
-    ['const break = foo', Context.Empty],
+    ['const break = foo', Context.Empty]
+  ];
 
-];
-
-fail('Declarations - Const (fail)', inValids);
+  fail('Declarations - Const (fail)', inValids);
 
   // valid tests
-  const valids: Array < [string, Context, any] > = [
-
-    ['const foo = bar;', Context.Empty, {
-      "type": "Program",
-      "body": [
+  const valids: Array<[string, Context, any]> = [
+    [
+      'const foo = bar;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "foo"
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "bar"
-                      }
-                  }
-              ],
-              "kind": "const"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'foo'
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'bar'
+                }
+              }
+            ],
+            kind: 'const'
           }
-      ],
-      "sourceType": "script"
-  }]
-];
+        ],
+        sourceType: 'script'
+      }
+    ]
+  ];
 
-pass('Declarations - Const (pass)', valids);
-
+  pass('Declarations - Const (pass)', valids);
 });

@@ -2,48 +2,53 @@ import { Context } from '../../../src/common';
 import { pass } from '../../test-utils';
 
 describe('Expressions - Postfix', () => {
-
   // valid tests
-const valids: Array < [string, Context, any] > = [
-
-  ['x--', Context.Empty, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
+  const valids: Array<[string, Context, any]> = [
+    [
+      'x--',
+      Context.Empty,
       {
-        "type": "ExpressionStatement",
-        "expression": {
-          "type": "UpdateExpression",
-          "argument": {
-            "type": "Identifier",
-            "name": "x"
-          },
-          "operator": "--",
-          "prefix": false
-        }
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'Identifier',
+                name: 'x'
+              },
+              operator: '--',
+              prefix: false
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'x++',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'Identifier',
+                name: 'x'
+              },
+              operator: '++',
+              prefix: false
+            }
+          }
+        ]
       }
     ]
-  }],
-  ['x++',  Context.Empty, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
-      {
-        "type": "ExpressionStatement",
-        "expression": {
-          "type": "UpdateExpression",
-          "argument": {
-            "type": "Identifier",
-            "name": "x"
-          },
-          "operator": "++",
-          "prefix": false
-        }
-      }
-    ]
-  }]
-];
+  ];
 
-pass('Expressions - Postfix (pass)', valids);
-
+  pass('Expressions - Postfix (pass)', valids);
 });

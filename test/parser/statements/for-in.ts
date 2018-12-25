@@ -2,134 +2,138 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Statements - For in', () => {
-
-  const inValids: Array < [string, Context] > = [
-
+  const inValids: Array<[string, Context]> = [
     // Bindings
 
-   ['for (let in x) {}', Context.Strict],
-   ['for (let x;;) { var x; }', Context.OptionDisablesWebCompat],
-   ['for (const x = y;;) { var x; }', Context.OptionDisablesWebCompat],
-   ['for (let x in y) { var x; }', Context.OptionDisablesWebCompat],
-   ['for (const x in y) { var x; }', Context.OptionDisablesWebCompat],
-   ['for (let x of y) { var x; }', Context.OptionDisablesWebCompat],
-   ['for (const a;;);', Context.OptionDisablesWebCompat],
-   ['for (const a,b,c;;);', Context.OptionDisablesWebCompat],
-   ['for (let a, b, x, d;;) { var foo; var bar; { var doo, x, ee; } }', Context.OptionDisablesWebCompat],
+    ['for (let in x) {}', Context.Strict],
+    ['for (let x;;) { var x; }', Context.OptionDisablesWebCompat],
+    ['for (const x = y;;) { var x; }', Context.OptionDisablesWebCompat],
+    ['for (let x in y) { var x; }', Context.OptionDisablesWebCompat],
+    ['for (const x in y) { var x; }', Context.OptionDisablesWebCompat],
+    ['for (let x of y) { var x; }', Context.OptionDisablesWebCompat],
+    ['for (const a;;);', Context.OptionDisablesWebCompat],
+    ['for (const a,b,c;;);', Context.OptionDisablesWebCompat],
+    [
+      'for (let a, b, x, d;;) { var foo; var bar; { var doo, x, ee; } }',
+      Context.OptionDisablesWebCompat
+    ],
 
-   // General
+    // General
 
-   // ['for (var [foo] = arr, [bar] in arr);', Context.OptionDisablesWebCompat],
-   // ['for (var [foo], bar in arr);', Context.OptionDisablesWebCompat],
-   // ['for (var [foo] = arr, bar in arr);', Context.OptionDisablesWebCompat],
-   // ['for (var foo, [bar] in arr);', Context.OptionDisablesWebCompat],
-   // ['for (var foo = arr, [bar] in arr);', Context.OptionDisablesWebCompat],
-   ['for (var [foo]);', Context.OptionDisablesWebCompat],
-   ['for (var [foo = x]);', Context.OptionDisablesWebCompat],
-   ['for (var [foo], bar);', Context.OptionDisablesWebCompat],
-   ['for (var foo, [bar]);', Context.OptionDisablesWebCompat],
-   ['for (var {x}, y);', Context.OptionDisablesWebCompat],
-   // ['for (var [...bar = foo] in obj);', Context.OptionDisablesWebCompat],
-   // ['for (var [.x] in obj);', Context.OptionDisablesWebCompat],
-   // ['for (var [..x] in obj);', Context.OptionDisablesWebCompat],
-   ['for (var {x,,} in obj);', Context.OptionDisablesWebCompat],
-   ['for (var {,x} in obj);', Context.OptionDisablesWebCompat],
-   ['for (var {,,x} in obj);', Context.OptionDisablesWebCompat],
-   ['for (var {x,, y} in obj);', Context.OptionDisablesWebCompat],
-   // ['for (var {x} = a, {y} in obj);', Context.OptionDisablesWebCompat],
-   // ['for (var {x} = a, y in obj);', Context.OptionDisablesWebCompat],
-//   ['for (var {x} = a, obj in obj2);', Context.OptionDisablesWebCompat],
-   // ['for (var x = a, {y} in obj);', Context.OptionDisablesWebCompat],
-//   ['for (var x, {y} in obj);', Context.OptionDisablesWebCompat],
-   ['for (var {x}, y);', Context.OptionDisablesWebCompat],
-   ['for (var {x}, y);', Context.OptionDisablesWebCompat],
-   ['for (var {x}, y);', Context.OptionDisablesWebCompat],
-   ['for (var {x}, y);', Context.OptionDisablesWebCompat],
-   ['for (var {x}, y);', Context.OptionDisablesWebCompat],
-   ['for (var {x}, y);', Context.OptionDisablesWebCompat],
+    // ['for (var [foo] = arr, [bar] in arr);', Context.OptionDisablesWebCompat],
+    // ['for (var [foo], bar in arr);', Context.OptionDisablesWebCompat],
+    // ['for (var [foo] = arr, bar in arr);', Context.OptionDisablesWebCompat],
+    // ['for (var foo, [bar] in arr);', Context.OptionDisablesWebCompat],
+    // ['for (var foo = arr, [bar] in arr);', Context.OptionDisablesWebCompat],
+    ['for (var [foo]);', Context.OptionDisablesWebCompat],
+    ['for (var [foo = x]);', Context.OptionDisablesWebCompat],
+    ['for (var [foo], bar);', Context.OptionDisablesWebCompat],
+    ['for (var foo, [bar]);', Context.OptionDisablesWebCompat],
+    ['for (var {x}, y);', Context.OptionDisablesWebCompat],
+    // ['for (var [...bar = foo] in obj);', Context.OptionDisablesWebCompat],
+    // ['for (var [.x] in obj);', Context.OptionDisablesWebCompat],
+    // ['for (var [..x] in obj);', Context.OptionDisablesWebCompat],
+    ['for (var {x,,} in obj);', Context.OptionDisablesWebCompat],
+    ['for (var {,x} in obj);', Context.OptionDisablesWebCompat],
+    ['for (var {,,x} in obj);', Context.OptionDisablesWebCompat],
+    ['for (var {x,, y} in obj);', Context.OptionDisablesWebCompat],
+    // ['for (var {x} = a, {y} in obj);', Context.OptionDisablesWebCompat],
+    // ['for (var {x} = a, y in obj);', Context.OptionDisablesWebCompat],
+    //   ['for (var {x} = a, obj in obj2);', Context.OptionDisablesWebCompat],
+    // ['for (var x = a, {y} in obj);', Context.OptionDisablesWebCompat],
+    //   ['for (var x, {y} in obj);', Context.OptionDisablesWebCompat],
+    ['for (var {x}, y);', Context.OptionDisablesWebCompat],
+    ['for (var {x}, y);', Context.OptionDisablesWebCompat],
+    ['for (var {x}, y);', Context.OptionDisablesWebCompat],
+    ['for (var {x}, y);', Context.OptionDisablesWebCompat],
+    ['for (var {x}, y);', Context.OptionDisablesWebCompat],
+    ['for (var {x}, y);', Context.OptionDisablesWebCompat]
+  ];
 
-];
-
-fail('Statements - For (fail)', inValids);
+  fail('Statements - For (fail)', inValids);
 
   // valid tests
-const valids: Array < [string, Context, any] > = [
-     ['for (var {x = y, z = a} in obj);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "sourceType": "script",
-      "body": [
-        {
-          "type": "ForInStatement",
-          "body": {
-            "type": "EmptyStatement"
-          },
-          "left": {
-            "type": "VariableDeclaration",
-            "kind": "var",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "init": null,
-                "id": {
-                  "type": "ObjectPattern",
-                  "properties": [
-                    {
-                      "type": "Property",
-                      "kind": "init",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "x"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "AssignmentPattern",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "x"
+  const valids: Array<[string, Context, any]> = [
+    [
+      'for (var {x = y, z = a} in obj);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        kind: 'init',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x'
                         },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "y"
-                        }
-                      },
-                      "method": false,
-                      "shorthand": true
-                    },
-                    {
-                      "type": "Property",
-                      "kind": "init",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "z"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "AssignmentPattern",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "z"
+                        computed: false,
+                        value: {
+                          type: 'AssignmentPattern',
+                          left: {
+                            type: 'Identifier',
+                            name: 'x'
+                          },
+                          right: {
+                            type: 'Identifier',
+                            name: 'y'
+                          }
                         },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "a"
-                        }
+                        method: false,
+                        shorthand: true
                       },
-                      "method": false,
-                      "shorthand": true
-                    }
-                  ]
+                      {
+                        type: 'Property',
+                        kind: 'init',
+                        key: {
+                          type: 'Identifier',
+                          name: 'z'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'AssignmentPattern',
+                          left: {
+                            type: 'Identifier',
+                            name: 'z'
+                          },
+                          right: {
+                            type: 'Identifier',
+                            name: 'a'
+                          }
+                        },
+                        method: false,
+                        shorthand: true
+                      }
+                    ]
+                  }
                 }
-              }
-            ]
-          },
-          "right": {
-            "type": "Identifier",
-            "name": "obj"
+              ]
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj'
+            }
           }
-        }
-      ]
-    }],
-      /*['for (var {x : y} in obj);', Context.OptionDisablesWebCompat, {
+        ]
+      }
+    ],
+    /*['for (var {x : y} in obj);', Context.OptionDisablesWebCompat, {
         "type": "Program",
         "sourceType": "script",
         "body": [
@@ -175,7 +179,7 @@ const valids: Array < [string, Context, any] > = [
           }
         ]
       }],*/
-     /* ['for (var [foo, bar=b] of arr);', Context.OptionDisablesWebCompat, {
+    /* ['for (var [foo, bar=b] of arr);', Context.OptionDisablesWebCompat, {
         "type": "Program",
         "body": [
             {
@@ -222,7 +226,7 @@ const valids: Array < [string, Context, any] > = [
         "sourceType": "script"
     }],*/
 
-  /* ['for (var {[x]: y} of obj);', Context.OptionDisablesWebCompat, {
+    /* ['for (var {[x]: y} of obj);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -270,7 +274,7 @@ const valids: Array < [string, Context, any] > = [
     ]
   }],*/
 
-/*   ['for (var [a=[...b], ...c] in obj);', Context.OptionDisablesWebCompat, {
+    /*   ['for (var [a=[...b], ...c] in obj);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -328,317 +332,341 @@ const valids: Array < [string, Context, any] > = [
     "sourceType": "script"
 }],*/
 
-    ['for (var {x = y} in obj);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "body": [
+    [
+      'for (var {x = y} in obj);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "ForInStatement",
-              "left": {
-                  "type": "VariableDeclaration",
-                  "declarations": [
+            type: 'ForInStatement',
+            left: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
                       {
-                          "type": "VariableDeclarator",
-                          "id": {
-                              "type": "ObjectPattern",
-                              "properties": [
-                                  {
-                                      "type": "Property",
-                                      "key": {
-                                          "type": "Identifier",
-                                          "name": "x"
-                                      },
-                                      "computed": false,
-                                      "value": {
-                                          "type": "AssignmentPattern",
-                                          "left": {
-                                              "type": "Identifier",
-                                              "name": "x"
-                                          },
-                                          "right": {
-                                              "type": "Identifier",
-                                              "name": "y"
-                                          }
-                                      },
-                                      "kind": "init",
-                                      "method": false,
-                                      "shorthand": true
-                                  }
-                              ]
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'AssignmentPattern',
+                          left: {
+                            type: 'Identifier',
+                            name: 'x'
                           },
-                          "init": null
+                          right: {
+                            type: 'Identifier',
+                            name: 'y'
+                          }
+                        },
+                        kind: 'init',
+                        method: false,
+                        shorthand: true
                       }
-                  ],
-                  "kind": "var"
-              },
-              "right": {
-                  "type": "Identifier",
-                  "name": "obj"
-              },
-              "body": {
-                  "type": "EmptyStatement"
-              }
+                    ]
+                  },
+                  init: null
+                }
+              ],
+              kind: 'var'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj'
+            },
+            body: {
+              type: 'EmptyStatement'
+            }
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['for (var {x = y, z} in obj);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (var {x = y, z} in obj);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "ForInStatement",
-              "left": {
-                  "type": "VariableDeclaration",
-                  "declarations": [
+            type: 'ForInStatement',
+            left: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
                       {
-                          "type": "VariableDeclarator",
-                          "id": {
-                              "type": "ObjectPattern",
-                              "properties": [
-                                  {
-                                      "type": "Property",
-                                      "key": {
-                                          "type": "Identifier",
-                                          "name": "x"
-                                      },
-                                      "computed": false,
-                                      "value": {
-                                          "type": "AssignmentPattern",
-                                          "left": {
-                                              "type": "Identifier",
-                                              "name": "x"
-                                          },
-                                          "right": {
-                                              "type": "Identifier",
-                                              "name": "y"
-                                          }
-                                      },
-                                      "kind": "init",
-                                      "method": false,
-                                      "shorthand": true
-                                  },
-                                  {
-                                      "type": "Property",
-                                      "key": {
-                                          "type": "Identifier",
-                                          "name": "z"
-                                      },
-                                      "computed": false,
-                                      "value": {
-                                          "type": "Identifier",
-                                          "name": "z"
-                                      },
-                                      "kind": "init",
-                                      "method": false,
-                                      "shorthand": true
-                                  }
-                              ]
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'AssignmentPattern',
+                          left: {
+                            type: 'Identifier',
+                            name: 'x'
                           },
-                          "init": null
+                          right: {
+                            type: 'Identifier',
+                            name: 'y'
+                          }
+                        },
+                        kind: 'init',
+                        method: false,
+                        shorthand: true
+                      },
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'z'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'Identifier',
+                          name: 'z'
+                        },
+                        kind: 'init',
+                        method: false,
+                        shorthand: true
                       }
-                  ],
-                  "kind": "var"
-              },
-              "right": {
-                  "type": "Identifier",
-                  "name": "obj"
-              },
-              "body": {
-                  "type": "EmptyStatement"
-              }
-          }
-      ],
-      "sourceType": "script"
-  }],
-    ['for (var {} in obj);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "sourceType": "script",
-      "body": [
-        {
-          "type": "ForInStatement",
-          "body": {
-            "type": "EmptyStatement"
-          },
-          "left": {
-            "type": "VariableDeclaration",
-            "kind": "var",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "init": null,
-                "id": {
-                  "type": "ObjectPattern",
-                  "properties": []
+                    ]
+                  },
+                  init: null
                 }
-              }
-            ]
-          },
-          "right": {
-            "type": "Identifier",
-            "name": "obj"
+              ],
+              kind: 'var'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj'
+            },
+            body: {
+              type: 'EmptyStatement'
+            }
           }
-        }
-      ]
-    }],
-    ['for (var {x} in obj);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (var {} in obj);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
           {
-              "type": "ForInStatement",
-              "left": {
-                  "type": "VariableDeclaration",
-                  "declarations": [
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: []
+                  }
+                }
+              ]
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'for (var {x} in obj);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForInStatement',
+            left: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
                       {
-                          "type": "VariableDeclarator",
-                          "id": {
-                              "type": "ObjectPattern",
-                              "properties": [
-                                  {
-                                      "type": "Property",
-                                      "key": {
-                                          "type": "Identifier",
-                                          "name": "x"
-                                      },
-                                      "computed": false,
-                                      "value": {
-                                          "type": "Identifier",
-                                          "name": "x"
-                                      },
-                                      "kind": "init",
-                                      "method": false,
-                                      "shorthand": true
-                                  }
-                              ]
-                          },
-                          "init": null
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        kind: 'init',
+                        method: false,
+                        shorthand: true
                       }
-                  ],
-                  "kind": "var"
-              },
-              "right": {
-                  "type": "Identifier",
-                  "name": "obj"
-              },
-              "body": {
-                  "type": "EmptyStatement"
-              }
-          }
-      ],
-      "sourceType": "script"
-  }],
-    ['for (var {x,} in obj);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "sourceType": "script",
-      "body": [
-        {
-          "type": "ForInStatement",
-          "body": {
-            "type": "EmptyStatement"
-          },
-          "left": {
-            "type": "VariableDeclaration",
-            "kind": "var",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "init": null,
-                "id": {
-                  "type": "ObjectPattern",
-                  "properties": [
-                    {
-                      "type": "Property",
-                      "kind": "init",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "x"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "Identifier",
-                        "name": "x"
-                      },
-                      "method": false,
-                      "shorthand": true
-                    }
-                  ]
+                    ]
+                  },
+                  init: null
                 }
-              }
-            ]
-          },
-          "right": {
-            "type": "Identifier",
-            "name": "obj"
+              ],
+              kind: 'var'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj'
+            },
+            body: {
+              type: 'EmptyStatement'
+            }
           }
-        }
-      ]
-    }],
-    ['for (var {x, y} in obj);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "sourceType": "script",
-      "body": [
-        {
-          "type": "ForInStatement",
-          "body": {
-            "type": "EmptyStatement"
-          },
-          "left": {
-            "type": "VariableDeclaration",
-            "kind": "var",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "init": null,
-                "id": {
-                  "type": "ObjectPattern",
-                  "properties": [
-                    {
-                      "type": "Property",
-                      "kind": "init",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "x"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "Identifier",
-                        "name": "x"
-                      },
-                      "method": false,
-                      "shorthand": true
-                    },
-                    {
-                      "type": "Property",
-                      "kind": "init",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "y"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "Identifier",
-                        "name": "y"
-                      },
-                      "method": false,
-                      "shorthand": true
-                    }
-                  ]
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (var {x,} in obj);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        kind: 'init',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        method: false,
+                        shorthand: true
+                      }
+                    ]
+                  }
                 }
-              }
-            ]
-          },
-          "right": {
-            "type": "Identifier",
-            "name": "obj"
+              ]
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj'
+            }
           }
-        }
-      ]
-    }],
+        ]
+      }
+    ],
+    [
+      'for (var {x, y} in obj);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        kind: 'init',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        method: false,
+                        shorthand: true
+                      },
+                      {
+                        type: 'Property',
+                        kind: 'init',
+                        key: {
+                          type: 'Identifier',
+                          name: 'y'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'Identifier',
+                          name: 'y'
+                        },
+                        method: false,
+                        shorthand: true
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj'
+            }
+          }
+        ]
+      }
+    ],
     // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
     // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
     // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
     // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
     // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
     // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
- /* ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {
+    /* ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -676,7 +704,7 @@ const valids: Array < [string, Context, any] > = [
       }
     ]
   }],*/
-/**
+    /**
   ['for (var [foo=a] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
@@ -811,7 +839,7 @@ const valids: Array < [string, Context, any] > = [
       }
     ]
   }], */
- /* ['for (var [foo=a, bar=b] in arr);', Context.OptionDisablesWebCompat, {
+    /* ['for (var [foo=a, bar=b] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -864,139 +892,40 @@ const valids: Array < [string, Context, any] > = [
       }
     ]
   }],*/
-  ['for (var [] in x);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForInStatement",
-            "left": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": []
-                        },
-                        "init": null
-                    }
-                ],
-                "kind": "var"
-            },
-            "right": {
-                "type": "Identifier",
-                "name": "x"
-            },
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
- /* ['for (var [,] in x);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForInStatement",
-            "left": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                null
-                            ]
-                        },
-                        "init": null
-                    }
-                ],
-                "kind": "var"
-            },
-            "right": {
-                "type": "Identifier",
-                "name": "x"
-            },
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-  ['for (var [foo] in arr);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
+    [
+      'for (var [] in x);',
+      Context.OptionDisablesWebCompat,
       {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "VariableDeclaration",
-          "kind": "var",
-          "declarations": [
-            {
-              "type": "VariableDeclarator",
-              "init": null,
-              "id": {
-                "type": "ArrayPattern",
-                "elements": [
-                  {
-                    "type": "Identifier",
-                    "name": "foo"
-                  }
-                ]
-              }
+        type: 'Program',
+        body: [
+          {
+            type: 'ForInStatement',
+            left: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: []
+                  },
+                  init: null
+                }
+              ],
+              kind: 'var'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'x'
+            },
+            body: {
+              type: 'EmptyStatement'
             }
-          ]
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "arr"
-        }
+          }
+        ],
+        sourceType: 'script'
       }
-    ]
-  }],*/
- /* ['for (var [foo,] in arr);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
-      {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "VariableDeclaration",
-          "kind": "var",
-          "declarations": [
-            {
-              "type": "VariableDeclarator",
-              "init": null,
-              "id": {
-                "type": "ArrayPattern",
-                "elements": [
-                  {
-                    "type": "Identifier",
-                    "name": "foo"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "arr"
-        }
-      }
-    ]
-  }],*/
-/*  ['for (var [foo,,] in arr);', Context.OptionDisablesWebCompat, {
+    ] /*['for (var [foo,,bar] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -1019,7 +948,11 @@ const valids: Array < [string, Context, any] > = [
                     "type": "Identifier",
                     "name": "foo"
                   },
-                  null
+                  null,
+                  {
+                    "type": "Identifier",
+                    "name": "bar"
+                  }
                 ]
               }
             }
@@ -1031,7 +964,7 @@ const valids: Array < [string, Context, any] > = [
         }
       }
     ]
-  }],*//*
+  }],*/ /*
   ['for (var [,foo] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
@@ -1106,8 +1039,110 @@ const valids: Array < [string, Context, any] > = [
         }
       }
     ]
+  }],*/,
+    /* ['for (var [,] in x);', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "body": [
+        {
+            "type": "ForInStatement",
+            "left": {
+                "type": "VariableDeclaration",
+                "declarations": [
+                    {
+                        "type": "VariableDeclarator",
+                        "id": {
+                            "type": "ArrayPattern",
+                            "elements": [
+                                null
+                            ]
+                        },
+                        "init": null
+                    }
+                ],
+                "kind": "var"
+            },
+            "right": {
+                "type": "Identifier",
+                "name": "x"
+            },
+            "body": {
+                "type": "EmptyStatement"
+            }
+        }
+    ],
+    "sourceType": "script"
+}],
+  ['for (var [foo] in arr);', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ForInStatement",
+        "body": {
+          "type": "EmptyStatement"
+        },
+        "left": {
+          "type": "VariableDeclaration",
+          "kind": "var",
+          "declarations": [
+            {
+              "type": "VariableDeclarator",
+              "init": null,
+              "id": {
+                "type": "ArrayPattern",
+                "elements": [
+                  {
+                    "type": "Identifier",
+                    "name": "foo"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "right": {
+          "type": "Identifier",
+          "name": "arr"
+        }
+      }
+    ]
   }],*/
-  /*['for (var [foo,,bar] in arr);', Context.OptionDisablesWebCompat, {
+    /* ['for (var [foo,] in arr);', Context.OptionDisablesWebCompat, {
+    "type": "Program",
+    "sourceType": "script",
+    "body": [
+      {
+        "type": "ForInStatement",
+        "body": {
+          "type": "EmptyStatement"
+        },
+        "left": {
+          "type": "VariableDeclaration",
+          "kind": "var",
+          "declarations": [
+            {
+              "type": "VariableDeclarator",
+              "init": null,
+              "id": {
+                "type": "ArrayPattern",
+                "elements": [
+                  {
+                    "type": "Identifier",
+                    "name": "foo"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "right": {
+          "type": "Identifier",
+          "name": "arr"
+        }
+      }
+    ]
+  }],*/
+    /*  ['for (var [foo,,] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -1130,11 +1165,7 @@ const valids: Array < [string, Context, any] > = [
                     "type": "Identifier",
                     "name": "foo"
                   },
-                  null,
-                  {
-                    "type": "Identifier",
-                    "name": "bar"
-                  }
+                  null
                 ]
               }
             }
@@ -1146,157 +1177,176 @@ const valids: Array < [string, Context, any] > = [
         }
       }
     ]
-  }],*/
-  ['for (a in b);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
+  }],*/ [
+      'for (a in b);',
+      Context.OptionDisablesWebCompat,
       {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "Identifier",
-          "name": "a"
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "b"
-        }
-      }
-    ]
-  }],
-  ['for (a in b); for (a in b); for (a in b);', Context.Empty, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
-      {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "Identifier",
-          "name": "a"
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "b"
-        }
-      },
-      {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "Identifier",
-          "name": "a"
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "b"
-        }
-      },
-      {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "Identifier",
-          "name": "a"
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "b"
-        }
-      }
-    ]
-  }],
-   ['for (let a in b);', Context.Empty, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
-      {
-        "type": "ForInStatement",
-        "body": {
-          "type": "EmptyStatement"
-        },
-        "left": {
-          "type": "VariableDeclaration",
-          "kind": "let",
-          "declarations": [
-            {
-              "type": "VariableDeclarator",
-              "init": null,
-              "id": {
-                "type": "Identifier",
-                "name": "a"
-              }
-            }
-          ]
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "b"
-        }
-      }
-    ]
-  }],
-   ['for (const a in b);', Context.Empty, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForInStatement",
-            "left": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "Identifier",
-                            "name": "a"
-                        },
-                        "init": null
-                    }
-                ],
-                "kind": "const"
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
             },
-            "right": {
-                "type": "Identifier",
-                "name": "b"
+            left: {
+              type: 'Identifier',
+              name: 'a'
             },
-            "body": {
-                "type": "EmptyStatement"
+            right: {
+              type: 'Identifier',
+              name: 'b'
             }
-        }
+          }
+        ]
+      }
     ],
-    "sourceType": "script"
-}],
+    [
+      'for (a in b); for (a in b); for (a in b);',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'Identifier',
+              name: 'a'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b'
+            }
+          },
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'Identifier',
+              name: 'a'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b'
+            }
+          },
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'Identifier',
+              name: 'a'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'for (let a in b);',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'let',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'Identifier',
+                    name: 'a'
+                  }
+                }
+              ]
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'for (const a in b);',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForInStatement',
+            left: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'Identifier',
+                    name: 'a'
+                  },
+                  init: null
+                }
+              ],
+              kind: 'const'
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b'
+            },
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
 
-   ['for (let in x) {}', Context.Empty, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForInStatement",
-            "left": {
-                "type": "Identifier",
-                "name": "let"
+    [
+      'for (let in x) {}',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForInStatement',
+            left: {
+              type: 'Identifier',
+              name: 'let'
             },
-            "right": {
-                "type": "Identifier",
-                "name": "x"
+            right: {
+              type: 'Identifier',
+              name: 'x'
             },
-            "body": {
-                "type": "BlockStatement",
-                "body": []
+            body: {
+              type: 'BlockStatement',
+              body: []
             }
-        }
-    ],
-    "sourceType": "script"
-}],/*
+          }
+        ],
+        sourceType: 'script'
+      }
+    ] /*
    ['for (var a = b in c);', Context.Empty, {
     "type": "Program",
     "body": [
@@ -1330,8 +1380,7 @@ const valids: Array < [string, Context, any] > = [
     ],
     "sourceType": "script"
 }]*/
-];
+  ];
 
-pass('Statements - For In (pass)', valids);
-
+  pass('Statements - For In (pass)', valids);
 });

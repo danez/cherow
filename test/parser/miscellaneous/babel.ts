@@ -8,13 +8,11 @@ import * as t from 'assert';
 
 for (const arg of [
   // Issue #7802
- `<!-- test --->`,
+  `<!-- test --->`
 ]) {
-
   it(`${arg}`, () => {
-      t.doesNotThrow(() => {
-          parseSource(`${arg}`, undefined, Context.Empty);
-      });
+    t.doesNotThrow(() => {
+      parseSource(`${arg}`, undefined, Context.Empty);
+    });
   });
-
 }

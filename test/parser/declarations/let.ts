@@ -2,9 +2,7 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Declarations - Let', () => {
-
-  const inValids: Array < [string, Context] > = [
-
+  const inValids: Array<[string, Context]> = [
     // Bindings
 
     ['const a = b, a = c', Context.Empty],
@@ -23,80 +21,86 @@ describe('Declarations - Let', () => {
     ['{ let f; function f() {} }', Context.Empty],
     ['{ let f; const f = b; }', Context.Empty],
 
-     // Bindings - Blockstatement
+    // Bindings - Blockstatement
 
-     ['let x; { var x; var y; }', Context.Empty],
-     ['let x; { var x; }', Context.Empty],
+    ['let x; { var x; var y; }', Context.Empty],
+    ['let x; { var x; }', Context.Empty],
 
     // General
 
     ['let class = foo', Context.Empty],
-    ['let break = foo', Context.Empty],
+    ['let break = foo', Context.Empty]
 
     //['let [foo];', Context.Empty],
     // ['let [foo = x];', Context.Empty],
-//    ['let [foo], bar;', Context.Empty],
+    //    ['let [foo], bar;', Context.Empty],
     //['let foo, [bar];', Context.Empty],
-//    ['let [foo:bar] = obj;', Context.Empty],
-];
+    //    ['let [foo:bar] = obj;', Context.Empty],
+  ];
 
-fail('Declarations - Let (fail)', inValids);
-
+  fail('Declarations - Let (fail)', inValids);
 
   // valid tests
-  const valids: Array < [string, Context, any] > = [
-
-    ['let foo, bar', Context.Empty, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "VariableDeclaration",
-            "declarations": [
-                {
-                    "type": "VariableDeclarator",
-                    "id": {
-                        "type": "Identifier",
-                        "name": "foo"
-                    },
-                    "init": null
-                },
-                {
-                    "type": "VariableDeclarator",
-                    "id": {
-                        "type": "Identifier",
-                        "name": "bar"
-                    },
-                    "init": null
-                }
-            ],
-            "kind": "let"
-        }
-    ],
-    "sourceType": "script"
-}],
-    ['let [] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+  const valids: Array<[string, Context, any]> = [
+    [
+      'let foo, bar',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": []
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "let"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'foo'
+                },
+                init: null
+              },
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'bar'
+                },
+                init: null
+              }
+            ],
+            kind: 'let'
           }
-      ],
-      "sourceType": "script"
-  }],/*
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'let [] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: []
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'let'
+          }
+        ],
+        sourceType: 'script'
+      }
+    ] /*
     ['let [,] = x;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -149,8 +153,8 @@ fail('Declarations - Let (fail)', inValids);
           }
       ],
       "sourceType": "script"
-  }],*/
-      /*['let [foo] = arr, bar = arr2;', Context.Empty, {
+  }],*/,
+    /*['let [foo] = arr, bar = arr2;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -459,107 +463,119 @@ fail('Declarations - Let (fail)', inValids);
       ],
       "sourceType": "script"
   }],*/
-    ['let {} = obj;', Context.Empty, {
-      "type": "Program",
-      "body": [
+    [
+      'let {} = obj;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": []
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "obj"
-                      }
-                  }
-              ],
-              "kind": "let"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: []
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'obj'
+                }
+              }
+            ],
+            kind: 'let'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['let {x} = obj;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'let {x} = obj;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "obj"
-                      }
-                  }
-              ],
-              "kind": "let"
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'x'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'obj'
+                }
+              }
+            ],
+            kind: 'let'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['let {x,} = obj;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'let {x,} = obj;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "obj"
-                      }
-                  }
-              ],
-              "kind": "let"
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'x'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'obj'
+                }
+              }
+            ],
+            kind: 'let'
           }
-      ],
-      "sourceType": "script"
-  }],/*
+        ],
+        sourceType: 'script'
+      }
+    ] /*
     ['let {x, y} = obj;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -1084,7 +1100,7 @@ fail('Declarations - Let (fail)', inValids);
           }
       ],
       "sourceType": "script"
-  }],*/
+  }],*/,
     /*['let {a, [x]: y} = a;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -1140,51 +1156,58 @@ fail('Declarations - Let (fail)', inValids);
       "sourceType": "script"
   }],
 */
-    ['let foo;', Context.Empty, {
-      "type": "Program",
-      "body": [
+    [
+      'let foo;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "foo"
-                      },
-                      "init": null
-                  }
-              ],
-              "kind": "let"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'foo'
+                },
+                init: null
+              }
+            ],
+            kind: 'let'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['let foo = bar;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'let foo = bar;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "foo"
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "bar"
-                      }
-                  }
-              ],
-              "kind": "let"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'foo'
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'bar'
+                }
+              }
+            ],
+            kind: 'let'
           }
-      ],
-      "sourceType": "script"
-  }]
-];
+        ],
+        sourceType: 'script'
+      }
+    ]
+  ];
 
-pass('Declarations - Const (pass)', valids);
-
+  pass('Declarations - Const (pass)', valids);
 });

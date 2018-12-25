@@ -2,888 +2,897 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Statements - Empty', () => {
-
   // valid tests
-const valids: Array < [string, Context, any] > = [
-
-  ['debugger', Context.Empty, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
+  const valids: Array<[string, Context, any]> = [
+    [
+      'debugger',
+      Context.Empty,
       {
-        "type": "DebuggerStatement"
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'DebuggerStatement'
+          }
+        ]
       }
-    ]
-  }],
-  ['debugger;', Context.Empty, {
-    "type": "Program",
-    "sourceType": "script",
-    "body": [
+    ],
+    [
+      'debugger;',
+      Context.Empty,
       {
-        "type": "DebuggerStatement"
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'DebuggerStatement'
+          }
+        ]
       }
-    ]
-  }],
-   [`;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ],
+    [
+      `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;;;;;   ;;;;;;  ;;      ;;  ;;;;;;   ;;;;;;;;  ;;    ;;     ;;;;;
    ;;;;;   ;;      ;;;;  ;;;;  ;;   ;;     ;;      ;;  ;;      ;;;;;
    ;;;;;   ;;;;    ;; ;;;; ;;  ;;;;;;      ;;       ;;;;       ;;;;;
    ;;;;;   ;;      ;;  ;;  ;;  ;;          ;;        ;;        ;;;;;
    ;;;;;   ;;;;;;  ;;      ;;  ;;          ;;        ;;        ;;;;;
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;`, Context.Empty, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        },
-        {
-            "type": "EmptyStatement"
-        }
-    ],
-    "sourceType": "script"
-}]
-];
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;`,
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            type: 'EmptyStatement'
+          }
+        ],
+        sourceType: 'script'
+      }
+    ]
+  ];
 
-pass('Statements - Do while (pass)', valids);
-
+  pass('Statements - Do while (pass)', valids);
 });
