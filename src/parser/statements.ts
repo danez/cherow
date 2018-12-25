@@ -2,13 +2,18 @@ import { BindingOrigin, BindingType, Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
-import { createChildScope, ScopeFlags, checkIfExistInLexicalBindings } from '../scope';
+import { createChildScope, checkIfExistInLexicalBindings } from '../scope';
 import { KeywordDescTable, Token } from '../token';
 import { ParserState, ScopeState } from '../types';
-import { consumeSemicolon, expect, optional, reinterpret } from './common';
+import { ScopeFlags, consumeSemicolon, expect, optional, reinterpret, validateExpression } from './common';
 import { parseFunctionDeclaration, parseVariableDeclarationList } from './declarations';
 import { parseAssignmentExpression, parseExpression, parseIdentifier } from './expressions';
 import { parseBindingIdentifierOrPattern } from './pattern';
+
+export const enum LabelledFunctionState {
+  Allow,
+  Disallow
+}
 
 /**
  * Parse statement list
@@ -60,7 +65,7 @@ export function parseStatementListItem(state: ParserState, context: Context, sco
     case Token.AsyncKeyword:
         return parseAsyncFunctionOrExpressionStatement(state, context);*/
     default:
-        return parseStatement(state, context, scope);
+        return parseStatement(state, context, scope, LabelledFunctionState.Allow);
   }
 }
 
@@ -73,7 +78,7 @@ export function parseStatementListItem(state: ParserState, context: Context, sco
  * @param context Context masks
  * @param scope Scope instance
  */
-export function parseStatement(state: ParserState, context: Context, scope: ScopeState): any {
+export function parseStatement(state: ParserState, context: Context, scope: ScopeState, label: LabelledFunctionState): any {
   switch (state.currentToken) {
     case Token.VarKeyword:
         return parseVariableStatement(state, context, BindingType.Variable, BindingOrigin.Statement, scope);
@@ -110,7 +115,7 @@ export function parseStatement(state: ParserState, context: Context, scope: Scop
     case Token.ClassKeyword:
       report(state, Errors.Unexpected);
     default:
-      return parseExpressionOrLabelledStatement(state, context, scope);
+      return parseExpressionOrLabelledStatement(state, context, scope, label);
   }
 }
 
@@ -149,7 +154,7 @@ export function parseIfStatement(state: ParserState, context: Context, scope: Sc
 function parseConsequentOrAlternate(state: ParserState, context: Context, scope: ScopeState): any {
   return context & Context.OptionDisablesWebCompat ||
           context & Context.Strict || state.currentToken !== Token.FunctionKeyword ?
-      parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope) :
+      parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, LabelledFunctionState.Disallow) :
       parseFunctionDeclaration(state, context | Context.DisallowGenerator, scope, true);
 }
 
@@ -187,7 +192,7 @@ export function parseWhileStatement(state: ParserState, context: Context, scope:
   expect(state, context | Context.ExpressionStart, Token.LeftParen);
   const test = parseExpression(state, context);
   expect(state, context, Token.RightParen);
-  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, LabelledFunctionState.Disallow);
   return {
       type: 'WhileStatement',
       test,
@@ -253,7 +258,7 @@ export function parseWithStatement(state: ParserState, context: Context, scope: 
   expect(state, context | Context.ExpressionStart, Token.LeftParen);
   const object = parseAssignmentExpression(state, context);
   expect(state, context, Token.RightParen);
-  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, LabelledFunctionState.Disallow);
   return {
       type: 'WithStatement',
       object,
@@ -286,7 +291,7 @@ export function parseDebuggerStatement(state: ParserState, context: Context): ES
 */
 export function parseDoWhileStatement(state: ParserState, context: Context, scope: ScopeState): any {
   expect(state, context, Token.DoKeyword);
-  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, LabelledFunctionState.Disallow);
   expect(state, context, Token.WhileKeyword);
   expect(state, context, Token.LeftParen);
   const test = parseExpression(state, context);
@@ -473,7 +478,7 @@ export function parseCatchBlock(state: ParserState, context: Context, scope: Sco
   // It will only be overwritten if there exist a left parenthesis
   let secondScope: ScopeState = scope;
   if (optional(state, context, Token.LeftParen)) {
-    const catchScope = createChildScope(scope, ScopeFlags.Catch);
+    const catchScope = createChildScope(scope, ScopeFlags.CatchClause);
     if (state.currentToken === Token.RightParen) report(state, Errors.Unexpected);
     param = parseBindingIdentifierOrPattern(state, context, BindingType.Arguments, BindingOrigin.Catch, false, catchScope);
     if (state.currentToken === Token.Assign)  report(state, Errors.Unexpected);
@@ -503,15 +508,24 @@ export function parseCatchBlock(state: ParserState, context: Context, scope: Sco
 export function parseExpressionOrLabelledStatement(
   state: ParserState,
   context: Context,
-  scope: ScopeState
-): ESTree.ExpressionStatement | ESTree.LabeledStatement {
+  scope: ScopeState,
+  label: LabelledFunctionState
+): any {
     const token = state.currentToken;
+    const tokenValue = state.tokenValue;
     const expr: ESTree.Expression = parseExpression(state, context);
     if (token & Token.Keyword && state.currentToken === Token.Colon) {
+      nextToken(state, context | Context.ExpressionStart);
+      validateExpression(state, context, BindingType.Empty, token);
+      let body: any = null;
+      if ((context & Context.OptionDisablesWebCompat)=== 0 &&
+          (state.currentToken === Token.FunctionKeyword && !(context & Context.Strict) && label === LabelledFunctionState.Allow)) {
+          body = parseFunctionDeclaration(state, context | Context.DisallowGenerator, scope, false);
+      } else body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, label)
       return {
         type: 'LabeledStatement',
         label: expr as ESTree.Identifier,
-        body: parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope)
+        body
     };
   }
 
@@ -597,7 +611,7 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
 
   const forAwait = optional(state, context, Token.AwaitKeyword);
 
-  scope = createChildScope(scope, ScopeFlags.For);
+  scope = createChildScope(scope, ScopeFlags.ForStatement);
 
   expect(state, context, Token.LeftParen);
 
@@ -642,7 +656,7 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
     if (isPattern) reinterpret(init);
     right = parseAssignmentExpression(state, context);
     expect(state, context, Token.RightParen);
-    const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+    const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, LabelledFunctionState.Disallow);
     return {
         type: 'ForOfStatement',
         body,
@@ -663,7 +677,7 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
     if (isPattern) reinterpret(init);
     right = parseExpression(state, context);
     expect(state, context, Token.RightParen);
-    const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+    const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, LabelledFunctionState.Disallow);
     return {
       type: 'ForInStatement',
       body,
@@ -684,7 +698,7 @@ function parseForStatement(state: ParserState, context: Context, scope: ScopeSta
 
   expect(state, context, Token.RightParen);
 
-  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope);
+  const body = parseStatement(state, (context | Context.ScopeRoot) ^ Context.ScopeRoot, scope, LabelledFunctionState.Disallow);
 
   return {
           type: 'ForStatement',

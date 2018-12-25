@@ -18,6 +18,153 @@ describe('Statements - Block', () => {
 fail('Expressions - Functions', inValids);
   // valid tests
 const valids: Array < [string, Context, any] > = [
+['{ a(); bt(); }', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "BlockStatement",
+          "body": [
+              {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                      "type": "CallExpression",
+                      "callee": {
+                          "type": "Identifier",
+                          "name": "a"
+                      },
+                      "arguments": []
+                  }
+              },
+              {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                      "type": "CallExpression",
+                      "callee": {
+                          "type": "Identifier",
+                          "name": "bt"
+                      },
+                      "arguments": []
+                  }
+              }
+          ]
+      }
+  ],
+  "sourceType": "script"
+}],
+['{ var {foo=3} = {}; };', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "BlockStatement",
+          "body": [
+              {
+                  "type": "VariableDeclaration",
+                  "declarations": [
+                      {
+                          "type": "VariableDeclarator",
+                          "id": {
+                              "type": "ObjectPattern",
+                              "properties": [
+                                  {
+                                      "type": "Property",
+                                      "key": {
+                                          "type": "Identifier",
+                                          "name": "foo"
+                                      },
+                                      "computed": false,
+                                      "value": {
+                                          "type": "AssignmentPattern",
+                                          "left": {
+                                              "type": "Identifier",
+                                              "name": "foo"
+                                          },
+                                          "right": {
+                                              "type": "Literal",
+                                              "value": 3,
+                                          }
+                                      },
+                                      "kind": "init",
+                                      "method": false,
+                                      "shorthand": true
+                                  }
+                              ]
+                          },
+                          "init": {
+                              "type": "ObjectExpression",
+                              "properties": []
+                          }
+                      }
+                  ],
+                  "kind": "var"
+              }
+          ]
+      },
+      {
+          "type": "EmptyStatement"
+      }
+  ],
+  "sourceType": "script"
+}],
+['{ var foo = 1; }', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "BlockStatement",
+          "body": [
+              {
+                  "type": "VariableDeclaration",
+                  "declarations": [
+                      {
+                          "type": "VariableDeclarator",
+                          "id": {
+                              "type": "Identifier",
+                              "name": "foo"
+                          },
+                          "init": {
+                              "type": "Literal",
+                              "value": 1
+                          }
+                      }
+                  ],
+                  "kind": "var"
+              }
+          ]
+      }
+  ],
+  "sourceType": "script"
+}],
+['{ function foo() {}; };', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "BlockStatement",
+          "body": [
+              {
+                  "type": "FunctionDeclaration",
+                  "id": {
+                      "type": "Identifier",
+                      "name": "foo"
+                  },
+                  "params": [],
+                  "body": {
+                      "type": "BlockStatement",
+                      "body": []
+                  },
+                  "generator": false,
+                  "expression": false,
+                  "async": false
+              },
+              {
+                  "type": "EmptyStatement"
+              }
+          ]
+      },
+      {
+          "type": "EmptyStatement"
+      }
+  ],
+  "sourceType": "script"
+}],
 ['{ function f() {} ; function f() {} }', Context.Empty, {
   "type": "Program",
   "sourceType": "script",

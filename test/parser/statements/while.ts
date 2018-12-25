@@ -3,6 +3,21 @@ import { pass, fail } from '../../test-utils';
 
 describe('Statements - While', () => {
 
+const inValids: Array < [string, Context] > = [
+  ['while 1 break;', Context.OptionDisablesWebCompat],
+  ['while "hood" break;', Context.OptionDisablesWebCompat],
+  ['while (false) function f() {}', Context.OptionDisablesWebCompat],
+  ['while (false) let x = 1;', Context.OptionDisablesWebCompat],
+  ['while 1 break;', Context.OptionDisablesWebCompat],
+  [`while '' break;`, Context.OptionDisablesWebCompat],
+  ['while (false) label1: label2: function f() {}', Context.OptionDisablesWebCompat],
+  [`while({1}){
+    break ;
+ };`, Context.Module],
+];
+
+fail('Statements - While (fail)', inValids);
+
   // valid tests
 const valids: Array < [string, Context, any] > = [
   ['while(function __func(){return 1;}()){ break }', Context.Empty, {

@@ -6,6 +6,19 @@ describe('Statements - Throw', () => {
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
+  ['throw\n1', Context.Empty, {
+      "body": [
+        {
+          "argument": {
+            "type": "Literal",
+            "value": 1,
+          },
+          "type": "ThrowStatement",
+        },
+      ],
+      "sourceType": "script",
+      "type": "Program"
+    }],
   ['throw foo;', Context.Empty, {
     "type": "Program",
     "body": [

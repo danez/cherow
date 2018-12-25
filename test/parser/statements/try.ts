@@ -39,7 +39,7 @@ describe('Statements - Try', () => {
 
   // valid tests
   const valids: Array < [string, Context, any] > = [
-   /* ['try {} catch ([a,b,c]) { }', Context.Empty, {
+    ['try {} catch ([a,b,c]) { }', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -76,7 +76,7 @@ describe('Statements - Try', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
+  }],
     ['try {} catch (foo) {} var foo;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -256,7 +256,170 @@ describe('Statements - Try', () => {
       ],
       "sourceType": "script"
   }],
-
+    ['try { throw null; } catch (f) {if (false) ; else function f() { return 123; }}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "TryStatement",
+              "block": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "ThrowStatement",
+                          "argument": {
+                              "type": "Literal",
+                              "value": null
+                          }
+                      }
+                  ]
+              },
+              "handler": {
+                  "type": "CatchClause",
+                  "param": {
+                      "type": "Identifier",
+                      "name": "f"
+                  },
+                  "body": {
+                      "type": "BlockStatement",
+                      "body": [
+                          {
+                              "type": "IfStatement",
+                              "test": {
+                                  "type": "Literal",
+                                  "value": false
+                              },
+                              "consequent": {
+                                  "type": "EmptyStatement"
+                              },
+                              "alternate": {
+                                  "type": "FunctionDeclaration",
+                                  "id": {
+                                      "type": "Identifier",
+                                      "name": "f"
+                                  },
+                                  "params": [],
+                                  "body": {
+                                      "type": "BlockStatement",
+                                      "body": [
+                                          {
+                                              "type": "ReturnStatement",
+                                              "argument": {
+                                                  "type": "Literal",
+                                                  "value": 123
+                                              }
+                                          }
+                                      ]
+                                  },
+                                  "generator": false,
+                                  "expression": false,
+                                  "async": false
+                              }
+                          }
+                      ]
+                  }
+              },
+              "finalizer": null
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['try { throw {}; } catch ({ arrow = () => {} }) {}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "TryStatement",
+              "block": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "ThrowStatement",
+                          "argument": {
+                              "type": "ObjectExpression",
+                              "properties": []
+                          }
+                      }
+                  ]
+              },
+              "handler": {
+                  "type": "CatchClause",
+                  "param": {
+                      "type": "ObjectPattern",
+                      "properties": [
+                          {
+                              "type": "Property",
+                              "key": {
+                                  "type": "Identifier",
+                                  "name": "arrow"
+                              },
+                              "computed": false,
+                              "value": {
+                                  "type": "AssignmentPattern",
+                                  "left": {
+                                      "type": "Identifier",
+                                      "name": "arrow"
+                                  },
+                                  "right": {
+                                      "type": "ArrowFunctionExpression",
+                                      "id": null,
+                                      "params": [],
+                                      "body": {
+                                          "type": "BlockStatement",
+                                          "body": []
+                                      },
+                                      "generator": false,
+                                      "expression": false,
+                                      "async": false
+                                  }
+                              },
+                              "kind": "init",
+                              "method": false,
+                              "shorthand": true
+                          }
+                      ]
+                  },
+                  "body": {
+                      "type": "BlockStatement",
+                      "body": []
+                  }
+              },
+              "finalizer": null
+          }
+      ],
+      "sourceType": "script"
+  }],
+    ['try { throw null; } catch ({}) {}', Context.Empty, {
+      "type": "Program",
+      "body": [
+          {
+              "type": "TryStatement",
+              "block": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "ThrowStatement",
+                          "argument": {
+                              "type": "Literal",
+                              "value": null
+                          }
+                      }
+                  ]
+              },
+              "handler": {
+                  "type": "CatchClause",
+                  "param": {
+                      "type": "ObjectPattern",
+                      "properties": []
+                  },
+                  "body": {
+                      "type": "BlockStatement",
+                      "body": []
+                  }
+              },
+              "finalizer": null
+          }
+      ],
+      "sourceType": "script"
+  }],
     ['try { } catch (a) { { let a = b; } }', Context.Empty, {
       "type": "Program",
       "body": [
