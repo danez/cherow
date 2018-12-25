@@ -25,22 +25,22 @@ export class State {
   }
 
   constructor(source: string) {
-      this.index = 0;
-      this.column = 0;
-      this.startIndex = 0;
-      this.line = 1;
-      this.source = source || '';
-      this.length = source.length;
-      this.flags = Flags.Empty;
-      this.tokenValue = '';
-      this.currentChar = source.charCodeAt(0);
-      this.previousToken = Token.EndOfSource;
-      this.currentToken = Token.EndOfSource;
-      this.tokenRegExp = undefined;
-      this.assignable = true;
-      this.tokens = [];
-      this.comments = [];
-      this.exportedNames = {};
-      this.exportedBindings = {};
+    this.index = 0;
+    this.column = 0;
+    this.startIndex = 0;
+    this.line = 1;
+    this.source = source || '';
+    this.length = source.length;
+    this.flags = Flags.Empty;
+    this.tokenValue = '';
+    this.currentChar = source.charCodeAt(0);
+    this.previousToken = Token.EndOfSource;
+    this.currentToken = Token.EndOfSource;
+    this.tokenRegExp = undefined;
+    this.assignable = true;
+    this.tokens = [];
+    this.comments = [];
+    this.exportedNames = {};
+    this.exportedBindings = {};
   }
 }
