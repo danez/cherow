@@ -8,7 +8,7 @@ describe('Lexer - Comments', () => {
     it(name, () => {
       const state = new State(opts.source);
       nextToken(state, Context.Empty);
-      t.deepEqual(
+      t.deepStrictEqual(
         {
           // index: state.index,
           line: state.line,

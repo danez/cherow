@@ -10,7 +10,7 @@ describe('Lexer - Whitespace', () => {
     it(name, () => {
       const state = new State(opts.source);
       nextToken(state, Context.Empty);
-      t.deepEqual(
+      t.deepStrictEqual(
         {
           line: state.line,
           column: state.column,

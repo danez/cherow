@@ -26,7 +26,7 @@ describe('Lexer - String literal', () => {
         if (opts.strict !== true) {
           const parser = new State(isEnd ? opts.source : `${opts.source} `);
 
-          t.deepEqual(
+          t.deepStrictEqual(
             {
               token: nextToken(parser, context),
               value: parser.tokenValue,
@@ -502,7 +502,7 @@ describe('Lexer - String literal', () => {
       const escape = `\\x${getHex(code)}`;
       const parser = new State(`'${escape}'`);
       it('scans ' + escape, () => {
-        t.deepEqual(
+        t.deepStrictEqual(
           {
             token: nextToken(parser, Context.Empty),
             value: parser.tokenValue,
@@ -526,7 +526,7 @@ describe('Lexer - String literal', () => {
       const escape0 = `\\${code}`;
       it(`Scans '${escape0}'`, () => {
         const parser = new State(`'${escape0}'`);
-        t.deepEqual(
+        t.deepStrictEqual(
           {
             token: nextToken(parser, Context.Empty),
             value: parser.tokenValue,
@@ -550,7 +550,7 @@ describe('Lexer - String literal', () => {
       const escape0 = `\\${code.toString(8)}`;
       it(`Scans '${escape0}'`, () => {
         const parser = new State(`'${escape0}'`);
-        t.deepEqual(
+        t.deepStrictEqual(
           {
             token: nextToken(parser, Context.Empty),
             value: parser.tokenValue,
@@ -582,7 +582,7 @@ describe('Lexer - String literal', () => {
           const ch = String.fromCodePoint(code);
           const escape = `\\u{${code.toString(16)}}`;
           const parser = new State(`'${escape}'`);
-          t.deepEqual(
+          t.deepStrictEqual(
             {
               token: nextToken(parser, Context.Empty),
               value: parser.tokenValue,
@@ -611,7 +611,7 @@ describe('Lexer - String literal', () => {
         it(`scans ${startStr} - ${endStr}`, function() {
           this.slow(150);
           const parser = new State(`'${escape}'`);
-          t.deepEqual(
+          t.deepStrictEqual(
             {
               token: nextToken(parser, Context.Empty),
               value: parser.tokenValue,

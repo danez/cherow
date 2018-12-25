@@ -9,7 +9,7 @@ describe('Lexer - Identifiers', () => {
     function test(name: string, context: Context) {
       it(name, () => {
         const state = new State(opts.source);
-        t.deepEqual(
+        t.deepStrictEqual(
           {
             token: nextToken(state, context | Context.OptionsRaw),
             //                  raw: state.tokenRaw,

@@ -8,7 +8,7 @@ describe('Lexer - Punctuators', () => {
   function pass(name: string, opts: any) {
     it(name, () => {
       const state = new State(opts.source);
-      t.deepEqual(
+      t.deepStrictEqual(
         {
           token: nextToken(state, opts.context),
           line: state.line,
@@ -91,7 +91,7 @@ describe('Lexer - Punctuators', () => {
   for (const [ctx, token, op] of tokens) {
     it(`scans '${op}'`, () => {
       const state = new State(op);
-      t.deepEqual(
+      t.deepStrictEqual(
         {
           token: KeywordDescTable[nextToken(state, ctx) & Token.Type],
           hasNext: state.index < state.length,
@@ -110,7 +110,7 @@ describe('Lexer - Punctuators', () => {
     it(`scans '${op}' with space`, () => {
       const state = new State(`${op} foo`);
 
-      t.deepEqual(
+      t.deepStrictEqual(
         {
           token: KeywordDescTable[nextToken(state, ctx) & Token.Type],
           hasNext: state.index < state.length,
@@ -130,7 +130,7 @@ describe('Lexer - Punctuators', () => {
   /*  it('scans \'.\' in \'..\'', () => {
           const state = new State('..');
 
-          t.deepEqual({
+          t.deepStrictEqual({
               token: KeywordDescTable[nextToken(state, Context.Empty) & Token.Type],
               hasNext: state.index < state.length,
               line: state.line,

@@ -10,7 +10,7 @@ describe('Lexer - Numbers', () => {
       it(name, () => {
         const state = new State(opts.source);
 
-        t.deepEqual(
+        t.deepStrictEqual(
           {
             token: nextToken(state, context),
             value: state.tokenValue,
