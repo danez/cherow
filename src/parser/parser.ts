@@ -19,40 +19,43 @@ export function parseSource(
   source: string,
   options: Options | void,
   /*@internal*/
-  context: Context): any {
+  context: Context
+): any {
   let sourceFile: string = '';
 
   if (options !== undefined) {
-      // The option to specify ecamVersion
-      const ecmaVersion = options.ecmaVersion || 10;
-      options.ecmaVersion = <EcmaVersion>(ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion);
+    // The option to specify ecamVersion
+    const ecmaVersion = options.ecmaVersion || 10;
+    options.ecmaVersion = <EcmaVersion>(
+      (ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion)
+    );
 
-      // The flag to enable module syntax support
-      if (options.module) context |= Context.Module;
-      // The flag to enable stage 3 support (ESNext)
-      if (options.next) context |= Context.OptionsNext;
-      // The flag to enable React JSX parsing
-      if (options.jsx) context |= Context.OptionsJSX;
-      // The flag to enable start and end offsets to each node
-      if (options.ranges) context |= Context.OptionsRanges;
-      // The flag to enable line/column location information to each node
-      if (options.loc) context |= Context.OptionsLoc;
-      // The flag to attach raw property to each literal and identifier node
-      if (options.raw) context |= Context.OptionsRaw;
-      // The flag to allow return in the global scope
-      if (options.globalReturn) context |= Context.OptionsGlobalReturn;
-      // Set to true to record the source file in every node's loc object when the loc option is set.
-      if (!!options.source) sourceFile = options.source;
-      // The flag to enable implied strict mode
-      if (options.impliedStrict) context |= Context.Strict;
-      // The flag to enable experimental features
-      if (options.experimental) context |= Context.OptionsExperimental;
-      // The flag to enable "native" NodeJS / V8 features
-      if (options.native) context |= Context.OptionsNative;
-      // The flag to enable tokenizing
-      if (options.tokenize) context |= Context.OptionsTokenize;
-      // The flag to disable web compability (AnnexB)
-      if (options.disableWebCompat) context &= ~Context.OptionDisablesWebCompat;
+    // The flag to enable module syntax support
+    if (options.module) context |= Context.Module;
+    // The flag to enable stage 3 support (ESNext)
+    if (options.next) context |= Context.OptionsNext;
+    // The flag to enable React JSX parsing
+    if (options.jsx) context |= Context.OptionsJSX;
+    // The flag to enable start and end offsets to each node
+    if (options.ranges) context |= Context.OptionsRanges;
+    // The flag to enable line/column location information to each node
+    if (options.loc) context |= Context.OptionsLoc;
+    // The flag to attach raw property to each literal and identifier node
+    if (options.raw) context |= Context.OptionsRaw;
+    // The flag to allow return in the global scope
+    if (options.globalReturn) context |= Context.OptionsGlobalReturn;
+    // Set to true to record the source file in every node's loc object when the loc option is set.
+    if (!!options.source) sourceFile = options.source;
+    // The flag to enable implied strict mode
+    if (options.impliedStrict) context |= Context.Strict;
+    // The flag to enable experimental features
+    if (options.experimental) context |= Context.OptionsExperimental;
+    // The flag to enable "native" NodeJS / V8 features
+    if (options.native) context |= Context.OptionsNative;
+    // The flag to enable tokenizing
+    if (options.tokenize) context |= Context.OptionsTokenize;
+    // The flag to disable web compability (AnnexB)
+    if (options.disableWebCompat) context &= ~Context.OptionDisablesWebCompat;
   }
 
   // Parser insdtance
@@ -64,15 +67,17 @@ export function parseSource(
   // Scope
   const scope: ScopeState = createBlockScope();
 
-  const body = (context & Context.Module) === Context.Module ?
-      parseModuleItemList(state, context | Context.ScopeRoot, scope) : parseStatementList(state, context | Context.ScopeRoot, scope);
+  const body =
+    (context & Context.Module) === Context.Module
+      ? parseModuleItemList(state, context | Context.ScopeRoot, scope)
+      : parseStatementList(state, context | Context.ScopeRoot, scope);
 
   return {
-      type: 'Program',
-      sourceType: context & Context.Module ? 'module' : 'script',
-      body: body,
-    };
-  }
+    type: 'Program',
+    sourceType: context & Context.Module ? 'module' : 'script',
+    body: body
+  };
+}
 
 /**
  * Parse either script code or module code
@@ -84,9 +89,9 @@ export function parseSource(
  * @param options parser options
  */
 export function parse(source: string, options?: Options): ESTree.Program {
-  return options && options.module ?
-      parseModule(source, options) :
-      parseScript(source, options);
+  return options && options.module
+    ? parseModule(source, options)
+    : parseScript(source, options);
 }
 
 /**
