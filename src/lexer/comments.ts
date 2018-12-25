@@ -14,7 +14,11 @@ import { nextChar } from './common';
  * @param parser Parser instance
  * @param context Context masks.
  */
-export function skipSingleHTMLComment(state: ParserState, context: Context, type: CommentType): Token {
+export function skipSingleHTMLComment(
+  state: ParserState,
+  context: Context,
+  type: CommentType
+): Token {
   // ES 2015 B.1.3 -  HTML comments are only allowed when parsing non-module code.
   if (context & Context.Module) report(state, Errors.Unexpected);
   return skipSingleLineComment(state, context, type);
@@ -30,33 +34,38 @@ export function skipSingleHTMLComment(state: ParserState, context: Context, type
  * @param state Parser instance
  * @param returnToken Token to be returned
  */
-export function skipSingleLineComment(state: ParserState, context: Context, type: CommentType): Token {
-
+export function skipSingleLineComment(
+  state: ParserState,
+  context: Context,
+  type: CommentType
+): Token {
   let lastIsCR = 0;
   const start = state.index;
   while (state.index < state.length) {
-      const next = state.source.charCodeAt(state.index);
-      if ((next & 0x53) < 3 && (
-              next === Chars.LineFeed ||
-              next === Chars.CarriageReturn ||
-              next === Chars.LineSeparator ||
-              next === Chars.ParagraphSeparator)) {
-          if (next === Chars.CarriageReturn) lastIsCR = 2;
-          if (!--lastIsCR) ++state.line;
-          state.flags |= Flags.LineTerminator;
-          ++state.index;
-          state.column = 0;
-          ++state.line;
-          break;
-      } else {
-          if (lastIsCR) {
-              ++state.line;
-              lastIsCR = 0;
-          }
-          ++state.index;
-          ++state.column;
+    const next = state.source.charCodeAt(state.index);
+    if (
+      (next & 0x53) < 3 &&
+      (next === Chars.LineFeed ||
+        next === Chars.CarriageReturn ||
+        next === Chars.LineSeparator ||
+        next === Chars.ParagraphSeparator)
+    ) {
+      if (next === Chars.CarriageReturn) lastIsCR = 2;
+      if (!--lastIsCR) ++state.line;
+      state.flags |= Flags.LineTerminator;
+      ++state.index;
+      state.column = 0;
+      ++state.line;
+      break;
+    } else {
+      if (lastIsCR) {
+        ++state.line;
+        lastIsCR = 0;
       }
+      ++state.index;
+      ++state.column;
     }
+  }
 
   if (context & Context.OptionsCollectComments) addComment(state, type, start);
   return Token.SingleComment;
@@ -69,35 +78,39 @@ export function skipSingleLineComment(state: ParserState, context: Context, type
  *
  * @param state Parser instance
  */
-export function skipMultilineComment(state: ParserState, context: Context): any {
+export function skipMultilineComment(
+  state: ParserState,
+  context: Context
+): any {
   let lastIsCR = 0;
   const start = state.index;
   while (state.index < state.length) {
-      switch (state.source.charCodeAt(state.index)) {
-          case Chars.Asterisk:
-              if (nextChar(state) === Chars.Slash) {
-                  nextChar(state);
-                  if (context & Context.OptionsCollectComments) addComment(state, 'MultiLine', start);
-                  return Token.MultiComment;
-              }
-              break;
-          case Chars.CarriageReturn:
-              lastIsCR = 2;
-          case Chars.LineFeed: // falls through
-          case Chars.LineSeparator: // falls through
-          case Chars.ParagraphSeparator:
-              if (!--lastIsCR) state.line++;
-              state.flags |= Flags.LineTerminator;
-              state.index++;
-              state.column = 0;
-              break;
-          default:
-              if (lastIsCR) {
-                  state.line++;
-                  lastIsCR = 0;
-              }
-              nextChar(state);
-      }
+    switch (state.source.charCodeAt(state.index)) {
+      case Chars.Asterisk:
+        if (nextChar(state) === Chars.Slash) {
+          nextChar(state);
+          if (context & Context.OptionsCollectComments)
+            addComment(state, 'MultiLine', start);
+          return Token.MultiComment;
+        }
+        break;
+      case Chars.CarriageReturn:
+        lastIsCR = 2;
+      case Chars.LineFeed: // falls through
+      case Chars.LineSeparator: // falls through
+      case Chars.ParagraphSeparator:
+        if (!--lastIsCR) state.line++;
+        state.flags |= Flags.LineTerminator;
+        state.index++;
+        state.column = 0;
+        break;
+      default:
+        if (lastIsCR) {
+          state.line++;
+          lastIsCR = 0;
+        }
+        nextChar(state);
+    }
   }
 
   // Unclosed multiline comment
@@ -113,9 +126,16 @@ export function skipMultilineComment(state: ParserState, context: Context): any 
  * @param commentStart Start position of comment
  */
 
-export function addComment(state: ParserState, type: CommentType, start: number): void {
+export function addComment(
+  state: ParserState,
+  type: CommentType,
+  start: number
+): void {
   state.comments.push({
-      type,
-      value: state.source.slice(start, type === 'MultiLine' ? state.index - 2 : state.index),
+    type,
+    value: state.source.slice(
+      start,
+      type === 'MultiLine' ? state.index - 2 : state.index
+    )
   });
 }

@@ -18,7 +18,10 @@ export function scanTemplate(state: ParserState, context: Context) {
 
   while (nextChar(state) !== Chars.Backtick) {
     if (state.currentChar === Chars.Dollar) {
-      if ((state.index + 1) < state.length && state.source.charCodeAt(state.index + 1) === Chars.LeftBrace) {
+      if (
+        state.index + 1 < state.length &&
+        state.source.charCodeAt(state.index + 1) === Chars.LeftBrace
+      ) {
         state.index++;
         tail = false;
         break;
@@ -31,15 +34,22 @@ export function scanTemplate(state: ParserState, context: Context) {
       } else {
         const code = table[state.currentChar](state, context);
         if (code >= 0) {
-            ret += fromCodePoint(code);
-        } else if (code !== InvalidEscapeType.Empty && context & Context.TaggedTemplate) {
-            ret = undefined;
-            state.currentChar = scanLooserTemplateSegment(state, state.currentChar);
-            if (state.currentChar < 0) {
-           state.currentChar = -state.currentChar; tail = false;
-      }
-            break;
-      } else {
+          ret += fromCodePoint(code);
+        } else if (
+          code !== InvalidEscapeType.Empty &&
+          context & Context.TaggedTemplate
+        ) {
+          ret = undefined;
+          state.currentChar = scanLooserTemplateSegment(
+            state,
+            state.currentChar
+          );
+          if (state.currentChar < 0) {
+            state.currentChar = -state.currentChar;
+            tail = false;
+          }
+          break;
+        } else {
           reportInvalidEscapeError(state, code as InvalidEscapeType);
         }
       }
@@ -70,16 +80,22 @@ export function scanTemplateTail(state: ParserState, context: Context): Token {
  * @param parser Parser object
  * @param ch codepoint
  */
-export function scanLooserTemplateSegment(state: ParserState, ch: number): number {
+export function scanLooserTemplateSegment(
+  state: ParserState,
+  ch: number
+): number {
   while (ch !== Chars.Backtick) {
-      if (ch === Chars.Dollar && state.source.charCodeAt(state.index + 1) === Chars.LeftBrace) {
-         nextChar(state);
-         return -ch;
-      }
+    if (
+      ch === Chars.Dollar &&
+      state.source.charCodeAt(state.index + 1) === Chars.LeftBrace
+    ) {
+      nextChar(state);
+      return -ch;
+    }
 
-      // Skip '\' and continue to scan the template token to search
-      // for the end, without validating any escape sequences
-      ch =  nextChar(state);
+    // Skip '\' and continue to scan the template token to search
+    // for the end, without validating any escape sequences
+    ch = nextChar(state);
   }
 
   return ch;

@@ -13,7 +13,10 @@ import { fromCodePoint, nextChar, toHex } from './common';
  * @param context Context masks
  */
 export function scanIdentifier(state: ParserState): Token {
-  while ((AsciiLookup[nextChar(state)] & (CharType.IDContinue | CharType.Decimal)) > 0) {}
+  while (
+    (AsciiLookup[nextChar(state)] & (CharType.IDContinue | CharType.Decimal)) >
+    0
+  ) {}
   state.tokenValue = state.source.slice(state.startIndex, state.index);
   return descKeywordTable[state.tokenValue] || Token.Identifier;
 }
