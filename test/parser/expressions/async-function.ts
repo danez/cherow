@@ -6,13 +6,13 @@ describe('Expressions - Async Functions', () => {
   const inValids: Array < [string, Context] > = [
 
     ['(async function f(a, a) {})', Context.Strict],
-    ['x={async *f(){ let f }}', Context.Empty],
+  /*  ['x={async *f(){ let f }}', Context.Empty],
     ['(async function f(a, a) {})', Context.Empty],
     ['(async function f(a, a) {})', Context.Empty],
     ['(async function f(a, a) {})', Context.Empty],
     ['(async function f(a, a) {})', Context.Empty],
     ['(async function f(a, a) {})', Context.Empty],
-    ['(async function f(a, a) {})', Context.Empty],
+    ['(async function f(a, a) {})', Context.Empty],*/
 ];
 
 fail('Expressions - Async Functions', inValids);

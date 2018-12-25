@@ -1,5 +1,7 @@
 import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
+import * as t from 'assert';
+import { parseSource } from '../../../src/parser/parser';
 
 describe('Expressions - Functions', () => {
 
@@ -26,26 +28,322 @@ describe('Expressions - Functions', () => {
     ['(function eval() {"use strict";})', Context.Empty],
 
     // General
-    ['"use strict"; (function eval(){})', Context.Empty],
-    ['"use strict"; (function eval(){})', Context.Empty],
+    // ['"use strict"; (function eval(){})', Context.Empty],
+    // ['"use strict"; (function eval(){})', Context.Empty],
 
     ['(function arguments(){ "use strict"; })', Context.Empty],
     ['(function arguments(){ "use strict"; })', Context.Empty],
-    ['(function f(x) { let x })', Context.Empty],
+    // ['(function f(x) { let x })', Context.Empty],
 
 
     // Future reserved words
-    ['(function package() {})', Context.Strict],
-    ['(function package() {})', Context.Strict | Context.Module],
-    ['(function package() {"use strict";})', Context.Empty],
+    //['(function package() {})', Context.Strict],
+    //['(function package() {})', Context.Strict | Context.Module],
+    // ['(function package() {"use strict";})', Context.Empty],
 ];
 
 fail('Expressions - Functions', inValids);
 
+for (const arg of [
+  '{ x: y }',
+  '{ x, }',
+  '{ x: y = 33 }',
+  '{ fn = function () {}, xFn = function x() {} }',
+  '{ cover = (function () {}), xCover = (1, function() {})  }',
+  '{ arrow = () => {} }',
+  '{}',
+  '{ x: y } = { x: 23 }',
+  '{ poisoned: x = ++initEvalCount } = poisonedProperty',
+  '{ w: [x, y, z] = [4, 5, 6] } = { w: [7, undefined, ] }',
+  '{ x, } = { x: 23 }',
+  '[,] = g()',
+  '[{ u: v, w: x, y: z } = { u: 444, w: 555, y: 666 }] = []',
+  '[{ x, y, z } = { x: 44, y: 55, z: 66 }] = [{ x: 11, y: 22, z: 33 }]',
+  '[{ x, y, z } = { x: 44, y: 55, z: 66 }] = []',
+  '[x = 23] = [,]',
+  '[[...x] = [2, 1, 3]] = []',
+  '[[x, y, z] = [4, 5, 6]] = []',
+  '[ , , ...x]',
+  '[, ...x]',
+  '[,]',
+  '[{ x }]',
+  '[{ x }]',
+  '[{ u: v, w: x, y: z } = { u: 444, w: 555, y: 666 }]',
+  '[ a = b ]',
+  '[x = 23]',
+  '[[] = function() { a += 1; }()]',
+  'x = args = arguments',
+]) {
+  it(`(function(${arg}) {})`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`(function(${arg}) {})`, undefined, Context.Empty);
+      });
+  });
+}
+
+ for (const arg of [
+  '(function([[,] = function* g() {}]) {})',
+  '(function([cover = (function () {}), xCover = (1, function() {})]) {})',
+  '(function([fn = function () {}, xFn = function x() {}]) {})',
+  '(function([x = 23]) {})',
+  '(function([...[x, y, z]]) {})',
+  '(function([...[,]]) {})',
+  '(function([...x]) {})',
+  '(function([...{ length }]) {})',
+  '(function([x = 23] = [undefined]) {})',
+  '(function([{ u: v, w: x, y: z } = { u: 444, w: 555, y: 666 }] = [{ u: 777, w: 888, y: 999 }]) {})',
+  '(function({} = null) {})',
+]) {
+   it(`${arg}`, () => {
+       t.doesNotThrow(() => {
+           parseSource(`${arg}`, undefined, Context.Empty);
+       });
+   });
+
+   it(`${arg}`, () => {
+     t.doesNotThrow(() => {
+         parseSource(`${arg}`, undefined, Context.Strict | Context.Module);
+     });
+ });
+}
   // valid tests
 
 const valids: Array < [string, Context, any] > = [
 
+ ['(function package() { (function gave_away_the_package() { "use strict"; }) })', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "ExpressionStatement",
+          "expression": {
+              "type": "FunctionExpression",
+              "id": {
+                  "type": "Identifier",
+                  "name": "package"
+              },
+              "params": [],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "ExpressionStatement",
+                          "expression": {
+                              "type": "FunctionExpression",
+                              "id": {
+                                  "type": "Identifier",
+                                  "name": "gave_away_the_package"
+                              },
+                              "params": [],
+                              "body": {
+                                  "type": "BlockStatement",
+                                  "body": [
+                                      {
+                                          "type": "ExpressionStatement",
+                                          "expression": {
+                                              "type": "Literal",
+                                              "value": "use strict"
+                                          }
+                                      }
+                                  ]
+                              },
+                              "generator": false,
+                              "expression": false,
+                              "async": false
+                          }
+                      }
+                  ]
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      }
+  ],
+  "sourceType": "script"
+}],
+ ['(function (eval) { (function () { "use strict"; })})', Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "ExpressionStatement",
+          "expression": {
+              "type": "FunctionExpression",
+              "id": null,
+              "params": [
+                  {
+                      "type": "Identifier",
+                      "name": "eval"
+                  }
+              ],
+              "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                      {
+                          "type": "ExpressionStatement",
+                          "expression": {
+                              "type": "FunctionExpression",
+                              "id": null,
+                              "params": [],
+                              "body": {
+                                  "type": "BlockStatement",
+                                  "body": [
+                                      {
+                                          "type": "ExpressionStatement",
+                                          "expression": {
+                                              "type": "Literal",
+                                              "value": "use strict"
+                                          },
+                                      }
+                                  ]
+                              },
+                              "generator": false,
+                              "expression": false,
+                              "async": false
+                          }
+                      }
+                  ]
+              },
+              "generator": false,
+              "expression": false,
+              "async": false
+          }
+      }
+  ],
+  "sourceType": "script"
+}],
+ [`if (a && b) {
+  c.d(this.e, (ctx) => a.b(this, void 1, void 1, function* () {
+    return a
+  }));
+}`, Context.Empty, {
+  "type": "Program",
+  "body": [
+      {
+          "type": "IfStatement",
+          "test": {
+              "type": "LogicalExpression",
+              "operator": "&&",
+              "left": {
+                  "type": "Identifier",
+                  "name": "a"
+              },
+              "right": {
+                  "type": "Identifier",
+                  "name": "b"
+              }
+          },
+          "consequent": {
+              "type": "BlockStatement",
+              "body": [
+                  {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                          "type": "CallExpression",
+                          "callee": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                  "type": "Identifier",
+                                  "name": "c"
+                              },
+                              "property": {
+                                  "type": "Identifier",
+                                  "name": "d"
+                              }
+                          },
+                          "arguments": [
+                              {
+                                  "type": "MemberExpression",
+                                  "computed": false,
+                                  "object": {
+                                      "type": "ThisExpression"
+                                  },
+                                  "property": {
+                                      "type": "Identifier",
+                                      "name": "e"
+                                  }
+                              },
+                              {
+                                  "type": "ArrowFunctionExpression",
+                                  "id": null,
+                                  "params": [
+                                      {
+                                          "type": "Identifier",
+                                          "name": "ctx"
+                                      }
+                                  ],
+                                  "body": {
+                                      "type": "CallExpression",
+                                      "callee": {
+                                          "type": "MemberExpression",
+                                          "computed": false,
+                                          "object": {
+                                              "type": "Identifier",
+                                              "name": "a"
+                                          },
+                                          "property": {
+                                              "type": "Identifier",
+                                              "name": "b"
+                                          }
+                                      },
+                                      "arguments": [
+                                          {
+                                              "type": "ThisExpression"
+                                          },
+                                          {
+                                              "type": "UnaryExpression",
+                                              "operator": "void",
+                                              "argument": {
+                                                  "type": "Literal",
+                                                  "value": 1,
+                                              },
+                                              "prefix": true
+                                          },
+                                          {
+                                              "type": "UnaryExpression",
+                                              "operator": "void",
+                                              "argument": {
+                                                  "type": "Literal",
+                                                  "value": 1,
+                                              },
+                                              "prefix": true
+                                          },
+                                          {
+                                              "type": "FunctionExpression",
+                                              "id": null,
+                                              "params": [],
+                                              "body": {
+                                                  "type": "BlockStatement",
+                                                  "body": [
+                                                      {
+                                                          "type": "ReturnStatement",
+                                                          "argument": {
+                                                              "type": "Identifier",
+                                                              "name": "a"
+                                                          }
+                                                      }
+                                                  ]
+                                              },
+                                              "generator": true,
+                                              "expression": false,
+                                              "async": false
+                                          }
+                                      ]
+                                  },
+                                  "generator": false,
+                                  "expression": true,
+                                  "async": false
+                              }
+                          ]
+                      }
+                  }
+              ]
+          },
+          "alternate": null
+      }
+  ],
+  "sourceType": "script"
+}],
  ['x=function f(){ var f }', Context.Empty, {
   "type": "Program",
   "body": [

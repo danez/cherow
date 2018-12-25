@@ -39,7 +39,7 @@ describe('Statements - Try', () => {
 
   // valid tests
   const valids: Array < [string, Context, any] > = [
-    ['try {} catch ([a,b,c]) { }', Context.Empty, {
+   /* ['try {} catch ([a,b,c]) { }', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -76,7 +76,7 @@ describe('Statements - Try', () => {
           }
       ],
       "sourceType": "script"
-  }],
+  }],*/
     ['try {} catch (foo) {} var foo;', Context.Empty, {
       "type": "Program",
       "body": [

@@ -1,5 +1,7 @@
 import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
+import * as t from 'assert';
+import { parseSource } from '../../../src/parser/parser';
 
 describe('Expressions - Array', () => {
 
@@ -20,6 +22,52 @@ describe('Expressions - Array', () => {
 ];
 
  fail('Expressions - Array (fail)', inValids);
+
+ for (const arg of [
+  '[1 <= 1]',
+  'let [a,,b] = c',
+  '[a, ...b=c]',
+  '([a, ...b=c])',
+  '[,,1,,,2,3,,]',
+  ' [,,3,,,]',
+  '[,]',
+  '[x()]',
+  '[a, ...b]',
+  '[function* f() {}]',
+  '[...{a}] = b;',
+  '[...{a}] = b;',
+  '[a, ...{1: b}] = 1',
+  '[1, "z", "a", "Symbol(foo)"]',
+  '[{...null}]',
+  '[{...{a: 2, b: 3}, ... {c: 4, d: 5}}]',
+  '[1, 2, 3, ...[]]',
+  ' [...{}];',
+  '[1,2,,4,5];',
+  'var array = [,,,,,];',
+  'var a = [,];',
+  'let a = [];',
+  'let b = [42];',
+  'let c = [42, 7];',
+  'let [d, ...e] = [1, 2, 3, 4, 5];']) {
+
+  it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`${arg}`, undefined, Context.Empty);
+      });
+  });
+
+  it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`${arg}`, undefined, Context.OptionsNext | Context.Module);
+      });
+  });
+
+  it(`"use strict"; ${arg}`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`"use strict"; ${arg}`, undefined, Context.Empty);
+      });
+  });
+}
 
   // valid tests
 const valids: Array < [string, Context, any] > = [

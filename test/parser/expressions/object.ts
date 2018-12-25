@@ -1,5 +1,7 @@
 import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
+import { parseSource } from '../../../src/parser/parser';
+import * as t from 'assert';
 
 describe('Expressions - Object (fail)', () => {
 
@@ -110,6 +112,217 @@ describe('Expressions - Object (fail)', () => {
 
 fail('Expressions - Object', inValids);
 
+const methodDefinition = [
+  'm() {}',
+  'm(x) { return x; }',
+  'm(x, y) {}, n() {}',
+  'set(x, y) {}',
+  'get(x, y) {}'
+];
+
+for (const arg of methodDefinition) {
+  it(`({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`({ ${arg} })`, undefined, Context.OptionsNext);
+      });
+   });
+
+   it(`({ *${arg} })`, () => {
+    t.doesNotThrow(() => {
+        parseSource(`({ *${arg} })`, undefined, Context.OptionsNext);
+    });
+  });
+
+  it(`"use strict"; ({ *${arg} })`, () => {
+    t.doesNotThrow(() => {
+        parseSource(`"use strict"; ({ *${arg} })`, undefined, Context.OptionsNext);
+    });
+  });
+
+  it(`"use strict"; ({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`"use strict"; ({ ${arg} })`, undefined, Context.OptionsNext);
+      });
+   });
+};
+
+const methodDefinitionNames = [
+  'm', '\'m\'', '"m"', '"m n"', 'true', 'false', 'null', '1.2',
+  '1e1', '1E1', '.12e3',
+
+  // Keywords
+  'async', 'await', 'break', 'case', 'catch', 'class', 'const', 'continue',
+  'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export',
+  'extends', 'finally', 'for', 'function', 'if', 'implements', 'import',
+  'in', 'instanceof', 'interface', 'let', 'new', 'package', 'private',
+  'protected', 'public', 'return', 'static', 'super', 'switch', 'this',
+  'throw', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield',
+];
+for (const arg of methodDefinitionNames) {
+
+  it(`({ ${arg}(x, y) {}});`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`({ ${arg}(x, y) {}});`, undefined, Context.Empty);
+      });
+  });
+}
+
+const methodDefinitionDuplicateProperty = [
+  'x: 1, x() {}',
+  'x() {}, x: 1',
+  'x() {}, get x() {}',
+  'x() {}, set x(_) {}',
+  'x() {}, x() {}',
+  'x() {}, y() {}, x() {}',
+  'x() {}, "x"() {}',
+  'x() {}, \'x\'() {}',
+  '1.0() {}, 1: 1',
+  'x: 1, *x() {}',
+  '*x() {}, x: 1',
+  '*x() {}, get x() {}',
+  '*x() {}, set x(_) {}',
+  '*x() {}, *x() {}',
+  '*x() {}, y() {}, *x() {}',
+  '*x() {}, *"x"() {}',
+  '*x() {}, *\'x\'() {}',
+  '*1.0() {}, 1: 1',
+];
+for (const arg of methodDefinitionDuplicateProperty) {
+
+  it(`"use strict"; ({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`"use strict";  ({ ${arg} });`, undefined, Context.OptionsNext);
+      });
+  });
+}
+
+const validGetterAndSetterShorthand = [
+  'var get = 1;',
+  'var set = 2;',
+  'var z = 3;',
+  'var o = { get };',
+  'var p = { set };',
+  'var q = { get, set };',
+  'var r = { set, get };',
+  'var s = { get, z };',
+  'var t = { a, set };',
+  'var u = { a, get, z };',
+  // concise method shorthand
+  'var o = { get() { return "g"; } }',
+  'var o = { set() { return "s"; } }'
+];
+for (const arg of validGetterAndSetterShorthand) {
+
+  it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`${arg}`, undefined, Context.OptionsNext);
+      });
+  });
+}
+
+const validSyntax = [
+  '*method(a,) {}',
+  '*[anonSym]() {}',
+  '*id() {}',
+  'async method(a,) {}',
+  'async method(x, y = x, z = y) {}',
+  'async() {}',
+  '*async() {}',
+  '*await() {}',
+  'async get(){}',
+  'async set(){}',
+  'async static(){}',
+  'method(a, b, c) {}',
+  'method(a,) {}',
+  'method(a, b,) {}',
+  'method(x = y, y) {}',
+  'async *method(...a) {}',
+  'async',
+  'await',
+  'async *method(a, b,) {}',
+  'async *method(x, y = x, z = y) {}',
+  'async *method(x = y, y) {}',
+  'prop: 12',
+  'get foo(){return 1;}',
+  'get foo(){return 1;}',
+  'set foo(arg){return 1;}',
+  'set foo(arg){}',
+  '1 : true',
+  'prop : true',
+  'true : 1',
+  'get [\'unicod\\u{000065}Escape\']() { return \'get string\'; }',
+  '[++counter]: ++counter, [++counter]: ++counter, [++counter]: ++counter, [++counter]: ++counter',
+  'async: foo',
+  'await: foo',
+  '*method([[x, y, z] = [4, 5, 6]]) {}',
+  'async *method([[,] = g()]) {}',
+  'async *method([x = 23]) {}',
+  'async *method([x]) {}',
+  'async *method([_, x]) {}',
+  'async *method([...[x, y, z]]) {}',
+  'async *method([...x]) {}',
+  'async *method([[x, y, z] = [4, 5, 6]] = [[7, 8, 9]]) {}',
+  'async *method([[...x] = function() {}()] = [[2, 1, 3]]) {}',
+  'async *method([[x]] = [null]) {}',
+  'async *method([x = 23] = [undefined]) {}',
+  'async *method([x] = g[Symbol.iterator] = function() {}) {}',
+  'async *method([...x] = {}) {}',
+  'async *method({ w: [x, y, z] = [4, 5, 6] } = {}) {}',
+  'async *method({ [function foo() {}]: x } = {}) {}',
+  'async *method({ x: y = thrower() } = {}) {}',
+  'foo: 1, get foo() {}',
+  'foo: 1, set foo(v) {}',
+  '"foo": 1, get "foo"() {}',
+  '"foo": 1, set "foo"(v) {}',
+  '1: 1, get 1() {}',
+  '1: 1, set 1(v) {}',
+  'get foo() {}, get foo() {}',
+  'set foo(_) {}, set foo(v) {}',
+  'foo: 1, get "foo"() {}',
+  'foo: 1, set "foo"(v) {}',
+  'get width() { return m_width }, set width(width) { m_width = width; }',
+  'method({ arrow = () => {} }) {}',
+  'method({ x: y, }) {}',
+  'id: function*() {}',
+  'null: 42',
+  '"answer": 42',
+  'get if() {}',
+  '__proto__: 2 ',
+  'set i(x) {}, i: 42 ',
+  '[a]:()=>{}',
+  'async',
+  'async: true',
+  'async() { }',
+  'async foo() { }',
+  'foo() { }',
+  'x, y, z () {}',
+  '[x]: "x"',
+  'async delete() {}',
+  'async [foo](){}',
+  'async 100(){}',
+  'async \'foo\'(){}',
+  'async "foo"(){}',
+  'async, foo',
+]
+for (const arg of validSyntax) {
+  it(`({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+          parseSource(`({ ${arg} })`, undefined, Context.OptionsNext);
+      });
+  });
+
+  it(`({ ${arg} })`, () => {
+    t.doesNotThrow(() => {
+        parseSource(`({ ${arg}, })`, undefined, Context.OptionsNext);
+    });
+});
+
+  it(`"use strict"; ({ ${arg} })`, () => {
+    t.doesNotThrow(() => {
+        parseSource(`"use strict"; ({ ${arg}, })`, undefined, Context.OptionsNext);
+    });
+  });
+}
   // valid tests
 const valids: Array < [string, Context, any] > = [
 
