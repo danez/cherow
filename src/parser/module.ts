@@ -173,9 +173,16 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
         if ((state.currentToken & Token.StringLiteral) !== Token.StringLiteral) report(state, Errors.Unexpected);
         source = parseLiteral(state, context);
       } else {
-        for (let i = 0, l = exportedNames.length; i < l; ++i)
+        let i = 0;
+        let iMax = exportedNames.length;
+        for (; i < iMax; i++) {
           addToExportedNamesAndCheckForDuplicates(state, exportedNames[i]);
-        for (let i = 0, l = exportedBindings.length; i < l; ++i) addToExportedBindings(state, exportedBindings[i]);
+        }
+        i = 0;
+        iMax = exportedBindings.length;
+        for (; i < iMax; i++) {
+          addToExportedBindings(state, exportedBindings[i]);
+        }
       }
 
       consumeSemicolon(state, context);
@@ -236,7 +243,7 @@ export function parseImportDeclaration(state: ParserState, context: Context, sco
       local: parseIdentifier(state, context)
     });
 
-    // NameSpaceImport 
+    // NameSpaceImport
     if (optional(state, context, Token.Comma)) {
       if (state.currentToken === Token.Multiply) {
         parseImportNamespace(state, context, scope, specifiers);
