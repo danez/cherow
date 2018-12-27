@@ -67,9 +67,16 @@ export function parseSource(
   // Scope
   const scope: ScopeState = createBlockScope();
 
+
+  // 15.2.3.4Static Semantics: ExportedNames
+  let exportedNames: any = {};
+
+  // 15.2.3.3Static Semantics: ExportedBindings
+  let exportedBindings: any = {};
+
   const body =
     (context & Context.Module) === Context.Module
-      ? parseModuleItemList(state, context | Context.ScopeRoot, scope)
+      ? parseModuleItemList(state, context | Context.ScopeRoot, scope, exportedNames, exportedBindings);
       : parseStatementList(state, context | Context.ScopeRoot, scope);
 
   return {
@@ -78,12 +85,6 @@ export function parseSource(
     body: body
   };
 }
-
-  // 15.2.3.4Static Semantics: ExportedNames
-  let exportedNames: any = {};
-
-  // 15.2.3.3Static Semantics: ExportedBindings
-  let exportedBindings: any = {};
 
 /**
  * Parse either script code or module code
@@ -96,7 +97,7 @@ export function parseSource(
  */
 export function parse(source: string, options?: Options): ESTree.Program {
   return options && options.module
-    ? parseModule(source, options, exportedNames, exportedBindings);
+    ? parseModule(source, options)
     : parseScript(source, options);
 }
 
