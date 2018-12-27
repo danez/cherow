@@ -5,18 +5,7 @@ import { Token } from './token';
 /**
  * `ECMAScript version
  */
-export type EcmaVersion =
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 2015
-  | 2016
-  | 2017
-  | 2018
-  | 2019
-  | 2020;
+export type EcmaVersion = 1 | 2 | 3 | 4 | 5 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020;
 
 /**
  * The Scope types
@@ -95,7 +84,9 @@ export interface ParserState {
   tokens: Token[];
   comments: Comment[];
   assignable: boolean;
-  catch: boolean
+  catch: boolean;
+  exportedNames: any[];
+  exportedBindings: any[];
 }
 
 /**

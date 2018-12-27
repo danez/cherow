@@ -19,6 +19,9 @@ export class State {
   public comments: Comment[];
   public assignable: boolean;
   public catch: boolean;
+  public exportedNames: any[];
+  public exportedBindings: any[];
+
   public get tokenRaw(): string {
     return this.source.slice(this.startIndex, this.index);
   }
@@ -40,5 +43,7 @@ export class State {
     this.catch = false;
     this.tokens = [];
     this.comments = [];
+    this.exportedNames = [];
+    this.exportedBindings = [];
   }
 }

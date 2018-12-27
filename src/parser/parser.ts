@@ -26,9 +26,7 @@ export function parseSource(
   if (options !== undefined) {
     // The option to specify ecamVersion
     const ecmaVersion = options.ecmaVersion || 10;
-    options.ecmaVersion = <EcmaVersion>(
-      (ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion)
-    );
+    options.ecmaVersion = <EcmaVersion>(ecmaVersion > 2009 ? ecmaVersion - 2009 : ecmaVersion);
 
     // The flag to enable module syntax support
     if (options.module) context |= Context.Module;
@@ -67,23 +65,15 @@ export function parseSource(
   // Scope
   const scope: ScopeState = createBlockScope();
 
-  // 15.2.3.4 Static Semantics: ExportedNames
-  let exportedNames: any = {};
-
-  // 15.2.3.3 Static Semantics: ExportedBindings
-  let exportedBindings: any = {};
-
   const body =
     (context & Context.Module) === Context.Module
-      ? parseModuleItemList(state, context | Context.ScopeRoot, scope, exportedNames, exportedBindings)
+      ? parseModuleItemList(state, context | Context.ScopeRoot, scope)
       : parseStatementList(state, context | Context.ScopeRoot, scope);
 
   if (context & Context.Module) {
-    for (let key in exportedBindings) {
-      if (key[0] === '#' && key !== '#default' &&
-      (scope.var[key] === undefined &&
-        scope.lex[key] === undefined)) {
-        report(state, Errors.Unexpected);
+    for (let key in state.exportedBindings) {
+      if (key[0] === '#' && key !== '#default' && (scope.var[key] === undefined && scope.lex[key] === undefined)) {
+        //    report(state, Errors.Unexpected);
       }
     }
   }
@@ -105,9 +95,7 @@ export function parseSource(
  * @param options parser options
  */
 export function parse(source: string, options?: Options): ESTree.Program {
-  return options && options.module
-    ? parseModule(source, options)
-    : parseScript(source, options);
+  return options && options.module ? parseModule(source, options) : parseScript(source, options);
 }
 
 /**
