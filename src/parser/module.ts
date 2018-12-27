@@ -141,6 +141,7 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
       expect(state, context, Token.LeftBrace);
       while (state.currentToken !== Token.RightBrace) {
         let tokenValue = state.tokenValue;
+        let currentToken = state.currentToken;
         const local = parseIdentifier(state, context);
         let exported: any;
         if (state.currentToken === Token.AsKeyword) {
@@ -150,6 +151,7 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
           exportedBindings.push(tokenValue);
           exported = parseIdentifier(state, context);
         } else {
+          validateBindingIdentifier(state, context, BindingType.Const, currentToken);
           exportedNames.push(state.tokenValue);
           exportedBindings.push(state.tokenValue);
           exported = local;
@@ -191,7 +193,7 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
     }
 
     case Token.ClassKeyword:
-      // TODO!
+    // TODO!
     case Token.LetKeyword:
       declaration = parseLexicalDeclaration(state, context, BindingType.Let, BindingOrigin.Export, scope);
       if (checkIfExistInLexicalBindings(state, context, scope)) report(state, Errors.Unexpected);
@@ -306,8 +308,10 @@ function parseImportSpecifierOrNamedImports(
   //   BindingIdentifier
   //   IdentifierName 'as' BindingIdentifier
   expect(state, context, Token.LeftBrace);
+
   while (state.currentToken !== Token.RightBrace) {
     const tokenValue = state.tokenValue;
+    const currentToken = state.currentToken;
     if (!(state.currentToken & (Token.Identifier | Token.Keyword))) report(state, Errors.Unexpected);
     const imported = parseIdentifier(state, context);
     let local: ESTree.Identifier;
@@ -318,7 +322,7 @@ function parseImportSpecifierOrNamedImports(
     } else {
       // An import name that is a keyword is a syntax error if it is not followed
       // by the keyword 'as'.
-      validateBindingIdentifier(state, context, BindingType.Const, tokenValue);
+      validateBindingIdentifier(state, context, BindingType.Const, currentToken);
       addVariable(state, context, scope, BindingType.Const, true, false, tokenValue);
       local = imported;
     }
@@ -375,7 +379,7 @@ function parseModuleSpecifier(state: ParserState, context: Context): ESTree.Lite
   // ModuleSpecifier :
   //   StringLiteral
   expect(state, context, Token.FromKeyword);
-  if ((state.currentToken & Token.StringLiteral) !== Token.StringLiteral) report(state, Errors.Unexpected);
+  if ((state.currentToken & Token.StringLiteral) === 0) report(state, Errors.Unexpected);
   return parseLiteral(state, context);
 }
 

@@ -73,7 +73,7 @@ export function parseSource(
   if (context & Context.Module) {
     for (let key in state.exportedBindings) {
       if (key[0] === '#' && key !== '#default' && (scope.var[key] === undefined && scope.lex[key] === undefined)) {
-        //    report(state, Errors.Unexpected);
+        report(state, Errors.UndeclaredExportedBinding, key.slice(1));
       }
     }
   }
