@@ -3,6 +3,28 @@ import { pass, fail } from '../../test-utils';
 
 describe('Module - Export', () => {
   const inValids: Array<[string, Context]> = [
+    ['export foo', Context.Strict | Context.Module],
+    ['export {', Context.Strict | Context.Module],
+    ['export async;', Context.Strict | Context.Module],
+    ['var a; export { a,', Context.Strict | Context.Module],
+    ['var a, b; export { a as , b};', Context.Strict | Context.Module],
+    // ['export { , };', Context.Strict | Context.Module],
+    // ['export default;', Context.Strict | Context.Module],
+    ['export default var x = 7;', Context.Strict | Context.Module],
+    ['export *;', Context.Strict | Context.Module],
+    ['export * from;', Context.Strict | Context.Module],
+    ["export default from 'module.js';", Context.Strict | Context.Module],
+    // ['export { for }', Context.Strict | Context.Module],
+    // ['export { for as foo }', Context.Strict | Context.Module],
+    //  ['export {try};', Context.Strict | Context.Module],
+    ['export *', Context.Strict | Context.Module],
+    // ['export { default }', Context.Strict | Context.Module],
+    ['export B, * as A, { C, D } from "test";', Context.Strict | Context.Module],
+    ['function foo() { }; export [ foo ];', Context.Strict | Context.Module],
+    ['function foo() { }; () => { export { foo }; }', Context.Strict | Context.Module],
+    ['function foo() { }; export { foo as 100 };', Context.Strict | Context.Module],
+    // ['export { if as foo }', Context.Strict | Context.Module],
+
     ['export default function(){}; export default function(){};', Context.Strict | Context.Module],
     ['export let a = 1, a = 2;', Context.Strict | Context.Module],
     ['export const a = 1, a = 2;', Context.Strict | Context.Module],
@@ -89,6 +111,372 @@ describe('Module - Export', () => {
   fail('Declarations - Functions (fail)', inValids);
   // valid tests
   const valids: Array<[string, Context, any]> = [
+    [
+      'function f() {}; f(); export { f };',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            async: false,
+            body: {
+              body: [],
+              type: 'BlockStatement'
+            },
+            expression: false,
+            generator: false,
+            id: {
+              name: 'f',
+              type: 'Identifier'
+            },
+            params: [],
+            type: 'FunctionDeclaration'
+          },
+          {
+            type: 'EmptyStatement'
+          },
+          {
+            expression: {
+              arguments: [],
+              callee: {
+                name: 'f',
+                type: 'Identifier'
+              },
+              type: 'CallExpression'
+            },
+            type: 'ExpressionStatement'
+          },
+          {
+            declaration: null,
+            source: null,
+            specifiers: [
+              {
+                exported: {
+                  name: 'f',
+                  type: 'Identifier'
+                },
+                local: {
+                  name: 'f',
+                  type: 'Identifier'
+                },
+                type: 'ExportSpecifier'
+              }
+            ],
+            type: 'ExportNamedDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export * from "module";',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            source: {
+              type: 'Literal',
+              value: 'module'
+            },
+            type: 'ExportAllDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export {a as b, c as d} from "module";',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: null,
+            source: {
+              type: 'Literal',
+              value: 'module'
+            },
+            specifiers: [
+              {
+                exported: {
+                  name: 'b',
+                  type: 'Identifier'
+                },
+                local: {
+                  name: 'a',
+                  type: 'Identifier'
+                },
+                type: 'ExportSpecifier'
+              },
+              {
+                exported: {
+                  name: 'd',
+                  type: 'Identifier'
+                },
+                local: {
+                  name: 'c',
+                  type: 'Identifier'
+                },
+                type: 'ExportSpecifier'
+              }
+            ],
+            type: 'ExportNamedDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export default [];',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: {
+              elements: [],
+              type: 'ArrayExpression'
+            },
+            type: 'ExportDefaultDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export { x as y };',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: null,
+            source: null,
+            specifiers: [
+              {
+                exported: {
+                  name: 'y',
+                  type: 'Identifier'
+                },
+                local: {
+                  name: 'x',
+                  type: 'Identifier'
+                },
+                type: 'ExportSpecifier'
+              }
+            ],
+            type: 'ExportNamedDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export const joo = 42;',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: {
+              declarations: [
+                {
+                  id: {
+                    name: 'joo',
+                    type: 'Identifier'
+                  },
+                  init: {
+                    type: 'Literal',
+                    value: 42
+                  },
+                  type: 'VariableDeclarator'
+                }
+              ],
+              kind: 'const',
+              type: 'VariableDeclaration'
+            },
+            source: null,
+            specifiers: [],
+            type: 'ExportNamedDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    //['export async function async() { }',Context.Strict | Context.Module, {}],
+    [
+      'export let document = { }',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: {
+              declarations: [
+                {
+                  id: {
+                    name: 'document',
+                    type: 'Identifier'
+                  },
+                  init: {
+                    properties: [],
+                    type: 'ObjectExpression'
+                  },
+                  type: 'VariableDeclarator'
+                }
+              ],
+              kind: 'let',
+              type: 'VariableDeclaration'
+            },
+            source: null,
+            specifiers: [],
+            type: 'ExportNamedDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export default () => 3',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: {
+              async: false,
+              body: {
+                type: 'Literal',
+                value: 3
+              },
+              expression: true,
+              generator: false,
+              id: null,
+              params: [],
+              type: 'ArrowFunctionExpression'
+            },
+            type: 'ExportDefaultDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export var x = 1;',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: {
+              declarations: [
+                {
+                  id: {
+                    name: 'x',
+                    type: 'Identifier'
+                  },
+                  init: {
+                    type: 'Literal',
+                    value: 1
+                  },
+                  type: 'VariableDeclarator'
+                }
+              ],
+              kind: 'var',
+              type: 'VariableDeclaration'
+            },
+            source: null,
+            specifiers: [],
+            type: 'ExportNamedDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export default 3;',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: {
+              type: 'Literal',
+              value: 3
+            },
+            type: 'ExportDefaultDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export {x}',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: null,
+            source: null,
+            specifiers: [
+              {
+                exported: {
+                  name: 'x',
+                  type: 'Identifier'
+                },
+                local: {
+                  name: 'x',
+                  type: 'Identifier'
+                },
+                type: 'ExportSpecifier'
+              }
+            ],
+            type: 'ExportNamedDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    [
+      'export default (function fName() { return 7; });',
+      Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            declaration: {
+              async: false,
+              body: {
+                body: [
+                  {
+                    argument: {
+                      type: 'Literal',
+                      value: 7
+                    },
+                    type: 'ReturnStatement'
+                  }
+                ],
+                type: 'BlockStatement'
+              },
+              expression: false,
+              generator: false,
+              id: {
+                name: 'fName',
+                type: 'Identifier'
+              },
+              params: [],
+              type: 'FunctionExpression'
+            },
+            type: 'ExportDefaultDeclaration'
+          }
+        ],
+        sourceType: 'module',
+        type: 'Program'
+      }
+    ],
+    // ['var x; export { x as a }; export { x as b };',Context.Strict | Context.Module, {}],
+    // ['var x; export { x as a }; export { x as b };',Context.Strict | Context.Module, {}],
     [
       'var x; export { x as a }; export { x as b };',
       Context.Strict | Context.Module,

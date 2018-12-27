@@ -2,7 +2,7 @@ import { Context, Flags, BindingType, BindingOrigin } from '../common';
 import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
 import {
-  validateExpression,
+  validateIdentifier,
   lookAheadOrScan,
   nextTokenIsLeftParenOrPeriod,
   nextTokenIsFuncKeywordOnSameLine
@@ -16,7 +16,7 @@ import { parseAssignmentExpression, parseLiteral, parseIdentifier } from './expr
 import {
   addToExportedNamesAndCheckForDuplicates,
   addToExportedBindings,
-  addVarOrLexicalNameAndDeduplicate,
+  addVariableAndDeduplicate,
   checkIfExistInLexicalBindings
 } from '../scope';
 import { Errors, report } from '../errors';
@@ -115,7 +115,7 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
     // See: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-exports-static-semantics-exportedbindings
     addToExportedBindings(state, '*default*');
 
-    addVarOrLexicalNameAndDeduplicate(state, context, scope, BindingType.Empty, false, '*default*');
+    addVariableAndDeduplicate(state, context, scope, BindingType.Empty, false, '*default*');
 
     return {
       type: 'ExportDefaultDeclaration',
@@ -217,7 +217,7 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
  *
  * @see [Link](https://tc39.github.io/ecma262/#prod-ImportDeclaration)
  *
- * @param parser  Parser object
+ * @param parser  Parser instance
  * @param context Context masks
  */
 export function parseImportDeclaration(state: ParserState, context: Context, scope: ScopeState): any {
@@ -228,6 +228,10 @@ export function parseImportDeclaration(state: ParserState, context: Context, sco
 
   // 'import' ModuleSpecifier ';'
   if (state.currentToken & Token.Identifier) {
+    // V8: 'VariableMode::kConst',
+    // Cherow: 'BindingType.Const'
+    validateIdentifier(state, context, BindingType.Const);
+    addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
     specifiers.push({
       type: 'ImportDefaultSpecifier',
       local: parseIdentifier(state, context)
@@ -289,14 +293,14 @@ function parseImportSpecifierOrNamedImports(
     const imported = parseIdentifier(state, context);
     let local: ESTree.Identifier;
     if (optional(state, context, Token.AsKeyword)) {
-      validateExpression(state, context, BindingType.Const);
-      addVarOrLexicalNameAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
+      validateIdentifier(state, context, BindingType.Const);
+      addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
       local = parseIdentifier(state, context);
     } else {
       // An import name that is a keyword is a syntax error if it is not followed
       // by the keyword 'as'.
-      validateExpression(state, context, BindingType.Const);
-      addVarOrLexicalNameAndDeduplicate(state, context, scope, BindingType.Const, false, tokenValue);
+      validateIdentifier(state, context, BindingType.Const, tokenValue);
+      addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, tokenValue);
       local = imported;
     }
 
@@ -331,8 +335,8 @@ function parseImportNamespace(
   //  * as ImportedBinding
   nextToken(state, context);
   expect(state, context, Token.AsKeyword);
-  validateExpression(state, context, BindingType.Const);
-  addVarOrLexicalNameAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
+  validateIdentifier(state, context, BindingType.Const);
+  addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
   const local = parseIdentifier(state, context); // parseBindingIdentifier(state, context);
   specifiers.push({
     type: 'ImportNamespaceSpecifier',

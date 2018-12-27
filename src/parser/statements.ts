@@ -5,7 +5,7 @@ import { nextToken } from '../lexer/scan';
 import { createChildScope, checkIfExistInLexicalBindings } from '../scope';
 import { KeywordDescTable, Token } from '../token';
 import { ParserState, ScopeState } from '../types';
-import { ScopeFlags, consumeSemicolon, expect, optional, reinterpret, validateExpression } from './common';
+import { ScopeFlags, consumeSemicolon, expect, optional, reinterpret, validateIdentifier } from './common';
 import { parseFunctionDeclaration, parseVariableDeclarationList } from './declarations';
 import { parseAssignmentExpression, parseExpression, parseIdentifier } from './expressions';
 import { parseBindingIdentifierOrPattern } from './pattern';
@@ -559,7 +559,7 @@ export function parseExpressionOrLabelledStatement(
   const expr: ESTree.Expression = parseExpression(state, context);
   if (token & Token.Keyword && state.currentToken === Token.Colon) {
     nextToken(state, context | Context.ExpressionStart);
-    validateExpression(state, context, BindingType.Empty, token);
+    validateIdentifier(state, context, BindingType.Empty, token);
     let body: any = null;
     if (
       (context & Context.OptionDisablesWebCompat) === 0 &&
