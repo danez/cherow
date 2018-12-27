@@ -191,6 +191,7 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
     }
 
     case Token.ClassKeyword:
+      // TODO!
     case Token.LetKeyword:
       declaration = parseLexicalDeclaration(state, context, BindingType.Let, BindingOrigin.Export, scope);
       if (checkIfExistInLexicalBindings(state, context, scope)) report(state, Errors.Unexpected);
@@ -355,7 +356,7 @@ function parseImportNamespace(
   expect(state, context, Token.AsKeyword);
   validateBindingIdentifier(state, context, BindingType.Const);
   addVariable(state, context, scope, BindingType.Const, true, false, state.tokenValue);
-  const local = parseIdentifier(state, context); // parseBindingIdentifier(state, context);
+  const local = parseIdentifier(state, context);
   specifiers.push({
     type: 'ImportNamespaceSpecifier',
     local
