@@ -17,9 +17,8 @@ export class State {
   public tokenRegExp: any;
   public tokenValue: any;
   public comments: Comment[];
-  public exportedNames: any;
-  public exportedBindings: any;
   public assignable: boolean;
+  public catch: boolean;
   public get tokenRaw(): string {
     return this.source.slice(this.startIndex, this.index);
   }
@@ -38,9 +37,8 @@ export class State {
     this.currentToken = Token.EndOfSource;
     this.tokenRegExp = undefined;
     this.assignable = true;
+    this.catch = false;
     this.tokens = [];
     this.comments = [];
-    this.exportedNames = {};
-    this.exportedBindings = {};
   }
 }

@@ -23,9 +23,9 @@ export type EcmaVersion =
  */
 
 export interface ScopeState {
-  vars: any;
+  var: any;
   lexvar: any;
-  lexical: any;
+  lex: any;
 }
 
 /**
@@ -94,9 +94,8 @@ export interface ParserState {
   tokenRegExp: any;
   tokens: Token[];
   comments: Comment[];
-  exportedNames: any;
-  exportedBindings: any;
   assignable: boolean;
+  catch: boolean
 }
 
 /**

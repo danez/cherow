@@ -79,6 +79,12 @@ export function parseSource(
   };
 }
 
+  // 15.2.3.4Static Semantics: ExportedNames
+  let exportedNames: any = {};
+
+  // 15.2.3.3Static Semantics: ExportedBindings
+  let exportedBindings: any = {};
+
 /**
  * Parse either script code or module code
  *
@@ -90,7 +96,7 @@ export function parseSource(
  */
 export function parse(source: string, options?: Options): ESTree.Program {
   return options && options.module
-    ? parseModule(source, options)
+    ? parseModule(source, options, exportedNames, exportedBindings);
     : parseScript(source, options);
 }
 

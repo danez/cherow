@@ -53,7 +53,7 @@ export function skipSingleLineComment(
       if (next === Chars.CarriageReturn) lastIsCR = 2;
       if (!--lastIsCR) ++state.line;
       state.flags |= Flags.LineTerminator;
-      ++state.index;
+      state.currentChar = state.source.charCodeAt(++state.index);
       state.column = 0;
       ++state.line;
       break;
@@ -101,7 +101,7 @@ export function skipMultilineComment(
       case Chars.ParagraphSeparator:
         if (!--lastIsCR) state.line++;
         state.flags |= Flags.LineTerminator;
-        state.index++;
+        state.currentChar = state.source.charCodeAt(++state.index);
         state.column = 0;
         break;
       default:
