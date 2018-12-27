@@ -2,7 +2,7 @@ import { Context, Flags, BindingType, BindingOrigin } from '../common';
 import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
 import {
-  validateIdentifier,
+  validateBindingIdentifier,
   lookAheadOrScan,
   nextTokenIsLeftParenOrPeriod,
   nextTokenIsFuncKeywordOnSameLine
@@ -16,7 +16,7 @@ import { parseAssignmentExpression, parseLiteral, parseIdentifier } from './expr
 import {
   addToExportedNamesAndCheckForDuplicates,
   addToExportedBindings,
-  addVariableAndDeduplicate,
+  addVariable,
   checkIfExistInLexicalBindings
 } from '../scope';
 import { Errors, report } from '../errors';
@@ -114,8 +114,7 @@ function parseExportDeclaration(state: ParserState, context: Context, scope: Sco
 
     // See: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-exports-static-semantics-exportedbindings
     addToExportedBindings(state, '*default*');
-
-    addVariableAndDeduplicate(state, context, scope, BindingType.Empty, false, '*default*');
+    addVariable(state, context, scope, BindingType.Empty, true, false, '*default*');
 
     return {
       type: 'ExportDefaultDeclaration',
@@ -230,13 +229,14 @@ export function parseImportDeclaration(state: ParserState, context: Context, sco
   if (state.currentToken & Token.Identifier) {
     // V8: 'VariableMode::kConst',
     // Cherow: 'BindingType.Const'
-    validateIdentifier(state, context, BindingType.Const);
-    addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
+    validateBindingIdentifier(state, context, BindingType.Const);
+    addVariable(state, context, scope, BindingType.Empty, true, false, state.tokenValue);
     specifiers.push({
       type: 'ImportDefaultSpecifier',
       local: parseIdentifier(state, context)
     });
 
+    // NameSpaceImport 
     if (optional(state, context, Token.Comma)) {
       if (state.currentToken === Token.Multiply) {
         parseImportNamespace(state, context, scope, specifiers);
@@ -285,22 +285,33 @@ function parseImportSpecifierOrNamedImports(
   scope: ScopeState,
   specifiers: ESTree.Specifiers[]
 ): void {
+  // NamedImports :
+  //   '{' '}'
+  //   '{' ImportsList '}'
+  //   '{' ImportsList ',' '}'
+  //
+  // ImportsList :
+  //   ImportSpecifier
+  //   ImportsList ',' ImportSpecifier
+  //
+  // ImportSpecifier :
+  //   BindingIdentifier
+  //   IdentifierName 'as' BindingIdentifier
   expect(state, context, Token.LeftBrace);
   while (state.currentToken !== Token.RightBrace) {
-    const t = state.currentToken;
     const tokenValue = state.tokenValue;
-    if (!(t & (Token.Identifier | Token.Keyword))) report(state, Errors.Unexpected);
+    if (!(state.currentToken & (Token.Identifier | Token.Keyword))) report(state, Errors.Unexpected);
     const imported = parseIdentifier(state, context);
     let local: ESTree.Identifier;
     if (optional(state, context, Token.AsKeyword)) {
-      validateIdentifier(state, context, BindingType.Const);
-      addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
+      validateBindingIdentifier(state, context, BindingType.Const);
+      addVariable(state, context, scope, BindingType.Const, true, false, state.tokenValue);
       local = parseIdentifier(state, context);
     } else {
       // An import name that is a keyword is a syntax error if it is not followed
       // by the keyword 'as'.
-      validateIdentifier(state, context, BindingType.Const, tokenValue);
-      addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, tokenValue);
+      validateBindingIdentifier(state, context, BindingType.Const, tokenValue);
+      addVariable(state, context, scope, BindingType.Const, true, false, tokenValue);
       local = imported;
     }
 
@@ -335,8 +346,8 @@ function parseImportNamespace(
   //  * as ImportedBinding
   nextToken(state, context);
   expect(state, context, Token.AsKeyword);
-  validateIdentifier(state, context, BindingType.Const);
-  addVariableAndDeduplicate(state, context, scope, BindingType.Const, false, state.tokenValue);
+  validateBindingIdentifier(state, context, BindingType.Const);
+  addVariable(state, context, scope, BindingType.Const, true, false, state.tokenValue);
   const local = parseIdentifier(state, context); // parseBindingIdentifier(state, context);
   specifiers.push({
     type: 'ImportNamespaceSpecifier',
