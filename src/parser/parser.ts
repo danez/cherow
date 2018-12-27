@@ -55,7 +55,7 @@ export function parseSource(
     // The flag to enable tokenizing
     if (options.tokenize) context |= Context.OptionsTokenize;
     // The flag to disable web compability (AnnexB)
-    if (options.disableWebCompat) context &= ~Context.OptionDisablesWebCompat;
+    if (options.disableWebCompat) context |= Context.OptionDisablesWebCompat;
   }
 
   // Parser insdtance
@@ -67,17 +67,26 @@ export function parseSource(
   // Scope
   const scope: ScopeState = createBlockScope();
 
-
-  // 15.2.3.4Static Semantics: ExportedNames
+  // 15.2.3.4 Static Semantics: ExportedNames
   let exportedNames: any = {};
 
-  // 15.2.3.3Static Semantics: ExportedBindings
+  // 15.2.3.3 Static Semantics: ExportedBindings
   let exportedBindings: any = {};
 
   const body =
     (context & Context.Module) === Context.Module
-      ? parseModuleItemList(state, context | Context.ScopeRoot, scope, exportedNames, exportedBindings);
+      ? parseModuleItemList(state, context | Context.ScopeRoot, scope, exportedNames, exportedBindings)
       : parseStatementList(state, context | Context.ScopeRoot, scope);
+
+  if (context & Context.Module) {
+    for (let key in exportedBindings) {
+      if (key[0] === '#' && key !== '#default' &&
+      (scope.var[key] === undefined &&
+        scope.lex[key] === undefined)) {
+        report(state, Errors.Unexpected);
+      }
+    }
+  }
 
   return {
     type: 'Program',
