@@ -1,0 +1,9 @@
+bench/v1.6.2/
+bench/v2/
+bench/v8-native-calls.js
+node_modules/
+dist/
+src/token.ts
+src/chars.ts
+src/unicode.ts
+package-lock.json
