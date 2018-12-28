@@ -44,166 +44,176 @@ describe('Declarations - Var', () => {
 
   // valid tests
   const valids: Array<[string, Context, any]> = [
-    
-    ['var [,] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+    [
+      'var [,] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              null
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [null]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var [,,] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [,,] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              null,
-                              null
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [null, null]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var {x, y : z} = obj;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var {x, y : z} = obj;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              },
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "y"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "z"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "obj"
-                      }
-                  }
-              ],
-              "kind": "var"
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'x'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: true
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'y'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'z'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'obj'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-     ['var {x : y, z : a} = obj;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var {x : y, z : a} = obj;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "y"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              },
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "z"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "a"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "obj"
-                      }
-                  }
-              ],
-              "kind": "var"
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'y'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'z'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'a'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'obj'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
+        ],
+        sourceType: 'script'
+      }
+    ],
     [
       'var\nfoo',
       Context.Empty,
@@ -228,507 +238,563 @@ describe('Declarations - Var', () => {
         type: 'Program'
       }
     ],
-      ['var [...bar] = obj;', Context.Empty, {
-      "type": "Program",
-      "body": [
+    [
+      'var [...bar] = obj;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "RestElement",
-                                  "argument": {
-                                      "type": "Identifier",
-                                      "name": "bar"
-                                  }
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "obj"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'RestElement',
+                      argument: {
+                        type: 'Identifier',
+                        name: 'bar'
                       }
-                  }
-              ],
-              "kind": "var"
-          }
-      ],
-      "sourceType": "script"
-  }],
-   ['var [foo, ...bar] = obj;', Context.Empty, {
-      "type": "Program",
-      "body": [
-          {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              },
-                              {
-                                  "type": "RestElement",
-                                  "argument": {
-                                      "type": "Identifier",
-                                      "name": "bar"
-                                  }
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "obj"
-                      }
-                  }
-              ],
-              "kind": "var"
-          }
-      ],
-      "sourceType": "script"
-  }],
-   ['var [foo=a,bar=b] = x;', Context.Empty, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "VariableDeclaration",
-            "declarations": [
-                {
-                    "type": "VariableDeclarator",
-                    "id": {
-                        "type": "ArrayPattern",
-                        "elements": [
-                            {
-                                "type": "AssignmentPattern",
-                                "left": {
-                                    "type": "Identifier",
-                                    "name": "foo"
-                                },
-                                "right": {
-                                    "type": "Identifier",
-                                    "name": "a"
-                                }
-                            },
-                            {
-                                "type": "AssignmentPattern",
-                                "left": {
-                                    "type": "Identifier",
-                                    "name": "bar"
-                                },
-                                "right": {
-                                    "type": "Identifier",
-                                    "name": "b"
-                                }
-                            }
-                        ]
-                    },
-                    "init": {
-                        "type": "Identifier",
-                        "name": "x"
                     }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'obj'
                 }
+              }
             ],
-            "kind": "var"
-        }
+            kind: 'var'
+          }
+        ],
+        sourceType: 'script'
+      }
     ],
-    "sourceType": "script"
-}],
-   ['var [foo,,] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+    [
+      'var [foo, ...bar] = obj;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              },
-                              null
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    {
+                      type: 'RestElement',
+                      argument: {
+                        type: 'Identifier',
+                        name: 'bar'
                       }
-                  }
-              ],
-              "kind": "var"
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'obj'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-     ['var [,foo] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo=a,bar=b] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              null,
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'foo'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
+                      right: {
+                        type: 'Identifier',
+                        name: 'a'
                       }
-                  }
-              ],
-              "kind": "var"
+                    },
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      right: {
+                        type: 'Identifier',
+                        name: 'b'
+                      }
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-     ['var [,,foo] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo,,] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              null,
-                              null,
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    null
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var [foo,bar] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [,foo] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              },
-                              {
-                                  "type": "Identifier",
-                                  "name": "bar"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    null,
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var [foo] = x, [foo] = y;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [,,foo] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  },
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "y"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    null,
+                    null,
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var [foo] = x, b;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo,bar] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  },
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "b"
-                      },
-                      "init": null
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    {
+                      type: 'Identifier',
+                      name: 'bar'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-     ['var [foo] = x, b = y;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo] = x, [foo] = y;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  },
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "b"
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "y"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-     ['var x, [foo] = y;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo] = x, b;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "x"
-                      },
-                      "init": null
-                  },
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "y"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'b'
+                },
+                init: null
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-     ['var x = y, [foo] = z;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo] = x, b = y;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "x"
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "y"
-                      }
-                  },
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "Identifier",
-                                  "name": "foo"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "z"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'b'
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-      ['var [foo=a] = c;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var x, [foo] = y;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "AssignmentPattern",
-                                  "left": {
-                                      "type": "Identifier",
-                                      "name": "foo"
-                                  },
-                                  "right": {
-                                      "type": "Identifier",
-                                      "name": "a"
-                                  }
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "c"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'x'
+                },
+                init: null
+              },
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }], 
-    ['var [foo=a,bar] = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var x = y, [foo] = z;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ArrayPattern",
-                          "elements": [
-                              {
-                                  "type": "AssignmentPattern",
-                                  "left": {
-                                      "type": "Identifier",
-                                      "name": "foo"
-                                  },
-                                  "right": {
-                                      "type": "Identifier",
-                                      "name": "a"
-                                  }
-                              },
-                              {
-                                  "type": "Identifier",
-                                  "name": "bar"
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'x'
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'z'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-   [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo=a] = c;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      right: {
+                        type: 'Identifier',
+                        name: 'a'
+                      }
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'c'
+                }
+              }
+            ],
+            kind: 'var'
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var [foo=a,bar] = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      right: {
+                        type: 'Identifier',
+                        name: 'a'
+                      }
+                    },
+                    {
+                      type: 'Identifier',
+                      name: 'bar'
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
       'var {} = x;',
       Context.Empty,
       {
@@ -1373,221 +1439,237 @@ describe('Declarations - Var', () => {
         sourceType: 'script'
       }
     ],
-     ['var {foo:a} = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+    [
+      'var {foo:a} = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "foo"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "a"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'a'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var {foo:a,bar} = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var {foo:a,bar} = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "foo"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "a"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              },
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "bar"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "bar"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'a'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var {foo,bar:b} = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var {foo,bar:b} = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "foo"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "foo"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              },
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "bar"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "b"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: true
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'b'
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
-    ['var {foo:a=b, bar:c=d} = x;', Context.Empty, {
-      "type": "Program",
-      "body": [
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'var {foo:a=b, bar:c=d} = x;',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "foo"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "AssignmentPattern",
-                                      "left": {
-                                          "type": "Identifier",
-                                          "name": "a"
-                                      },
-                                      "right": {
-                                          "type": "Identifier",
-                                          "name": "b"
-                                      }
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              },
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "bar"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "AssignmentPattern",
-                                      "left": {
-                                          "type": "Identifier",
-                                          "name": "c"
-                                      },
-                                      "right": {
-                                          "type": "Identifier",
-                                          "name": "d"
-                                      }
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              }
-                          ]
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
                       },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "x"
-                      }
-                  }
-              ],
-              "kind": "var"
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'a'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'b'
+                        }
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'c'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'd'
+                        }
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                },
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            kind: 'var'
           }
-      ],
-      "sourceType": "script"
-  }],
+        ],
+        sourceType: 'script'
+      }
+    ],
     [
       'var {foo};',
       Context.Empty,
@@ -2088,7 +2170,7 @@ describe('Declarations - Var', () => {
           }
         ]
       }
-    ],/*
+    ] /*
      ['var x; [{ x = 10 } = {}]', Context.Empty, {
       "type": "Program",
       "sourceType": "script",
@@ -2151,107 +2233,111 @@ describe('Declarations - Var', () => {
           }
         }
       ]
-    }],*/
-     ['var x; (true ? { x = true } = {} : { x = false } = {})', Context.Empty, {
-      "type": "Program",
-      "body": [
+    }],*/,
+    [
+      'var x; (true ? { x = true } = {} : { x = false } = {})',
+      Context.Empty,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "Identifier",
-                          "name": "x"
-                      },
-                      "init": null
-                  }
-              ],
-              "kind": "var"
+            type: 'VariableDeclaration',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                id: {
+                  type: 'Identifier',
+                  name: 'x'
+                },
+                init: null
+              }
+            ],
+            kind: 'var'
           },
           {
-              "type": "ExpressionStatement",
-              "expression": {
-                  "type": "ConditionalExpression",
-                  "test": {
-                      "type": "Literal",
-                      "value": true,
-                  },
-                  "consequent": {
-                      "type": "AssignmentExpression",
-                      "operator": "=",
-                      "left": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "AssignmentPattern",
-                                      "left": {
-                                          "type": "Identifier",
-                                          "name": "x"
-                                      },
-                                      "right": {
-                                          "type": "Literal",
-                                          "value": true,
-                                      }
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              }
-                          ]
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'Literal',
+                value: true
+              },
+              consequent: {
+                type: 'AssignmentExpression',
+                operator: '=',
+                left: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x'
                       },
-                      "right": {
-                          "type": "ObjectExpression",
-                          "properties": []
-                      }
-                  },
-                  "alternate": {
-                      "type": "AssignmentExpression",
-                      "operator": "=",
-                      "left": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "AssignmentPattern",
-                                      "left": {
-                                          "type": "Identifier",
-                                          "name": "x"
-                                      },
-                                      "right": {
-                                          "type": "Literal",
-                                          "value": false,
-                                      }
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              }
-                          ]
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: true
+                        }
                       },
-                      "right": {
-                          "type": "ObjectExpression",
-                          "properties": []
-                      }
-                  }
+                      kind: 'init',
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                right: {
+                  type: 'ObjectExpression',
+                  properties: []
+                }
+              },
+              alternate: {
+                type: 'AssignmentExpression',
+                operator: '=',
+                left: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: false
+                        }
+                      },
+                      kind: 'init',
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                right: {
+                  type: 'ObjectExpression',
+                  properties: []
+                }
               }
+            }
           }
-      ],
-      "sourceType": "script"
-  }],
+        ],
+        sourceType: 'script'
+      }
+    ],
     [
       'var x; (({ x = 10 } = { x = 20 } = {}) => x)({})',
       Context.Empty,

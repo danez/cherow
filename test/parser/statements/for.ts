@@ -378,608 +378,660 @@ describe('Statements - For', () => {
     ],
     "sourceType": "script"
 }],*/,
-    ['for (let [,] = x;;);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "body": [
+    [
+      'for (let [,] = x;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
           {
-              "type": "ForStatement",
-              "init": {
-                  "type": "VariableDeclaration",
-                  "declarations": [
-                      {
-                          "type": "VariableDeclarator",
-                          "id": {
-                              "type": "ArrayPattern",
-                              "elements": [
-                                  null
-                              ]
-                          },
-                          "init": {
-                              "type": "Identifier",
-                              "name": "x"
-                          }
-                      }
-                  ],
-                  "kind": "let"
-              },
-              "test": null,
-              "update": null,
-              "body": {
-                  "type": "EmptyStatement"
-              }
-          }
-      ],
-      "sourceType": "script"
-  }],
-    ['for (let [,,] = x;;);', Context.OptionDisablesWebCompat, {
-      "type": "Program",
-      "body": [
-          {
-              "type": "ForStatement",
-              "init": {
-                  "type": "VariableDeclaration",
-                  "declarations": [
-                      {
-                          "type": "VariableDeclarator",
-                          "id": {
-                              "type": "ArrayPattern",
-                              "elements": [
-                                  null,
-                                  null
-                              ]
-                          },
-                          "init": {
-                              "type": "Identifier",
-                              "name": "x"
-                          }
-                      }
-                  ],
-                  "kind": "let"
-              },
-              "test": null,
-              "update": null,
-              "body": {
-                  "type": "EmptyStatement"
-              }
-          }
-      ],
-      "sourceType": "script"
-  }],
-    ['for (let [foo] = arr;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "Identifier",
-                                    "name": "foo"
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-     ['for (let [foo,] = arr;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "Identifier",
-                                    "name": "foo"
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-    ['for (let [foo] = arr, [bar] = arr2;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "Identifier",
-                                    "name": "foo"
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    },
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "Identifier",
-                                    "name": "bar"
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr2"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-['for (let [foo] = arr, bar;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "Identifier",
-                                    "name": "foo"
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    },
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "Identifier",
-                            "name": "bar"
-                        },
-                        "init": null
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-     ['for (let foo = arr, [bar] = arr2;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "Identifier",
-                            "name": "foo"
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    },
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "Identifier",
-                                    "name": "bar"
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr2"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-     ['for (let [foo=a] = arr;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "AssignmentPattern",
-                                    "left": {
-                                        "type": "Identifier",
-                                        "name": "foo"
-                                    },
-                                    "right": {
-                                        "type": "Identifier",
-                                        "name": "a"
-                                    }
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-      ['for (let [foo=a, bar] = arr;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "AssignmentPattern",
-                                    "left": {
-                                        "type": "Identifier",
-                                        "name": "foo"
-                                    },
-                                    "right": {
-                                        "type": "Identifier",
-                                        "name": "a"
-                                    }
-                                },
-                                {
-                                    "type": "Identifier",
-                                    "name": "bar"
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-      ['for (let [foo, bar=b] = arr;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "Identifier",
-                                    "name": "foo"
-                                },
-                                {
-                                    "type": "AssignmentPattern",
-                                    "left": {
-                                        "type": "Identifier",
-                                        "name": "bar"
-                                    },
-                                    "right": {
-                                        "type": "Identifier",
-                                        "name": "b"
-                                    }
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-     ['for (let [foo=a, bar=b] = arr;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "AssignmentPattern",
-                                    "left": {
-                                        "type": "Identifier",
-                                        "name": "foo"
-                                    },
-                                    "right": {
-                                        "type": "Identifier",
-                                        "name": "a"
-                                    }
-                                },
-                                {
-                                    "type": "AssignmentPattern",
-                                    "left": {
-                                        "type": "Identifier",
-                                        "name": "bar"
-                                    },
-                                    "right": {
-                                        "type": "Identifier",
-                                        "name": "b"
-                                    }
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "arr"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-    ['for (let [...foo] = obj;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ArrayPattern",
-                            "elements": [
-                                {
-                                    "type": "RestElement",
-                                    "argument": {
-                                        "type": "Identifier",
-                                        "name": "foo"
-                                    }
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "obj"
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
-            }
-        }
-    ],
-    "sourceType": "script"
-}],
-     ['for (let [foo, ...bar] = obj;;);', Context.OptionDisablesWebCompat, {
-        "type": "Program",
-        "body": [
-            {
-                "type": "ForStatement",
-                "init": {
-                    "type": "VariableDeclaration",
-                    "declarations": [
-                        {
-                            "type": "VariableDeclarator",
-                            "id": {
-                                "type": "ArrayPattern",
-                                "elements": [
-                                    {
-                                        "type": "Identifier",
-                                        "name": "foo"
-                                    },
-                                    {
-                                        "type": "RestElement",
-                                        "argument": {
-                                            "type": "Identifier",
-                                            "name": "bar"
-                                        }
-                                    }
-                                ]
-                            },
-                            "init": {
-                                "type": "Identifier",
-                                "name": "obj"
-                            }
-                        }
-                    ],
-                    "kind": "let"
-                },
-                "test": null,
-                "update": null,
-                "body": {
-                    "type": "EmptyStatement"
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [null]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'x'
+                  }
                 }
-            }
-        ],
-        "sourceType": "script"
-    }],
-    ['for (let {x} = obj;;);', Context.OptionDisablesWebCompat, {
-    "type": "Program",
-    "body": [
-        {
-            "type": "ForStatement",
-            "init": {
-                "type": "VariableDeclaration",
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "id": {
-                            "type": "ObjectPattern",
-                            "properties": [
-                                {
-                                    "type": "Property",
-                                    "key": {
-                                        "type": "Identifier",
-                                        "name": "x"
-                                    },
-                                    "computed": false,
-                                    "value": {
-                                        "type": "Identifier",
-                                        "name": "x"
-                                    },
-                                    "kind": "init",
-                                    "method": false,
-                                    "shorthand": true
-                                }
-                            ]
-                        },
-                        "init": {
-                            "type": "Identifier",
-                            "name": "obj"
-                        }
-                    }
-                ],
-                "kind": "let"
+              ],
+              kind: 'let'
             },
-            "test": null,
-            "update": null,
-            "body": {
-                "type": "EmptyStatement"
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
             }
-        }
+          }
+        ],
+        sourceType: 'script'
+      }
     ],
-    "sourceType": "script"
-}], [
+    [
+      'for (let [,,] = x;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [null, null]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'x'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo] = arr;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'foo'
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo,] = arr;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'foo'
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo] = arr, [bar] = arr2;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'foo'
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'bar'
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr2'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo] = arr, bar;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'foo'
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'Identifier',
+                    name: 'bar'
+                  },
+                  init: null
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let foo = arr, [bar] = arr2;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'Identifier',
+                    name: 'foo'
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'bar'
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr2'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo=a] = arr;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'foo'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'a'
+                        }
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo=a, bar] = arr;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'foo'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'a'
+                        }
+                      },
+                      {
+                        type: 'Identifier',
+                        name: 'bar'
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo, bar=b] = arr;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'bar'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'b'
+                        }
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo=a, bar=b] = arr;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'foo'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'a'
+                        }
+                      },
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'bar'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'b'
+                        }
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [...foo] = obj;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'RestElement',
+                        argument: {
+                          type: 'Identifier',
+                          name: 'foo'
+                        }
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'obj'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let [foo, ...bar] = obj;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      {
+                        type: 'RestElement',
+                        argument: {
+                          type: 'Identifier',
+                          name: 'bar'
+                        }
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'obj'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
+      'for (let {x} = obj;;);',
+      Context.OptionDisablesWebCompat,
+      {
+        type: 'Program',
+        body: [
+          {
+            type: 'ForStatement',
+            init: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        computed: false,
+                        value: {
+                          type: 'Identifier',
+                          name: 'x'
+                        },
+                        kind: 'init',
+                        method: false,
+                        shorthand: true
+                      }
+                    ]
+                  },
+                  init: {
+                    type: 'Identifier',
+                    name: 'obj'
+                  }
+                }
+              ],
+              kind: 'let'
+            },
+            test: null,
+            update: null,
+            body: {
+              type: 'EmptyStatement'
+            }
+          }
+        ],
+        sourceType: 'script'
+      }
+    ],
+    [
       'for (let foo in x);',
       Context.OptionDisablesWebCompat,
       {

@@ -5,7 +5,7 @@ import { createChildScope } from '../scope';
 import { KeywordDescTable, Token } from '../token';
 import { ParserState, ScopeState } from '../types';
 import {
-  Context, 
+  Context,
   Flags,
   ScopeFlags,
   consumeSemicolon,
@@ -15,8 +15,8 @@ import {
   validateBindingIdentifier,
   lookAheadOrScan,
   checkIfExistInLexicalBindings,
-  BindingOrigin, 
-  BindingType, 
+  BindingOrigin,
+  BindingType
 } from './common';
 import { parseFunctionDeclaration, parseVariableDeclarationList } from './declarations';
 import { parseAssignmentExpression, parseExpression, parseIdentifier } from './expressions';
@@ -721,7 +721,7 @@ function parseForStatement(
    */
 
   if (forAwait ? expect(state, context, Token.OfKeyword) : optional(state, context, Token.OfKeyword)) {
-    if (state.catch) report(state, Errors.Unexpected);
+    if (state.inCatch) report(state, Errors.Unexpected);
     if (isPattern) reinterpret(init);
     right = parseAssignmentExpression(state, context);
     expect(state, context, Token.RightParen);

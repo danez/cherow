@@ -11,17 +11,9 @@ export interface _Node<T extends string> {
   innerComments?: Comment[];
 }
 
-export type Specifiers =
-  | ImportSpecifier
-  | ImportDefaultSpecifier
-  | ImportNamespaceSpecifier;
+export type Specifiers = ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier;
 
-export interface T_Node
-  extends T_Statement,
-    T_Expression,
-    T_Pattern,
-    T_ModuleDeclaration,
-    T_ModuleSpecifier {
+export interface T_Node extends T_Statement, T_Expression, T_Pattern, T_ModuleDeclaration, T_ModuleSpecifier {
   Program: Program;
   SwitchCase: SwitchCase;
   CatchClause: CatchClause;
@@ -136,12 +128,7 @@ export interface T_TypeAnnotation {
   RestElement: RestElement;
 }
 
-export type TypeAnnotation =
-  | Identifier
-  | FunctionExpression
-  | ArrayPattern
-  | ObjectPattern
-  | RestElement;
+export type TypeAnnotation = Identifier | FunctionExpression | ArrayPattern | ObjectPattern | RestElement;
 export interface _Expression<T extends string> extends _Node<T> {}
 export interface T_Expression {
   Identifier: Identifier;
@@ -217,11 +204,7 @@ export interface T_Pattern {
   RestElement: RestElement;
 }
 
-export type PatternTop =
-  | Identifier
-  | ObjectPattern
-  | ArrayPattern
-  | MemberExpression;
+export type PatternTop = Identifier | ObjectPattern | ArrayPattern | MemberExpression;
 export type PatternNoRest = PatternTop | AssignmentPattern;
 export type Pattern = PatternTop | AssignmentPattern | RestElement;
 export interface _Declaration<T extends string> extends _Statement<T> {}
@@ -231,10 +214,7 @@ export interface T_Declaration {
   ClassDeclaration: ClassDeclaration;
 }
 
-export type Declaration =
-  | FunctionDeclaration
-  | VariableDeclaration
-  | ClassDeclaration;
+export type Declaration = FunctionDeclaration | VariableDeclaration | ClassDeclaration;
 export interface _ModuleDeclaration<T extends string> extends _Node<T> {}
 export interface T_ModuleDeclaration {
   ImportDeclaration: ImportDeclaration;
@@ -258,11 +238,7 @@ export interface T_ModuleSpecifier {
   ExportSpecifier: ExportSpecifier;
 }
 
-export type ModuleSpecifier =
-  | ImportSpecifier
-  | ImportDefaultSpecifier
-  | ImportNamespaceSpecifier
-  | ExportSpecifier;
+export type ModuleSpecifier = ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier | ExportSpecifier;
 
 export interface SourceLocation {
   start: Position;
@@ -277,12 +253,7 @@ export interface Position {
   column: number;
 }
 
-export type CommentType =
-  | 'SingleLine'
-  | 'MultiLine'
-  | 'HTMLClose'
-  | 'HTMLOpen'
-  | 'SheBang';
+export type CommentType = 'SingleLine' | 'MultiLine' | 'HTMLClose' | 'HTMLOpen' | 'SheBang';
 
 export interface Comment {
   type: CommentType;
@@ -324,8 +295,7 @@ export type AssignmentOperator =
   | '&='
   | '**=';
 
-export interface AssignmentExpression
-  extends _Expression<'AssignmentExpression'> {
+export interface AssignmentExpression extends _Expression<'AssignmentExpression'> {
   operator: AssignmentOperator;
   left: Expression | PatternTop;
   right: Expression;
@@ -336,8 +306,7 @@ export interface AssignmentPattern extends _Pattern<'AssignmentPattern'> {
   right: Expression;
 }
 
-export interface ArrowFunctionExpression
-  extends _Expression<'ArrowFunctionExpression'> {
+export interface ArrowFunctionExpression extends _Expression<'ArrowFunctionExpression'> {
   id: Identifier | null;
   params: Pattern[];
   body: BlockStatement | Expression;
@@ -402,8 +371,7 @@ export interface ClassBody extends _Node<'ClassBody'> {
   body: (MethodDefinition | FieldDefinition)[];
 }
 
-export interface PrivateMemberExpression
-  extends _Node<'PrivateMemberExpression '> {
+export interface PrivateMemberExpression extends _Node<'PrivateMemberExpression '> {
   object: Expression;
   property: PrivateName;
 }
@@ -432,8 +400,7 @@ export interface MemberExpression extends _Expression<'MemberExpression'> {
   property: Expression;
 }
 
-export interface ConditionalExpression
-  extends _Expression<'ConditionalExpression'> {
+export interface ConditionalExpression extends _Expression<'ConditionalExpression'> {
   test: Expression;
   consequent: Expression;
   alternate: Expression;
@@ -452,18 +419,15 @@ export interface DoWhileStatement extends _Statement<'DoWhileStatement'> {
 
 export interface EmptyStatement extends _Statement<'EmptyStatement'> {}
 
-export interface ExportAllDeclaration
-  extends _ModuleDeclaration<'ExportAllDeclaration'> {
+export interface ExportAllDeclaration extends _ModuleDeclaration<'ExportAllDeclaration'> {
   source: Literal;
 }
 
-export interface ExportDefaultDeclaration
-  extends _ModuleDeclaration<'ExportDefaultDeclaration'> {
+export interface ExportDefaultDeclaration extends _ModuleDeclaration<'ExportDefaultDeclaration'> {
   declaration: Declaration | Expression;
 }
 
-export interface ExportNamedDeclaration
-  extends _ModuleDeclaration<'ExportNamedDeclaration'> {
+export interface ExportNamedDeclaration extends _ModuleDeclaration<'ExportNamedDeclaration'> {
   declaration: Declaration | null;
   specifiers: ExportSpecifier[];
   source: Literal | null;
@@ -497,8 +461,7 @@ export interface ForStatement extends _Statement<'ForStatement'> {
   body: Statement;
 }
 
-export interface FunctionDeclaration
-  extends _Declaration<'FunctionDeclaration'> {
+export interface FunctionDeclaration extends _Declaration<'FunctionDeclaration'> {
   id: Identifier | null;
   params: Pattern[];
   body: BlockStatement;
@@ -518,15 +481,11 @@ export interface FunctionExpression extends _Expression<'FunctionExpression'> {
   typeAnnotation?: TypeAnnotation | null;
 }
 
-export interface DoExpression
-  extends _Expression<'DoExpression'>,
-    _Pattern<'DoExpression'> {
+export interface DoExpression extends _Expression<'DoExpression'>, _Pattern<'DoExpression'> {
   body: BlockStatement;
 }
 
-export interface Identifier
-  extends _Expression<'Identifier'>,
-    _Pattern<'Identifier'> {
+export interface Identifier extends _Expression<'Identifier'>, _Pattern<'Identifier'> {
   name: string;
   typeAnnotation?: TypeAnnotation | null;
   raw?: string;
@@ -540,20 +499,14 @@ export interface IfStatement extends _Statement<'IfStatement'> {
 
 export interface Import extends _Node<'Import'> {}
 
-export interface ImportDeclaration
-  extends _ModuleDeclaration<'ImportDeclaration'> {
-  specifiers: (
-    | ImportDefaultSpecifier
-    | ImportNamespaceSpecifier
-    | ImportSpecifier)[];
+export interface ImportDeclaration extends _ModuleDeclaration<'ImportDeclaration'> {
+  specifiers: (ImportDefaultSpecifier | ImportNamespaceSpecifier | ImportSpecifier)[];
   source: Literal;
 }
 
-export interface ImportDefaultSpecifier
-  extends _ModuleSpecifier<'ImportDefaultSpecifier'> {}
+export interface ImportDefaultSpecifier extends _ModuleSpecifier<'ImportDefaultSpecifier'> {}
 
-export interface ImportNamespaceSpecifier
-  extends _ModuleSpecifier<'ImportNamespaceSpecifier'> {}
+export interface ImportNamespaceSpecifier extends _ModuleSpecifier<'ImportNamespaceSpecifier'> {}
 
 export interface ImportSpecifier extends _ModuleSpecifier<'ImportSpecifier'> {
   imported: Identifier;
@@ -671,8 +624,7 @@ export interface SwitchStatement extends _Statement<'SwitchStatement'> {
   cases: SwitchCase[];
 }
 
-export interface TaggedTemplateExpression
-  extends _Expression<'TaggedTemplateExpression'> {
+export interface TaggedTemplateExpression extends _Expression<'TaggedTemplateExpression'> {
   tag: Expression;
   quasi: TemplateLiteral;
 }
@@ -699,15 +651,7 @@ export interface TryStatement extends _Statement<'TryStatement'> {
   finalizer: BlockStatement | null;
 }
 
-export type UnaryOperator =
-  | '-'
-  | '+'
-  | '!'
-  | '~'
-  | 'typeof'
-  | 'void'
-  | 'delete'
-  | 'throw';
+export type UnaryOperator = '-' | '+' | '!' | '~' | 'typeof' | 'void' | 'delete' | 'throw';
 export interface UnaryExpression extends _Expression<'UnaryExpression'> {
   operator: UnaryOperator;
   argument: Expression;
@@ -721,8 +665,7 @@ export interface UpdateExpression extends _Expression<'UpdateExpression'> {
   prefix: boolean;
 }
 
-export interface VariableDeclaration
-  extends _Declaration<'VariableDeclaration'> {
+export interface VariableDeclaration extends _Declaration<'VariableDeclaration'> {
   declarations: VariableDeclarator[];
   kind: 'var' | 'let' | 'const';
 }
@@ -769,8 +712,7 @@ export interface JSXNamespacedName extends _Node<'JSXNamespacedName'> {
 
 export interface JSXEmptyExpression extends _Node<'JSXEmptyExpression'> {}
 
-export interface JSXExpressionContainer
-  extends _Node<'JSXExpressionContainer'> {
+export interface JSXExpressionContainer extends _Node<'JSXExpressionContainer'> {
   expression: Expression | JSXEmptyExpression;
 }
 
@@ -781,8 +723,7 @@ export interface _JSXBoundaryElement<T extends string> extends _Node<T> {
   name: JSXIdentifier | JSXMemberExpression | JSXNamespacedName;
 }
 
-export interface JSXOpeningElement
-  extends _JSXBoundaryElement<'JSXOpeningElement'> {
+export interface JSXOpeningElement extends _JSXBoundaryElement<'JSXOpeningElement'> {
   selfClosing: boolean;
   attributes: (JSXAttribute | JSXSpreadAttribute)[];
 }
@@ -792,23 +733,15 @@ export interface JSXText extends _Node<'JSXText'> {
   raw: string;
 }
 
-export interface JSXOpeningFragment
-  extends _JSXBoundaryElement<'JSXOpeningFragment'> {}
+export interface JSXOpeningFragment extends _JSXBoundaryElement<'JSXOpeningFragment'> {}
 
-export interface JSXClosingFragment
-  extends _JSXBoundaryElement<'JSXClosingFragment'> {}
+export interface JSXClosingFragment extends _JSXBoundaryElement<'JSXClosingFragment'> {}
 
-export interface JSXClosingElement
-  extends _JSXBoundaryElement<'JSXClosingElement'> {}
+export interface JSXClosingElement extends _JSXBoundaryElement<'JSXClosingElement'> {}
 
 export interface JSXAttribute extends _Node<'JSXAttribute'> {
   name: JSXIdentifier | JSXNamespacedName;
-  value:
-    | JSXText
-    | JSXElement
-    | JSXSpreadAttribute
-    | JSXExpressionContainer
-    | null;
+  value: JSXText | JSXElement | JSXSpreadAttribute | JSXExpressionContainer | null;
 }
 
 export interface JSXSpreadAttribute extends _Node<'JSXSpreadAttribute'> {

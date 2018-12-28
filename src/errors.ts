@@ -9,7 +9,8 @@ export const enum Errors {
   StrictFunction,
   SloppyFunction,
   InvalidLetInStrict,
-  UndeclaredExportedBinding
+  UndeclaredExportedBinding,
+  InvalidDuplicateExportedBinding
 }
 
 /*@internal*/
@@ -24,7 +25,8 @@ export const errorMessages: {
   [Errors.SloppyFunction]:
     'In non-strict mode code, functions can only be declared at top level, inside a block, or as the body of an if statement',
   [Errors.InvalidLetInStrict]: "let can't be a variable name in strict mode",
-  [Errors.UndeclaredExportedBinding]: "Exported binding '%0' is not declared"
+  [Errors.UndeclaredExportedBinding]: "Exported binding '%0' is not declared",
+  [Errors.InvalidDuplicateExportedBinding]: "Exported binding '%0' has already been declared"
 };
 
 export function constructError(index: number, line: number, column: number, description: string): void {

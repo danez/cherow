@@ -3563,6 +3563,1567 @@ describe('Declarations - Functions', () => {
         sourceType: 'script'
       }
     ],
+
+    [
+      'function f({a},){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ObjectPattern',
+                properties: [
+                  {
+                    type: 'Property',
+                    kind: 'init',
+                    key: {
+                      type: 'Identifier',
+                      name: 'a'
+                    },
+                    computed: false,
+                    value: {
+                      type: 'Identifier',
+                      name: 'a'
+                    },
+                    method: false,
+                    shorthand: true
+                  }
+                ]
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([x] = y,){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'x'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f({a} = b,){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'a'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'a'
+                      },
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'b'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f(a=b){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'Identifier',
+                  name: 'a'
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'b'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f(a=b=c){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'Identifier',
+                  name: 'a'
+                },
+                right: {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'b'
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'Identifier',
+                    name: 'c'
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f({foo,} = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f({foo,bar=b} = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      method: false,
+                      shorthand: true
+                    },
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'bar'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'b'
+                        }
+                      },
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f({foo=a,bar=b} = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'foo'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'a'
+                        }
+                      },
+                      method: false,
+                      shorthand: true
+                    },
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'bar'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'b'
+                        }
+                      },
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f({foo:a=b, bar:c=d} = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'a'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'b'
+                        }
+                      },
+                      method: false,
+                      shorthand: false
+                    },
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar'
+                      },
+                      computed: false,
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'c'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'd'
+                        }
+                      },
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([,,] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [null, null]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([,foo] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    null,
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo,bar] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    {
+                      type: 'Identifier',
+                      name: 'bar'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo], b){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'foo'
+                  }
+                ]
+              },
+              {
+                type: 'Identifier',
+                name: 'b'
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo] = x, b = y){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              },
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'Identifier',
+                  name: 'b'
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo=a]){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'AssignmentPattern',
+                    left: {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'a'
+                    }
+                  }
+                ]
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo=a] = c){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      right: {
+                        type: 'Identifier',
+                        name: 'a'
+                      }
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'c'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo=a,bar] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      right: {
+                        type: 'Identifier',
+                        name: 'a'
+                      }
+                    },
+                    {
+                      type: 'Identifier',
+                      name: 'bar'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([,] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [null]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+
+    [
+      'function f([,,foo] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    null,
+                    null,
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo,bar]){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'foo'
+                  },
+                  {
+                    type: 'Identifier',
+                    name: 'bar'
+                  }
+                ]
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo,bar] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    {
+                      type: 'Identifier',
+                      name: 'bar'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo,,bar] = x){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    null,
+                    {
+                      type: 'Identifier',
+                      name: 'bar'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo], [bar]){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'foo'
+                  }
+                ]
+              },
+              {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'bar'
+                  }
+                ]
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([foo] = x, [bar] = y){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              },
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'bar'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f(x, [foo] = y){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'Identifier',
+                name: 'x'
+              },
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f(x = y, [foo] = z){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'Identifier',
+                  name: 'x'
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'y'
+                }
+              },
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo'
+                    }
+                  ]
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'z'
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    /*  ['function yield() {}', Context.Empty, {
+      "type": "Program",
+      "sourceType": "script",
+      "body": [
+        {
+          "type": "FunctionDeclaration",
+          "params": [],
+          "body": {
+            "type": "BlockStatement",
+            "body": []
+          },
+          "async": false,
+          "generator": false,
+          "expression": false,
+          "id": {
+            "type": "Identifier",
+            "name": "yield"
+          }
+        }
+      ]
+    }],/* 
+   ['async function await() {}', Context.Empty, {
+      "type": "Program",
+      "sourceType": "script",
+      "body": [
+        {
+          "type": "FunctionDeclaration",
+          "params": [],
+          "body": {
+            "type": "BlockStatement",
+            "body": []
+          },
+          "async": true,
+          "generator": false,
+          "expression": false,
+          "id": {
+            "type": "Identifier",
+            "name": "await"
+          }
+        }
+      ]
+    }],
+    ['function *await() {}', Context.Empty, {
+      "type": "Program",
+      "sourceType": "script",
+      "body": [
+        {
+          "type": "FunctionDeclaration",
+          "params": [],
+          "body": {
+            "type": "BlockStatement",
+            "body": []
+          },
+          "async": false,
+          "generator": true,
+          "expression": false,
+          "id": {
+            "type": "Identifier",
+            "name": "await"
+          }
+        }
+      ]
+    }],
+    ['async function *await() {}', Context.Empty, {
+      "type": "Program",
+      "sourceType": "script",
+      "body": [
+        {
+          "type": "FunctionDeclaration",
+          "params": [],
+          "body": {
+            "type": "BlockStatement",
+            "body": []
+          },
+          "async": true,
+          "generator": true,
+          "expression": false,
+          "id": {
+            "type": "Identifier",
+            "name": "await"
+          }
+        }
+      ]
+    }],*/
+    [
+      'let f = function await() {}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'FunctionExpression',
+                  params: [],
+                  body: {
+                    type: 'BlockStatement',
+                    body: []
+                  },
+                  async: false,
+                  generator: false,
+                  expression: false,
+                  id: {
+                    type: 'Identifier',
+                    name: 'await'
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'f'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    /*['function f(yield) {}', Context.Empty, {
+      "type": "Program",
+      "sourceType": "script",
+      "body": [
+        {
+          "type": "FunctionDeclaration",
+          "params": [
+            {
+              "type": "Identifier",
+              "name": "yield"
+            }
+          ],
+          "body": {
+            "type": "BlockStatement",
+            "body": []
+          },
+          "async": false,
+          "generator": false,
+          "expression": false,
+          "id": {
+            "type": "Identifier",
+            "name": "f"
+          }
+        }
+      ]
+    }],*/
+    [
+      'async function f(yield) {}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'Identifier',
+                name: 'yield'
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: true,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f(await) {}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'Identifier',
+                name: 'await'
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function *f(await) {}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'Identifier',
+                name: 'await'
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: true,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'function f([,,]){}',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ArrayPattern',
+                elements: [null, null]
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            expression: false,
+            id: {
+              type: 'Identifier',
+              name: 'f'
+            }
+          }
+        ]
+      }
+    ],
     [
       'function f(b, a, b, a = x) {}',
       Context.Empty,
