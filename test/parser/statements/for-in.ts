@@ -130,7 +130,7 @@ describe('Statements - For in', () => {
         ]
       }
     ],
-    /*['for (var {x : y} in obj);', Context.OptionDisablesWebCompat, {
+    ['for (var {x : y} in obj);', Context.OptionDisablesWebCompat, {
         "type": "Program",
         "sourceType": "script",
         "body": [
@@ -175,12 +175,13 @@ describe('Statements - For in', () => {
             }
           }
         ]
-      }],*/
-    /* ['for (var [foo, bar=b] of arr);', Context.OptionDisablesWebCompat, {
+      }],
+     ['for (var [foo, bar=b] of arr);', Context.OptionDisablesWebCompat, {
         "type": "Program",
         "body": [
             {
                 "type": "ForOfStatement",
+                "await": false,
                 "left": {
                     "type": "VariableDeclaration",
                     "declarations": [
@@ -221,9 +222,9 @@ describe('Statements - For in', () => {
             }
         ],
         "sourceType": "script"
-    }],*/
+    }],
 
-    /* ['for (var {[x]: y} of obj);', Context.OptionDisablesWebCompat, {
+    ['for (var {[x]: y} of obj);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -269,9 +270,9 @@ describe('Statements - For in', () => {
         "await": false
       }
     ]
-  }],*/
+  }],
 
-    /*   ['for (var [a=[...b], ...c] in obj);', Context.OptionDisablesWebCompat, {
+    ['for (var [a=[...b], ...c] in obj);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -327,8 +328,7 @@ describe('Statements - For in', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-
+}],
     [
       'for (var {x = y} in obj);',
       Context.OptionDisablesWebCompat,
@@ -657,13 +657,7 @@ describe('Statements - For in', () => {
         ]
       }
     ],
-    // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
-    // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
-    // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
-    // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
-    // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
-    // ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {}],
-    /* ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {
+     ['for (var [...foo] in obj);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -700,8 +694,7 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }],*/
-    /**
+  }],
   ['for (var [foo=a] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
@@ -835,8 +828,8 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }], */
-    /* ['for (var [foo=a, bar=b] in arr);', Context.OptionDisablesWebCompat, {
+  }],
+    ['for (var [foo=a, bar=b] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -888,7 +881,7 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }],*/
+  }],
     [
       'for (var [] in x);',
       Context.OptionDisablesWebCompat,
@@ -922,7 +915,8 @@ describe('Statements - For in', () => {
         ],
         sourceType: 'script'
       }
-    ] /*['for (var [foo,,bar] in arr);', Context.OptionDisablesWebCompat, {
+    ],
+    ['for (var [foo,,bar] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -961,7 +955,7 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }],*/ /*
+  }],
   ['for (var [,foo] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
@@ -1036,8 +1030,8 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }],*/,
-    /* ['for (var [,] in x);', Context.OptionDisablesWebCompat, {
+  }],
+     ['for (var [,] in x);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -1103,8 +1097,8 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }],*/
-    /* ['for (var [foo,] in arr);', Context.OptionDisablesWebCompat, {
+  }],
+    ['for (var [foo,] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -1138,8 +1132,8 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }],*/
-    /*  ['for (var [foo,,] in arr);', Context.OptionDisablesWebCompat, {
+  }],
+   ['for (var [foo,,] in arr);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "sourceType": "script",
     "body": [
@@ -1174,7 +1168,8 @@ describe('Statements - For in', () => {
         }
       }
     ]
-  }],*/ [
+  }],
+  [
       'for (a in b);',
       Context.OptionDisablesWebCompat,
       {
@@ -1343,8 +1338,8 @@ describe('Statements - For in', () => {
         ],
         sourceType: 'script'
       }
-    ] /*
-   ['for (var a = b in c);', Context.Empty, {
+    ],
+   /*['for (var a = b in c);', Context.Empty, {
     "type": "Program",
     "body": [
         {

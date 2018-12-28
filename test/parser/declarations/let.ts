@@ -100,7 +100,7 @@ describe('Declarations - Let', () => {
         ],
         sourceType: 'script'
       }
-    ] /*
+    ], /*
     ['let [,] = x;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -125,7 +125,7 @@ describe('Declarations - Let', () => {
           }
       ],
       "sourceType": "script"
-  }],
+  }],*/
     ['let [foo] = arr;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -153,8 +153,8 @@ describe('Declarations - Let', () => {
           }
       ],
       "sourceType": "script"
-  }],*/,
-    /*['let [foo] = arr, bar = arr2;', Context.Empty, {
+  }],
+    ['let [foo] = arr, bar = arr2;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -462,7 +462,7 @@ describe('Declarations - Let', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
+  }],
     [
       'let {} = obj;',
       Context.Empty,
@@ -575,7 +575,7 @@ describe('Declarations - Let', () => {
         ],
         sourceType: 'script'
       }
-    ] /*
+    ], 
     ['let {x, y} = obj;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -1055,7 +1055,7 @@ describe('Declarations - Let', () => {
       ],
       "sourceType": "script"
   }],
-    ['let {[x]: y = z} = a;', Context.Empty, {
+/**    ['let {[x]: y = z} = a;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -1100,62 +1100,61 @@ describe('Declarations - Let', () => {
           }
       ],
       "sourceType": "script"
-  }],*/,
-    /*['let {a, [x]: y} = a;', Context.Empty, {
-      "type": "Program",
-      "body": [
-          {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
-                          "type": "ObjectPattern",
-                          "properties": [
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "a"
-                                  },
-                                  "computed": false,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "a"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": true
-                              },
-                              {
-                                  "type": "Property",
-                                  "key": {
-                                      "type": "Identifier",
-                                      "name": "x"
-                                  },
-                                  "computed": true,
-                                  "value": {
-                                      "type": "Identifier",
-                                      "name": "y"
-                                  },
-                                  "kind": "init",
-                                  "method": false,
-                                  "shorthand": false
-                              }
-                          ]
-                      },
-                      "init": {
-                          "type": "Identifier",
-                          "name": "a"
-                      }
-                  }
-              ],
-              "kind": "let"
-          }
-      ],
-      "sourceType": "script"
-  }],
-*/
+  }], *//*
+    ['let {a, [x]: y} = a;', Context.Empty, {
+        "type": "Program",
+        "body": [
+            {
+                "type": "VariableDeclaration",
+                "declarations": [
+                    {
+                        "type": "VariableDeclarator",
+                        "id": {
+                            "type": "ObjectPattern",
+                            "properties": [
+                                {
+                                    "type": "Property",
+                                    "key": {
+                                        "type": "Identifier",
+                                        "name": "a"
+                                    },
+                                    "computed": false,
+                                    "value": {
+                                        "type": "Identifier",
+                                        "name": "a"
+                                    },
+                                    "kind": "init",
+                                    "method": false,
+                                    "shorthand": true
+                                },
+                                {
+                                    "type": "Property",
+                                    "key": {
+                                        "type": "Identifier",
+                                        "name": "x"
+                                    },
+                                    "computed": true,
+                                    "value": {
+                                        "type": "Identifier",
+                                        "name": "y"
+                                    },
+                                    "kind": "init",
+                                    "method": false,
+                                    "shorthand": false
+                                }
+                            ]
+                        },
+                        "init": {
+                            "type": "Identifier",
+                            "name": "a"
+                        }
+                    }
+                ],
+                "kind": "let"
+            }
+        ],
+        "sourceType": "script"
+    }],*/
     [
       'let foo;',
       Context.Empty,

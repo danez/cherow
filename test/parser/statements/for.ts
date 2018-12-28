@@ -378,7 +378,7 @@ describe('Statements - For', () => {
     ],
     "sourceType": "script"
 }],*/,
-    /*   ['for (let [,] = x;;);', Context.OptionDisablesWebCompat, {
+    ['for (let [,] = x;;);', Context.OptionDisablesWebCompat, {
       "type": "Program",
       "body": [
           {
@@ -444,8 +444,8 @@ describe('Statements - For', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /*['for (let [foo] = arr;;);', Context.OptionDisablesWebCompat, {
+  }],
+    ['for (let [foo] = arr;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -480,8 +480,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /* ['for (let [foo,] = arr;;);', Context.OptionDisablesWebCompat, {
+}],
+     ['for (let [foo,] = arr;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -516,8 +516,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /* ['for (let [foo] = arr, [bar] = arr2;;);', Context.OptionDisablesWebCompat, {
+}],
+    ['for (let [foo] = arr, [bar] = arr2;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -568,8 +568,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /* ['for (let [foo] = arr, bar;;);', Context.OptionDisablesWebCompat, {
+}],
+['for (let [foo] = arr, bar;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -612,8 +612,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /* ['for (let foo = arr, [bar] = arr2;;);', Context.OptionDisablesWebCompat, {
+}],
+     ['for (let foo = arr, [bar] = arr2;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -659,8 +659,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /* ['for (let [foo=a] = arr;;);', Context.OptionDisablesWebCompat, {
+}],
+     ['for (let [foo=a] = arr;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -702,8 +702,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /*  ['for (let [foo=a, bar] = arr;;);', Context.OptionDisablesWebCompat, {
+}],
+      ['for (let [foo=a, bar] = arr;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -749,8 +749,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /*  ['for (let [foo, bar=b] = arr;;);', Context.OptionDisablesWebCompat, {
+}],
+      ['for (let [foo, bar=b] = arr;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -796,8 +796,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /* ['for (let [foo=a, bar=b] = arr;;);', Context.OptionDisablesWebCompat, {
+}],
+     ['for (let [foo=a, bar=b] = arr;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -850,8 +850,8 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    /* ['for (let [...foo] = obj;;);', Context.OptionDisablesWebCompat, {
+}],
+    ['for (let [...foo] = obj;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -889,9 +889,51 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/
-    // ['for (let [foo, ...bar] = obj;;);', Context.OptionDisablesWebCompat, {}],
-    /* ['for (let {x} = obj;;);', Context.OptionDisablesWebCompat, {
+}],
+     ['for (let [foo, ...bar] = obj;;);', Context.OptionDisablesWebCompat, {
+        "type": "Program",
+        "body": [
+            {
+                "type": "ForStatement",
+                "init": {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                        {
+                            "type": "VariableDeclarator",
+                            "id": {
+                                "type": "ArrayPattern",
+                                "elements": [
+                                    {
+                                        "type": "Identifier",
+                                        "name": "foo"
+                                    },
+                                    {
+                                        "type": "RestElement",
+                                        "argument": {
+                                            "type": "Identifier",
+                                            "name": "bar"
+                                        }
+                                    }
+                                ]
+                            },
+                            "init": {
+                                "type": "Identifier",
+                                "name": "obj"
+                            }
+                        }
+                    ],
+                    "kind": "let"
+                },
+                "test": null,
+                "update": null,
+                "body": {
+                    "type": "EmptyStatement"
+                }
+            }
+        ],
+        "sourceType": "script"
+    }],
+    ['for (let {x} = obj;;);', Context.OptionDisablesWebCompat, {
     "type": "Program",
     "body": [
         {
@@ -937,7 +979,7 @@ describe('Statements - For', () => {
         }
     ],
     "sourceType": "script"
-}],*/ [
+}], [
       'for (let foo in x);',
       Context.OptionDisablesWebCompat,
       {

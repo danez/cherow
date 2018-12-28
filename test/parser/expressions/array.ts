@@ -15,7 +15,7 @@ describe('Expressions - Array', () => {
     //    ['([a], {a:a}) => {}', Context.Empty],
     //  ['({a}, [a]) => {}', Context.Empty],
     //    ['([a], b, {a:a}) => {}', Context.Empty],
-    //    ['({a:a}, [a]) => {}', Context.Empty],
+    //    ['({a:a}, [a]) => {}', Context.Empty], q
     //    ['({a:a}, [a = b]) => {}', Context.Empty],
   ];
 

@@ -44,7 +44,7 @@ describe('Declarations - Var', () => {
 
   // valid tests
   const valids: Array<[string, Context, any]> = [
-    /*
+    
     ['var [,] = x;', Context.Empty, {
       "type": "Program",
       "body": [
@@ -69,8 +69,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /*    ['var [,,] = x;', Context.Empty, {
+  }],
+    ['var [,,] = x;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -149,8 +149,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /* ['var {x : y, z : a} = obj;', Context.Empty, {
+  }],
+     ['var {x : y, z : a} = obj;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -203,12 +203,7 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }], */
-
-    // ['for (var [foo] = arr, bar);', Context.Empty, {}],
-    //['for (var [foo] = arr, bar);', Context.Empty, {}],
-    //['for (var [foo] = arr, bar);', Context.Empty, {}],
-
+  }],
     [
       'var\nfoo',
       Context.Empty,
@@ -232,7 +227,8 @@ describe('Declarations - Var', () => {
         sourceType: 'script',
         type: 'Program'
       }
-    ] /* ['var [...bar] = obj;', Context.Empty, {
+    ],
+      ['var [...bar] = obj;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -297,7 +293,7 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/ /*
+  }],
    ['var [foo=a,bar=b] = x;', Context.Empty, {
     "type": "Program",
     "body": [
@@ -343,8 +339,8 @@ describe('Declarations - Var', () => {
         }
     ],
     "sourceType": "script"
-}],*/,
-    /* ['var [foo,,] = x;', Context.Empty, {
+}],
+   ['var [foo,,] = x;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -372,8 +368,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /*  ['var [,foo] = x;', Context.Empty, {
+  }],
+     ['var [,foo] = x;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -401,8 +397,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }], */
-    /* ['var [,,foo] = x;', Context.Empty, {
+  }],
+     ['var [,,foo] = x;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -463,8 +459,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /*['var [foo] = x, [foo] = y;', Context.Empty, {
+  }],
+    ['var [foo] = x, [foo] = y;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -507,8 +503,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /*['var [foo] = x, b;', Context.Empty, {
+  }],
+    ['var [foo] = x, b;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -543,8 +539,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /* ['var [foo] = x, b = y;', Context.Empty, {
+  }],
+     ['var [foo] = x, b = y;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -582,8 +578,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /* ['var x, [foo] = y;', Context.Empty, {
+  }],
+     ['var x, [foo] = y;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -618,8 +614,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /* ['var x = y, [foo] = z;', Context.Empty, {
+  }],
+     ['var x = y, [foo] = z;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -657,8 +653,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
-    /*  ['var [foo=a] = c;', Context.Empty, {
+  }],
+      ['var [foo=a] = c;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -692,8 +688,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }], */
-    /*['var [foo=a,bar] = x;', Context.Empty, {
+  }], 
+    ['var [foo=a,bar] = x;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -731,7 +727,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/ [
+  }],
+   [
       'var {} = x;',
       Context.Empty,
       {
@@ -1376,7 +1373,7 @@ describe('Declarations - Var', () => {
         sourceType: 'script'
       }
     ],
-    /* ['var {foo:a} = x;', Context.Empty, {
+     ['var {foo:a} = x;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -1522,8 +1519,8 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }], */
-    /*['var {foo:a=b, bar:c=d} = x;', Context.Empty, {
+  }],
+    ['var {foo:a=b, bar:c=d} = x;', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -1590,7 +1587,7 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
+  }],
     [
       'var {foo};',
       Context.Empty,
@@ -2091,72 +2088,71 @@ describe('Declarations - Var', () => {
           }
         ]
       }
-    ],
-    /*  ['var x; [{ x = 10 } = {}]', Context.Empty, {
+    ],/*
+     ['var x; [{ x = 10 } = {}]', Context.Empty, {
       "type": "Program",
+      "sourceType": "script",
       "body": [
-          {
-              "type": "VariableDeclaration",
-              "declarations": [
-                  {
-                      "type": "VariableDeclarator",
-                      "id": {
+        {
+          "type": "VariableDeclaration",
+          "kind": "var",
+          "declarations": [
+            {
+              "type": "VariableDeclarator",
+              "init": null,
+              "id": {
+                "type": "Identifier",
+                "name": "x"
+              }
+            }
+          ]
+        },
+        {
+          "type": "ExpressionStatement",
+          "expression": {
+            "type": "ArrayExpression",
+            "elements": [
+              {
+                "type": "AssignmentExpression",
+                "left": {
+                  "type": "ObjectPattern",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "x"
+                      },
+                      "value": {
+                        "type": "AssignmentPattern",
+                        "left": {
                           "type": "Identifier",
                           "name": "x"
+                        },
+                        "right": {
+                          "type": "Literal",
+                          "value": 10
+                        }
                       },
-                      "init": null
-                  }
-              ],
-              "kind": "var"
-          },
-          {
-              "type": "ExpressionStatement",
-              "expression": {
-                  "type": "ArrayExpression",
-                  "elements": [
-                      {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
-                          "left": {
-                              "type": "ObjectPattern",
-                              "properties": [
-                                  {
-                                      "type": "Property",
-                                      "key": {
-                                          "type": "Identifier",
-                                          "name": "x"
-                                      },
-                                      "computed": false,
-                                      "value": {
-                                          "type": "AssignmentPattern",
-                                          "left": {
-                                              "type": "Identifier",
-                                              "name": "x"
-                                          },
-                                          "right": {
-                                              "type": "Literal",
-                                              "value": 10,
-                                              "raw": "10"
-                                          }
-                                      },
-                                      "kind": "init",
-                                      "method": false,
-                                      "shorthand": true
-                                  }
-                              ]
-                          },
-                          "right": {
-                              "type": "ObjectExpression",
-                              "properties": []
-                          }
-                      }
+                      "kind": "init",
+                      "computed": false,
+                      "method": false,
+                      "shorthand": true
+                    }
                   ]
+                },
+                "operator": "=",
+                "right": {
+                  "type": "ObjectExpression",
+                  "properties": []
+                }
               }
+            ]
           }
-      ],
-      "sourceType": "script"
+        }
+      ]
     }],*/
-    /* ['var x; (true ? { x = true } = {} : { x = false } = {})', Context.Empty, {
+     ['var x; (true ? { x = true } = {} : { x = false } = {})', Context.Empty, {
       "type": "Program",
       "body": [
           {
@@ -2180,7 +2176,6 @@ describe('Declarations - Var', () => {
                   "test": {
                       "type": "Literal",
                       "value": true,
-                      "raw": "true"
                   },
                   "consequent": {
                       "type": "AssignmentExpression",
@@ -2204,7 +2199,6 @@ describe('Declarations - Var', () => {
                                       "right": {
                                           "type": "Literal",
                                           "value": true,
-                                          "raw": "true"
                                       }
                                   },
                                   "kind": "init",
@@ -2240,7 +2234,6 @@ describe('Declarations - Var', () => {
                                       "right": {
                                           "type": "Literal",
                                           "value": false,
-                                          "raw": "false"
                                       }
                                   },
                                   "kind": "init",
@@ -2258,7 +2251,7 @@ describe('Declarations - Var', () => {
           }
       ],
       "sourceType": "script"
-  }],*/
+  }],
     [
       'var x; (({ x = 10 } = { x = 20 } = {}) => x)({})',
       Context.Empty,
@@ -2462,11 +2455,6 @@ describe('Declarations - Var', () => {
         sourceType: 'script'
       }
     ],
-    // ['var x; { let x; var y; }', Context.Empty, {}],
-    // ['var x; { let x; var y; }', Context.Empty, {}],
-    // ['var x; { let x; var y; }', Context.Empty, {}],
-    // ['var x; { let x; var y; }', Context.Empty, {}],
-    // ['var x; { let x; var y; }', Context.Empty, {}],
     [
       'var x; { let x; var y; }',
       Context.Empty,
