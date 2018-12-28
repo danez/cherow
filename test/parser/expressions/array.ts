@@ -1409,34 +1409,25 @@ describe('Expressions - Array', () => {
                                                         type: 'ArrayPattern',
                                                         elements: [
                                                           {
-                                                            type:
-                                                              'ArrayPattern',
+                                                            type: 'ArrayPattern',
                                                             elements: [
                                                               {
-                                                                type:
-                                                                  'ArrayPattern',
+                                                                type: 'ArrayPattern',
                                                                 elements: [
                                                                   {
-                                                                    type:
-                                                                      'ArrayPattern',
+                                                                    type: 'ArrayPattern',
                                                                     elements: [
                                                                       {
-                                                                        type:
-                                                                          'Identifier',
-                                                                        name:
-                                                                          'x'
+                                                                        type: 'Identifier',
+                                                                        name: 'x'
                                                                       },
                                                                       {
-                                                                        type:
-                                                                          'Identifier',
-                                                                        name:
-                                                                          'y'
+                                                                        type: 'Identifier',
+                                                                        name: 'y'
                                                                       },
                                                                       {
-                                                                        type:
-                                                                          'Identifier',
-                                                                        name:
-                                                                          'z'
+                                                                        type: 'Identifier',
+                                                                        name: 'z'
                                                                       }
                                                                     ]
                                                                   }

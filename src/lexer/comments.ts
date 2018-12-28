@@ -14,11 +14,7 @@ import { nextChar } from './common';
  * @param parser Parser instance
  * @param context Context masks.
  */
-export function skipSingleHTMLComment(
-  state: ParserState,
-  context: Context,
-  type: CommentType
-): Token {
+export function skipSingleHTMLComment(state: ParserState, context: Context, type: CommentType): Token {
   // ES 2015 B.1.3 -  HTML comments are only allowed when parsing non-module code.
   if (context & Context.Module) report(state, Errors.Unexpected);
   return skipSingleLineComment(state, context, type);
@@ -34,11 +30,7 @@ export function skipSingleHTMLComment(
  * @param state Parser instance
  * @param returnToken Token to be returned
  */
-export function skipSingleLineComment(
-  state: ParserState,
-  context: Context,
-  type: CommentType
-): Token {
+export function skipSingleLineComment(state: ParserState, context: Context, type: CommentType): Token {
   let lastIsCR = 0;
   const start = state.index;
   while (state.index < state.length) {
@@ -78,10 +70,7 @@ export function skipSingleLineComment(
  *
  * @param state Parser instance
  */
-export function skipMultilineComment(
-  state: ParserState,
-  context: Context
-): any {
+export function skipMultilineComment(state: ParserState, context: Context): any {
   let lastIsCR = 0;
   const start = state.index;
   while (state.index < state.length) {
@@ -89,8 +78,7 @@ export function skipMultilineComment(
       case Chars.Asterisk:
         if (nextChar(state) === Chars.Slash) {
           nextChar(state);
-          if (context & Context.OptionsCollectComments)
-            addComment(state, 'MultiLine', start);
+          if (context & Context.OptionsCollectComments) addComment(state, 'MultiLine', start);
           return Token.MultiComment;
         }
         break;
@@ -126,16 +114,9 @@ export function skipMultilineComment(
  * @param commentStart Start position of comment
  */
 
-export function addComment(
-  state: ParserState,
-  type: CommentType,
-  start: number
-): void {
+export function addComment(state: ParserState, type: CommentType, start: number): void {
   state.comments.push({
     type,
-    value: state.source.slice(
-      start,
-      type === 'MultiLine' ? state.index - 2 : state.index
-    )
+    value: state.source.slice(start, type === 'MultiLine' ? state.index - 2 : state.index)
   });
 }

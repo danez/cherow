@@ -5,7 +5,15 @@ import { nextToken } from '../lexer/scan';
 import { createChildScope, checkIfExistInLexicalBindings } from '../scope';
 import { KeywordDescTable, Token } from '../token';
 import { ParserState, ScopeState } from '../types';
-import { ScopeFlags, consumeSemicolon, expect, optional, reinterpret, validateIdentifier } from './common';
+import {
+  ScopeFlags,
+  consumeSemicolon,
+  expect,
+  optional,
+  reinterpret,
+  validateBindingIdentifier,
+  lookAheadOrScan
+} from './common';
 import { parseFunctionDeclaration, parseVariableDeclarationList } from './declarations';
 import { parseAssignmentExpression, parseExpression, parseIdentifier } from './expressions';
 import { parseBindingIdentifierOrPattern } from './pattern';
@@ -59,11 +67,9 @@ export function parseStatementListItem(state: ParserState, context: Context, sco
     case Token.ConstKeyword:
       return parseLexicalDeclaration(state, context, BindingType.Const, BindingOrigin.Statement, scope);
     case Token.LetKeyword:
-      return parseLexicalDeclaration(state, context, BindingType.Let, BindingOrigin.Statement, scope);
-    /*case Token.LetKeyword:
-        return parseLetOrExpressionStatement(state, context);
+      return parseLetOrExpressionStatement(state, context, scope);
     case Token.AsyncKeyword:
-        return parseAsyncFunctionOrExpressionStatement(state, context);*/
+      return parseAsyncFunctionOrExpressionStatement(state, context, scope);
     default:
       return parseStatement(state, context, scope, LabelledFunctionState.Allow);
   }
@@ -179,10 +185,11 @@ function parseConsequentOrAlternate(state: ParserState, context: Context, scope:
  * @param context Context masks
  */
 export function parseReturnStatement(state: ParserState, context: Context): ESTree.ReturnStatement {
+  if (!(context & (Context.OptionsGlobalReturn | Context.InFunctionBody))) report(state, Errors.Unexpected);
   nextToken(state, context | Context.ExpressionStart);
   const argument =
     (state.currentToken & Token.ASI) < 1 && (state.flags & Flags.LineTerminator) < 1
-      ? parseExpression(state, context & ~Context.InFunctionBody)
+      ? parseExpression(state, (context | Context.InFunctionBody) ^ Context.InFunctionBody)
       : null;
   consumeSemicolon(state, context);
   return {
@@ -344,11 +351,11 @@ export function parseDoWhileStatement(state: ParserState, context: Context, scop
  */
 export function parseBlockStatement(state: ParserState, context: Context, scope: ScopeState): ESTree.BlockStatement {
   const body: ESTree.Statement[] = [];
-  nextToken(state, context);
+  expect(state, context, Token.LeftBrace);
   while (state.currentToken !== Token.RightBrace) {
     body.push(parseStatementListItem(state, context, scope));
   }
-  expect(state, context | Context.ExpressionStart, Token.RightBrace);
+  expect(state, context, Token.RightBrace);
 
   return {
     type: 'BlockStatement',
@@ -436,6 +443,7 @@ export function parseCaseOrDefaultClauses(
  */
 export function parseThrowStatement(state: ParserState, context: Context): ESTree.ThrowStatement {
   nextToken(state, context);
+  if (state.flags & Flags.LineTerminator) report(state, Errors.Unexpected);
   const argument: ESTree.Expression = parseExpression(state, context);
   consumeSemicolon(state, context);
   return {
@@ -559,7 +567,7 @@ export function parseExpressionOrLabelledStatement(
   const expr: ESTree.Expression = parseExpression(state, context);
   if (token & Token.Keyword && state.currentToken === Token.Colon) {
     nextToken(state, context | Context.ExpressionStart);
-    validateIdentifier(state, context, BindingType.Empty, token);
+    validateBindingIdentifier(state, context, BindingType.Empty, token);
     let body: any = null;
     if (
       (context & Context.OptionDisablesWebCompat) === 0 &&
@@ -779,4 +787,65 @@ function parseForStatement(
     test,
     update
   };
+}
+
+/**
+ * Parses either an async function declaration or an expression statement
+ *
+ * @see [Link](https://tc39.github.io/ecma262/#sec-let-and-const-declarations)
+ * @see [Link](https://tc39.github.io/ecma262/#prod-ExpressionStatement)
+ *
+ * @param parser  Parser instance
+ * @param context Context masks
+ */
+function parseAsyncFunctionOrExpressionStatement(
+  state: ParserState,
+  context: Context,
+  scope: ScopeState
+): ReturnType<typeof parseFunctionDeclaration | typeof parseExpressionOrLabelledStatement> {
+  return lookAheadOrScan(state, context, nextTokenIsFuncKeywordOnSameLine, false)
+    ? parseFunctionDeclaration(state, context, scope, false)
+    : parseExpressionOrLabelledStatement(state, context, scope, LabelledFunctionState.Disallow);
+}
+
+/**
+ * Parses either an lexical declaration (let) or an expression statement
+ *
+ * @see [Link](https://tc39.github.io/ecma262/#sec-let-and-const-declarations)
+ * @see [Link](https://tc39.github.io/ecma262/#prod-ExpressionStatement)
+ *
+ * @param parser  Parser instance
+ * @param context Context masks
+ */
+function parseLetOrExpressionStatement(
+  state: ParserState,
+  context: Context,
+  scope: ScopeState
+): ReturnType<typeof parseVariableStatement | typeof parseExpressionOrLabelledStatement> {
+  return lookAheadOrScan(state, context, isLexical, true)
+    ? parseLexicalDeclaration(state, context, BindingType.Let, BindingOrigin.Statement, scope)
+    : parseExpressionOrLabelledStatement(state, context, scope, LabelledFunctionState.Disallow);
+}
+
+export function nextTokenIsFuncKeywordOnSameLine(state: ParserState, context: Context): boolean {
+  const line = state.line;
+  nextToken(state, context);
+  return state.currentToken === Token.FunctionKeyword && state.line === line;
+}
+
+/**
+ * Returns true if this an valid lexical binding and not an identifier
+ *
+ * @param parser Parser object
+ * @param context  Context masks
+ */
+export function isLexical(state: ParserState, context: Context): boolean {
+  nextToken(state, context);
+  return (
+    (state.currentToken & Token.IdentifierOrContextual) > 0 ||
+    state.currentToken === Token.LeftBrace ||
+    state.currentToken === Token.LeftBracket ||
+    state.currentToken === Token.YieldKeyword ||
+    state.currentToken === Token.AwaitKeyword
+  );
 }

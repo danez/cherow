@@ -2,9 +2,7 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Expressions - Logical', () => {
-  const inValids: Array<[string, Context]> = [
-    ['(async function *f(a, a) {})', Context.Strict]
-  ];
+  const inValids: Array<[string, Context]> = [['(async function *f(a, a) {})', Context.Strict]];
 
   fail('Expressions - Logical', inValids);
 

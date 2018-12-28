@@ -9,10 +9,7 @@ describe('Statements - While', () => {
     ['while (false) let x = 1;', Context.OptionDisablesWebCompat],
     ['while 1 break;', Context.OptionDisablesWebCompat],
     [`while '' break;`, Context.OptionDisablesWebCompat],
-    [
-      'while (false) label1: label2: function f() {}',
-      Context.OptionDisablesWebCompat
-    ],
+    ['while (false) label1: label2: function f() {}', Context.OptionDisablesWebCompat],
     [
       `while({1}){
     break ;

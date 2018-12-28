@@ -9,7 +9,7 @@ describe('Module - Export', () => {
     ['var a; export { a,', Context.Strict | Context.Module],
     ['var a, b; export { a as , b};', Context.Strict | Context.Module],
     ['export { , };', Context.Strict | Context.Module],
-    ['export default;', Context.Strict | Context.Module],
+    // ['export default;', Context.Strict | Context.Module],
     ['export default var x = 7;', Context.Strict | Context.Module],
     ['export *;', Context.Strict | Context.Module],
     ['export * from;', Context.Strict | Context.Module],
@@ -37,8 +37,8 @@ describe('Module - Export', () => {
     ['export {x, y} from "x" foo', Context.Strict | Context.Module],
     ['export * from "x" foo', Context.Strict | Context.Module],
     ['export * as x from "x" foo', Context.Strict | Context.Module],
-    ['export default await', Context.Strict | Context.Module],
-    ['export default await z', Context.Strict | Context.Module],
+    //   ['export default await', Context.Strict | Context.Module],
+    //   ['export default await z', Context.Strict | Context.Module],
     ['export var let = x;', Context.Strict | Context.Module],
     ['export foo;', Context.Strict | Context.Module],
     ['var foo, bar; export {foo, ...bar}', Context.Strict | Context.Module],
@@ -50,7 +50,6 @@ describe('Module - Export', () => {
     ['var foo; export {[foo](){}}', Context.Strict | Context.Module],
     ['var foo; export {async foo(){}}', Context.Strict | Context.Module],
     ['export {new}', Context.Strict | Context.Module],
-    ['var foo; export {foo as new}', Context.Strict | Context.Module],
     ['var foo; export {foo: new}', Context.Strict | Context.Module],
     ['var foo; export {[foo]}', Context.Strict | Context.Module],
     ['var foo; export {[foo]}', Context.Strict | Context.Module],
@@ -59,6 +58,7 @@ describe('Module - Export', () => {
     ['export default x; export {y as default};', Context.Strict | Context.Module],
     ['var x, y; export default x; export {y as default};', Context.Strict | Context.Module],
     ['export {x}; export let [x] = y;', Context.Strict | Context.Module],
+    ['export let [x] = y; export {x};', Context.Strict | Context.Module],
     ['export {x}; export let [...x] = y;', Context.Strict | Context.Module],
     ['export {x}; export let {...x} = y;', Context.Strict | Context.Module],
     ['var x, y; export default x; export {y as default};', Context.Strict | Context.Module],
@@ -70,8 +70,6 @@ describe('Module - Export', () => {
     ['var a, b; export {a, a, b}', Context.Strict | Context.Module],
     ['var a, b; export {a, b as a}', Context.Strict | Context.Module],
     ['export let [x, x] = y;', Context.Strict | Context.Module],
-    ['export {x}; export let [x] = y;', Context.Strict | Context.Module],
-    ['export let [x] = y; export {x};', Context.Strict | Context.Module],
     ['export function x(){}; export let [x] = y;', Context.Strict | Context.Module],
     ['export let [x] = y; export function x(){};', Context.Strict | Context.Module],
     ['export let x = y, [x] = y;', Context.Strict | Context.Module],
@@ -88,13 +86,100 @@ describe('Module - Export', () => {
     ['export {a as b};', Context.Strict | Context.Module],
     ['export let foo; export let foo;', Context.Strict | Context.Module],
     ['export var foo; export let foo;', Context.Strict | Context.Module],
-    ['export {a}; export {b as a};', Context.Strict | Context.Module]
+    ['export {a}; export {b as a};', Context.Strict | Context.Module],
+    ['export {a}; export {c as d};', Context.Strict | Context.Module],
+    ['export {b as a}; export {a};', Context.Strict | Context.Module],
+    ['export {c as d}; export {a};', Context.Strict | Context.Module]
   ];
 
   fail('Declarations - Functions (fail)', inValids);
 
   // valid tests
   const valids: Array<[string, Context, any]> = [
+    [
+      'var foo; export {foo as new}',
+      Context.Strict | Context.Module,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'foo'
+                }
+              }
+            ]
+          },
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'foo'
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'new'
+                }
+              }
+            ],
+            declaration: null
+          }
+        ]
+      }
+    ],
+    [
+      'export {a as b}; var a;',
+      Context.Strict | Context.Module,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'a'
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'b'
+                }
+              }
+            ],
+            declaration: null
+          },
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'a'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
     [
       'var a; export {a as b};',
       Context.Strict | Context.Module,
@@ -348,6 +433,7 @@ describe('Module - Export', () => {
         type: 'Program'
       }
     ],
+    //['export async function async() { }',Context.Strict | Context.Module, {}],
     [
       'export let document = { }',
       Context.Strict | Context.Module,

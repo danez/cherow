@@ -17,9 +17,7 @@ const enum Constants {
   Size = 128
 }
 
-export const table = new Array<
-  (state: ParserState, context: Context) => number
->(128).fill(nextUnicodeChar);
+export const table = new Array<(state: ParserState, context: Context) => number>(128).fill(nextUnicodeChar);
 
 table[Chars.LowerB] = () => Chars.Backspace;
 table[Chars.LowerF] = () => Chars.FormFeed;
@@ -42,19 +40,14 @@ table[Chars.CarriageReturn] = state => {
   return InvalidEscapeType.Empty;
 };
 
-table[Chars.LineFeed] = table[Chars.LineSeparator] = table[
-  Chars.ParagraphSeparator
-] = state => {
+table[Chars.LineFeed] = table[Chars.LineSeparator] = table[Chars.ParagraphSeparator] = state => {
   state.column = -1;
   state.line++;
   return InvalidEscapeType.Empty;
 };
 
 // Null character, octals specification.
-table[Chars.Zero] = table[Chars.One] = table[Chars.Two] = table[Chars.Three] = (
-  state,
-  context
-) => {
+table[Chars.Zero] = table[Chars.One] = table[Chars.Two] = table[Chars.Three] = (state, context) => {
   // 1 to 3 octal digits
   let code = state.currentChar - Chars.Zero;
   let index = state.index + 1;
@@ -98,9 +91,7 @@ table[Chars.Zero] = table[Chars.One] = table[Chars.Two] = table[Chars.Three] = (
 };
 
 // Octal character specification.
-table[Chars.Four] = table[Chars.Five] = table[Chars.Six] = table[
-  Chars.Seven
-] = (state, context) => {
+table[Chars.Four] = table[Chars.Five] = table[Chars.Six] = table[Chars.Seven] = (state, context) => {
   if (context & Context.Strict) return InvalidEscapeType.StrictOctal;
   let code = state.currentChar - Chars.Zero;
   const index = state.index + 1;
@@ -126,8 +117,7 @@ table[Chars.LowerX] = state => {
   // 2 hex digits
   const ch1 = nextChar(state);
   const hi = toHex(ch1);
-  if (hi < 0 || state.index >= state.length)
-    return InvalidEscapeType.InvalidHex;
+  if (hi < 0 || state.index >= state.length) return InvalidEscapeType.InvalidHex;
   const ch2 = nextChar(state);
   const lo = toHex(ch2);
   if (lo < 0) return InvalidEscapeType.InvalidHex;
@@ -197,8 +187,7 @@ export function scanString(state: ParserState, context: Context): Token {
       break;
     } else if (
       (state.currentChar & 0x53) < 3 &&
-      (state.currentChar === Chars.CarriageReturn ||
-        state.currentChar === Chars.LineFeed)
+      (state.currentChar === Chars.CarriageReturn || state.currentChar === Chars.LineFeed)
     ) {
       report(state, Errors.Unexpected);
     } else {
@@ -217,10 +206,7 @@ export function scanString(state: ParserState, context: Context): Token {
  * @param state state object
  * @param context Context masks
  */
-export function reportInvalidEscapeError(
-  state: ParserState,
-  type: InvalidEscapeType
-): void {
+export function reportInvalidEscapeError(state: ParserState, type: InvalidEscapeType): void {
   switch (type) {
     case InvalidEscapeType.StrictOctal:
       report(state, Errors.Unexpected); // falls through

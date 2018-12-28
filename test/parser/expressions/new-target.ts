@@ -34,31 +34,19 @@ describe('Expressions - New target', () => {
   for (const arg of validSyntax) {
     it(`function f() {${arg}}`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `function f() {${arg}}`,
-          undefined,
-          Context.OptionsNext | Context.Module
-        );
+        parseSource(`function f() {${arg}}`, undefined, Context.OptionsNext | Context.Module);
       });
     });
 
     it(`var f = function() {${arg}}`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `var f = function() {${arg}}`,
-          undefined,
-          Context.OptionsNext | Context.Module
-        );
+        parseSource(`var f = function() {${arg}}`, undefined, Context.OptionsNext | Context.Module);
       });
     });
 
     it(`({m: function() {${arg}}})`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `({m: function() {${arg}}})`,
-          undefined,
-          Context.OptionsNext | Context.Module
-        );
+        parseSource(`({m: function() {${arg}}})`, undefined, Context.OptionsNext | Context.Module);
       });
     });
 
@@ -70,31 +58,19 @@ describe('Expressions - New target', () => {
 
     it(`'use strict'; ({get x() {${arg}}})`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `'use strict'; ({get x() {${arg}}})`,
-          undefined,
-          Context.Empty
-        );
+        parseSource(`'use strict'; ({get x() {${arg}}})`, undefined, Context.Empty);
       });
     });
 
     it(`({m: function() {${arg}}})`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `({m: function() {${arg}}})`,
-          undefined,
-          Context.OptionsNext | Context.Module
-        );
+        parseSource(`({m: function() {${arg}}})`, undefined, Context.OptionsNext | Context.Module);
       });
     });
 
     it(`'use strict'; ({m: function() {${arg}}})`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `'use strict'; ({m: function() {${arg}}})`,
-          undefined,
-          Context.OptionsNext | Context.Module
-        );
+        parseSource(`'use strict'; ({m: function() {${arg}}})`, undefined, Context.OptionsNext | Context.Module);
       });
     });
   }

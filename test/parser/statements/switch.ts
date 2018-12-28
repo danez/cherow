@@ -5,58 +5,41 @@ describe('Statements - Switch', () => {
   const inValids: Array<[string, Context]> = [
     // Bindings
 
-    [
-      'switch (x) { case a: let foo; break; case b: let foo; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: let foo; break; default: let foo; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: let foo; break; case b: var foo; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: var foo; break; case b: let foo; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: let foo; break; case b: const foo = x; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: const foo = x; break; case b: let foo; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: const foo = x; break; case b: const foo = x; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: const foo = x; break; case b: var foo = x; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case a: var foo = x; break; case b: const foo = x; break; }',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) { case 0: var foo = 1 } let foo = 1;',
-      Context.OptionDisablesWebCompat
-    ],
-    [
-      'switch (x) {case a: const f = x; break; case b: function f(){}; break; }',
-      Context.Empty
-    ],
-    [
-      'switch (x) {case a: function f(){}; break; case b: let f; break; }',
-      Context.Empty
-    ],
-    [
-      'switch (x) {case a: function f(){}; break; case b: let f; break; }',
-      Context.OptionDisablesWebCompat
-    ]
+    ['switch (x) { case a: let foo; break; case b: let foo; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: let foo; break; default: let foo; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: let foo; break; case b: var foo; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: var foo; break; case b: let foo; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: let foo; break; case b: const foo = x; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: const foo = x; break; case b: let foo; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: const foo = x; break; case b: const foo = x; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: const foo = x; break; case b: var foo = x; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case a: var foo = x; break; case b: const foo = x; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 0: var foo = 1 } let foo = 1;', Context.OptionDisablesWebCompat],
+    ['switch (x) {case a: const f = x; break; case b: function f(){}; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) {case a: function f(){}; break; case b: let f; break; }', Context.OptionDisablesWebCompat],
+    ['switch (x) {case a: function f(){}; break; case b: let f; break; }', Context.OptionDisablesWebCompat],
+    ['switch (2) { case 1: let f; default: var f }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: function* f() {} default: var f }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: function* f() {} default: function f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: function* f() {} default: async function* f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (1) { case 1: var f; default: const f = 2 }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: function* f() {} default: async function f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: function f() {} default: function f() {} ', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: const f = 0; default: var f }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: const f = 0; default: async function* f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: async function* f() {} default: var f }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: async function* f() {} default: function f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: async function* f() {} default: const f = 0 }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: async function f() {} default: var f }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: async function f() {} default: async function* f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: const f = 0; default: async function* f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: async function f() {} default: async function f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: async function* f() {} default: async function f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: const f = 0; default: function* f() {} }', Context.OptionDisablesWebCompat],
+
+    ['switch (x) { case 1: const f = 0; default: function* f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: const f = 0; default: function* f() {} }', Context.OptionDisablesWebCompat],
+    ['switch (x) { case 1: const f = 0; default: function* f() {} }', Context.OptionDisablesWebCompat]
   ];
 
   fail('Statements - Switch (fail)', inValids);

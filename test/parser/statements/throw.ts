@@ -2,25 +2,15 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Statements - Throw', () => {
+
+  const inValids: Array<[string, Context]> = [
+    ['throw\n1', Context.OptionDisablesWebCompat],
+  ];
+
+  fail('Statements - Throw (fail)', inValids);
+
   // valid tests
   const valids: Array<[string, Context, any]> = [
-    [
-      'throw\n1',
-      Context.Empty,
-      {
-        body: [
-          {
-            argument: {
-              type: 'Literal',
-              value: 1
-            },
-            type: 'ThrowStatement'
-          }
-        ],
-        sourceType: 'script',
-        type: 'Program'
-      }
-    ],
     [
       'throw foo;',
       Context.Empty,

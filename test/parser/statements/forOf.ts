@@ -2,9 +2,7 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Statements - For of', () => {
-  const inValids: Array<[string, Context]> = [
-    ['for (let of x) y', Context.OptionDisablesWebCompat]
-  ];
+  const inValids: Array<[string, Context]> = [['for (let of x) y', Context.OptionDisablesWebCompat]];
 
   fail('Statements - For (fail)', inValids);
 

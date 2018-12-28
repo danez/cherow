@@ -340,7 +340,7 @@ function e() {
   'x = { get if() {} }',
   'x = { get false() {} }',
   'x = { get null() {} }',
-  'x = { get \"undef\"() {} }',
+  'x = { get "undef"() {} }',
   'x = { set width(w) { m_width = w } }',
   'x = { set if(w) { m_if = w } }',
   'x = { set true(w) { m_true = w } }',
@@ -427,9 +427,7 @@ function e() {
   '[a, {b: {c = 1}}] = arr',
   '[a, {b: {c = 1}}] = arr',
   '[a, {b: {c = 1}}] = arr',
-  '[a, {b: {c = 1}}] = arr',
-
-
+  '[a, {b: {c = 1}}] = arr'
 ]) {
   // With AnnexB
   it(`${arg}`, () => {

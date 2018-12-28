@@ -111,13 +111,7 @@ describe('Expressions - Object (fail)', () => {
 
   fail('Expressions - Object', inValids);
 
-  const methodDefinition = [
-    'm() {}',
-    'm(x) { return x; }',
-    'm(x, y) {}, n() {}',
-    'set(x, y) {}',
-    'get(x, y) {}'
-  ];
+  const methodDefinition = ['m() {}', 'm(x) { return x; }', 'm(x, y) {}, n() {}', 'set(x, y) {}', 'get(x, y) {}'];
 
   for (const arg of methodDefinition) {
     it(`({ ${arg} })`, () => {
@@ -134,21 +128,13 @@ describe('Expressions - Object (fail)', () => {
 
     it(`"use strict"; ({ *${arg} })`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `"use strict"; ({ *${arg} })`,
-          undefined,
-          Context.OptionsNext
-        );
+        parseSource(`"use strict"; ({ *${arg} })`, undefined, Context.OptionsNext);
       });
     });
 
     it(`"use strict"; ({ ${arg} })`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `"use strict"; ({ ${arg} })`,
-          undefined,
-          Context.OptionsNext
-        );
+        parseSource(`"use strict"; ({ ${arg} })`, undefined, Context.OptionsNext);
       });
     });
   }
@@ -243,11 +229,7 @@ describe('Expressions - Object (fail)', () => {
   for (const arg of methodDefinitionDuplicateProperty) {
     it(`"use strict"; ({ ${arg} })`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `"use strict";  ({ ${arg} });`,
-          undefined,
-          Context.OptionsNext
-        );
+        parseSource(`"use strict";  ({ ${arg} });`, undefined, Context.OptionsNext);
       });
     });
   }
@@ -374,11 +356,7 @@ describe('Expressions - Object (fail)', () => {
 
     it(`"use strict"; ({ ${arg} })`, () => {
       t.doesNotThrow(() => {
-        parseSource(
-          `"use strict"; ({ ${arg}, })`,
-          undefined,
-          Context.OptionsNext
-        );
+        parseSource(`"use strict"; ({ ${arg}, })`, undefined, Context.OptionsNext);
       });
     });
   }

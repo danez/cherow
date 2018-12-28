@@ -9,10 +9,7 @@ describe('Statements - Block', () => {
     ['{ function f() {} ; function f() {} }', Context.Strict],
     ['function f(){ var f = 123; if (a) function f(){} }', Context.Strict],
     ['{ var f = 123; if (a) function f(){} }', Context.OptionDisablesWebCompat],
-    [
-      '{ var f = 123; if (abc) function f(){} }',
-      Context.OptionDisablesWebCompat
-    ],
+    ['{ var f = 123; if (abc) function f(){} }', Context.OptionDisablesWebCompat],
     ['(function f(b, a, b, a = x) {})', Context.Strict]
   ];
 

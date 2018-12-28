@@ -15,11 +15,7 @@ import { fromCodePoint, nextChar, toHex } from './common';
  * @param state Parser instance
  * @param context Context masks
  */
-export function scanNumber(
-  state: ParserState,
-  context: Context,
-  isFloat: boolean
-): Token {
+export function scanNumber(state: ParserState, context: Context, isFloat: boolean): Token {
   if (isFloat) {
     state.tokenValue = 0;
   } else {
@@ -27,11 +23,7 @@ export function scanNumber(
     const maxDigits = 10;
     const digit = maxDigits - 1;
     state.tokenValue = state.currentChar - Chars.Zero;
-    while (
-      digit >= 0 &&
-      nextChar(state) <= Chars.Nine &&
-      state.currentChar >= Chars.Zero
-    ) {
+    while (digit >= 0 && nextChar(state) <= Chars.Nine && state.currentChar >= Chars.Zero) {
       state.tokenValue = state.tokenValue * 10 + state.currentChar - Chars.Zero;
     }
 
@@ -39,11 +31,7 @@ export function scanNumber(
       digit >= 0 &&
       state.currentChar !== Chars.Period &&
       ((AsciiLookup[state.currentChar] & CharType.IDStart) < 0 ||
-        ((unicodeLookup[(state.currentChar >>> 5) + 34816] >>>
-          state.currentChar) &
-          31 &
-          1) <
-          1)
+        ((unicodeLookup[(state.currentChar >>> 5) + 34816] >>> state.currentChar) & 31 & 1) < 1)
     ) {
       return Token.NumericLiteral;
     }
@@ -66,15 +54,9 @@ export function scanNumber(
   }
 
   // Consume any exponential notation
-  if (
-    state.currentChar === Chars.UpperE ||
-    state.currentChar === Chars.LowerE
-  ) {
+  if (state.currentChar === Chars.UpperE || state.currentChar === Chars.LowerE) {
     nextChar(state);
-    if (
-      state.currentChar === Chars.Plus ||
-      state.currentChar === Chars.Hyphen
-    ) {
+    if (state.currentChar === Chars.Plus || state.currentChar === Chars.Hyphen) {
       nextChar(state);
     }
 
@@ -90,10 +72,7 @@ export function scanNumber(
   // Numbers can't be followed by  an identifier start
   if (
     (AsciiLookup[state.currentChar] & CharType.IDStart) > 0 ||
-    ((unicodeLookup[(state.currentChar >>> 5) + 34816] >>> state.currentChar) &
-      31 &
-      1) >
-      0
+    ((unicodeLookup[(state.currentChar >>> 5) + 34816] >>> state.currentChar) & 31 & 1) > 0
   ) {
     report(state, Errors.Unexpected);
   }

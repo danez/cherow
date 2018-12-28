@@ -114,10 +114,7 @@ describe('Lexer - String literal', () => {
   fail('should fail on "\\u{012"', '"\\u{012"');
   fail('should fail on "\\u{12345"', '"\\u{12345"');
   fail('should fail on "\\u{110000}"', '"\\u{110000}"');
-  fail(
-    'should fail on "\\u{00000000000000000000110000}"',
-    '"\\u{00000000000000000000110000}"'
-  );
+  fail('should fail on "\\u{00000000000000000000110000}"', '"\\u{00000000000000000000110000}"');
   fail('should fail on "\\9b"', '"\\9b"');
   fail('should fail on "\\xF"', '"\\xF"');
   fail('should fail on "\\x9"', '"\\x9"');

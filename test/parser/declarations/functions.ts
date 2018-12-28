@@ -70,17 +70,11 @@ describe('Declarations - Functions', () => {
     ['function f(){ let x; function x(){} }', Context.Empty],
     ['function f(){ function x(){} let x; }', Context.OptionDisablesWebCompat],
     ['function f(){ const x = y; function x(){} }', Context.Empty],
-    [
-      'function f(){ function x(){} const x = y; }',
-      Context.OptionDisablesWebCompat
-    ],
+    ['function f(){ function x(){} const x = y; }', Context.OptionDisablesWebCompat],
     ['{ function f() {} ; function f() {} }', Context.OptionDisablesWebCompat], // Fails only Without AnnexB
     ['{ function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
     ['{ if (x) function f() {} ; function f() {} }', Context.Strict], // throws if no AnnexB and in strict mode only
-    [
-      'switch (x) {case a: function f(){}; break; case b: function f(){}; break; }',
-      Context.Strict | Context.Module
-    ] // throws if no AnnexB and in strict mode only
+    ['switch (x) {case a: function f(){}; break; case b: function f(){}; break; }', Context.Strict | Context.Module] // throws if no AnnexB and in strict mode only
   ];
 
   fail('Declarations - Functions (fail)', inValids);

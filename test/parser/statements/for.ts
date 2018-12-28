@@ -13,10 +13,7 @@ describe('Statements - For', () => {
     ['for (const a;;);', Context.OptionDisablesWebCompat],
     ['for (const a,b,c;;);', Context.OptionDisablesWebCompat],
     // ['for (const [x, x] in {}) {}', Context.OptionDisablesWebCompat],
-    [
-      'for (let a, b, x, d;;) { var foo; var bar; { var doo, x, ee; } }',
-      Context.OptionDisablesWebCompat
-    ],
+    ['for (let a, b, x, d;;) { var foo; var bar; { var doo, x, ee; } }', Context.OptionDisablesWebCompat],
 
     // General
     ['for (var [foo] = arr, [bar] = arr2);', Context.OptionDisablesWebCompat],

@@ -9,11 +9,7 @@ import { scanNumber } from './numbers';
 import { scanString } from './strings';
 import { scanTemplate } from './template';
 
-import {
-  skipMultilineComment,
-  skipSingleHTMLComment,
-  skipSingleLineComment
-} from './comments';
+import { skipMultilineComment, skipSingleHTMLComment, skipSingleLineComment } from './comments';
 
 export const whiteSpaceMap: Function[] = new Array(0xfeff);
 
@@ -26,24 +22,19 @@ const truthFn = (state: ParserState) => {
 whiteSpaceMap.fill(truthFn, 0x9, 0xd + 1);
 whiteSpaceMap.fill(truthFn, 0x2000, 0x200a + 1);
 whiteSpaceMap[0xa0] = whiteSpaceMap[0x1680] = whiteSpaceMap[0x202f] = whiteSpaceMap[0x205f] = whiteSpaceMap[0x3000] = whiteSpaceMap[0xfeff] = truthFn;
-whiteSpaceMap[Chars.ParagraphSeparator] = whiteSpaceMap[Chars.LineSeparator] = (
-  state: ParserState
-) => {
+whiteSpaceMap[Chars.ParagraphSeparator] = whiteSpaceMap[Chars.LineSeparator] = (state: ParserState) => {
   advanceNewLine(state);
   return Token.WhiteSpace;
 };
 
-const unexpectedCharacter: (state: ParserState) => void = (
-  state: ParserState
-) => report(state, Errors.Unexpected, String.fromCharCode(state.currentChar));
+const unexpectedCharacter: (state: ParserState) => void = (state: ParserState) =>
+  report(state, Errors.Unexpected, String.fromCharCode(state.currentChar));
 
-const table = new Array(0xffff)
-  .fill(unexpectedCharacter, 0, 0x80)
-  .fill((state: ParserState) => {
-    if (whiteSpaceMap[state.currentChar](state)) return Token.WhiteSpace;
-    // TODO: Identifier special cases
-    return Token.WhiteSpace;
-  }, 0x80) as ((state: ParserState, context: Context) => Token)[];
+const table = new Array(0xffff).fill(unexpectedCharacter, 0, 0x80).fill((state: ParserState) => {
+  if (whiteSpaceMap[state.currentChar](state)) return Token.WhiteSpace;
+  // TODO: Identifier special cases
+  return Token.WhiteSpace;
+}, 0x80) as ((state: ParserState, context: Context) => Token)[];
 
 export function mapToToken(token: Token): (state: ParserState) => Token {
   return state => {
@@ -73,8 +64,7 @@ for (let i = Chars.UpperA; i <= Chars.UpperZ; i++) table[i] = scanIdentifier;
 for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
 
 // `1`...`9`
-for (let i = Chars.One; i <= Chars.Nine; i++)
-  table[i] = (s, context) => scanNumber(s, context, false);
+for (let i = Chars.One; i <= Chars.Nine; i++) table[i] = (s, context) => scanNumber(s, context, false);
 
 // `$foo`, `_var`
 table[Chars.Dollar] = table[Chars.Underscore] = scanIdentifier;
@@ -83,9 +73,7 @@ table[Chars.Dollar] = table[Chars.Underscore] = scanIdentifier;
 table[Chars.Backtick] = scanTemplate;
 
 // Whitespace
-table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[
-  Chars.VerticalTab
-] = s => {
+table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = s => {
   nextChar(s);
   return Token.WhiteSpace;
 };
@@ -298,10 +286,7 @@ table[Chars.Period] = (state, context) => {
     const next = state.source.charCodeAt(index);
     if (next === Chars.Period) {
       index++;
-      if (
-        index < state.source.length &&
-        state.source.charCodeAt(index) === Chars.Period
-      ) {
+      if (index < state.source.length && state.source.charCodeAt(index) === Chars.Period) {
         state.index = index + 1;
         state.column += 3;
         state.currentChar = state.source.charCodeAt(state.index);
@@ -324,15 +309,11 @@ table[Chars.Period] = (state, context) => {
  * @param context Context masks
  */
 export function nextToken(state: ParserState, context: Context): Token {
+  state.flags &= ~Flags.LineTerminator;
   while (state.index < state.length) {
     state.startIndex = state.index;
-    if (
-      ((state.currentToken = table[state.currentChar](state, context)) &
-        Token.WhiteSpace) !==
-      Token.WhiteSpace
-    ) {
-      if (context & Context.OptionsTokenize)
-        state.tokens.push(state.currentToken);
+    if (((state.currentToken = table[state.currentChar](state, context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
+      if (context & Context.OptionsTokenize) state.tokens.push(state.currentToken);
       return state.currentToken;
     }
   }

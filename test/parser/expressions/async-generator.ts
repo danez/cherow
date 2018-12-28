@@ -2,9 +2,7 @@ import { Context } from '../../../src/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Expressions - Async Generator Functions', () => {
-  const inValids: Array<[string, Context]> = [
-    ['(async function *f(a, a) {})', Context.Strict]
-  ];
+  const inValids: Array<[string, Context]> = [['(async function *f(a, a) {})', Context.Strict]];
 
   fail('Expressions - Async Generator Functions', inValids);
 

@@ -85,40 +85,31 @@ describe('Lexer - Comments', () => {
 
   pass('should skip single line comment with multi line paragrap', {
     source: `// \u2028\u2028`,
-    line: 2,
-    column: 1,
+    line: 3,
+    column: 0,
     index: 5
   });
 
-  pass(
-    'should handle multiline comment with multiple carriage return and newline',
-    {
-      source: `/**\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\n*/`,
-      line: 2,
-      column: 2,
-      index: 49
-    }
-  );
+  pass('should handle multiline comment with multiple carriage return and newline', {
+    source: `/**\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\n*/`,
+    line: 2,
+    column: 2,
+    index: 49
+  });
 
-  pass(
-    'should handle multiline comment with carriage return and multiple newline',
-    {
-      source: `/**\r\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n*/`,
-      line: 2,
-      column: 2,
-      index: 35
-    }
-  );
+  pass('should handle multiline comment with carriage return and multiple newline', {
+    source: `/**\r\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n*/`,
+    line: 2,
+    column: 2,
+    index: 35
+  });
 
-  pass(
-    'should handle multiline comment with carriage return and newline, paragrap separator and line separator',
-    {
-      source: `/**\r\n\u2028\u2029*/`,
-      line: 2,
-      column: 2,
-      index: 9
-    }
-  );
+  pass('should handle multiline comment with carriage return and newline, paragrap separator and line separator', {
+    source: `/**\r\n\u2028\u2029*/`,
+    line: 2,
+    column: 2,
+    index: 9
+  });
 
   pass('should skip single line comment with line feed', {
     source: `// \r`,
@@ -129,8 +120,8 @@ describe('Lexer - Comments', () => {
 
   pass('should skip single line with newline and line feed', {
     source: `// \r\n`,
-    line: 2,
-    column: 1,
+    line: 3,
+    column: 0,
     index: 5
   });
 
@@ -227,7 +218,7 @@ describe('Lexer - Comments', () => {
     source: `//FOO
     ///`,
     line: 2,
-    column: 1,
+    column: 7,
     index: 17
   });
 
