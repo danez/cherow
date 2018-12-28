@@ -1,10 +1,7 @@
-import { AsciiLookup, Chars, CharType, isIdentifierPart } from '../chars';
-import { Context, Flags } from '../common';
-import { Errors, report } from '../errors';
+import { AsciiLookup, CharType } from '../chars';
 import { descKeywordTable, Token } from '../token';
 import { ParserState } from '../types';
-import { unicodeLookup } from '../unicode';
-import { fromCodePoint, nextChar, toHex } from './common';
+import { nextChar } from './common';
 
 /**
  * Scans identifier

@@ -1,4 +1,4 @@
-import { Context } from '../../../src/common';
+import { Context } from '../../../src/parser/common';
 import { parseSource } from '../../../src/parser/parser';
 import * as t from 'assert';
 

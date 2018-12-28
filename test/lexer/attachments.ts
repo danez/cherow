@@ -1,7 +1,7 @@
 import * as t from 'assert';
 import { nextToken } from '../../src/lexer/scan';
 import { State } from '../../src/state';
-import { Context } from '../../src/common';
+import { Context } from '../../src/parser/common';
 
 describe('Lexer - Attach comments', () => {
   function pass(name: string, opts: any): void {

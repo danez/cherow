@@ -1,4 +1,4 @@
-import { Context } from '../../../src/common';
+import { Context } from '../../../src/parser/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Statements - While', () => {
@@ -9,6 +9,8 @@ describe('Statements - While', () => {
     ['while (false) let x = 1;', Context.OptionDisablesWebCompat],
     ['while 1 break;', Context.OptionDisablesWebCompat],
     [`while '' break;`, Context.OptionDisablesWebCompat],
+    // [`while (false) async function f() {}`, Context.OptionDisablesWebCompat],
+    [`while (false) function* g() {}`, Context.OptionDisablesWebCompat],
     ['while (false) label1: label2: function f() {}', Context.OptionDisablesWebCompat],
     [
       `while({1}){

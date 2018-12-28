@@ -1,11 +1,8 @@
-import { Context } from '../../../src/common';
+import { Context } from '../../../src/parser/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Statements - Throw', () => {
-
-  const inValids: Array<[string, Context]> = [
-    ['throw\n1', Context.OptionDisablesWebCompat],
-  ];
+  const inValids: Array<[string, Context]> = [['throw\n1', Context.OptionDisablesWebCompat]];
 
   fail('Statements - Throw (fail)', inValids);
 

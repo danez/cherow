@@ -1,6 +1,6 @@
 import * as t from 'assert';
 import { parseSource } from '../src/parser/parser';
-import { Context } from '../src/common';
+import { Context } from '../src/parser/common';
 
 export const pass = (name: string, valids: Array<[string, Context, any]>) => {
   describe(name, () => {

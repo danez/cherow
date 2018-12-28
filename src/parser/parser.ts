@@ -1,4 +1,4 @@
-import { Context } from '../common';
+import { Context } from './common';
 import { Errors, report } from '../errors';
 import * as ESTree from '../estree';
 import { skipHashBang } from '../lexer/common';

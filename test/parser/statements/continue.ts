@@ -1,4 +1,4 @@
-import { Context } from '../../../src/common';
+import { Context } from '../../../src/parser/common';
 import { pass, fail } from '../../test-utils';
 
 describe('Statements - Continue', () => {

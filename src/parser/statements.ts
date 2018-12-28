@@ -1,18 +1,22 @@
-import { BindingOrigin, BindingType, Context, Flags } from '../common';
 import { Errors, report } from '../errors';
 import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
-import { createChildScope, checkIfExistInLexicalBindings } from '../scope';
+import { createChildScope } from '../scope';
 import { KeywordDescTable, Token } from '../token';
 import { ParserState, ScopeState } from '../types';
 import {
+  Context, 
+  Flags,
   ScopeFlags,
   consumeSemicolon,
   expect,
   optional,
   reinterpret,
   validateBindingIdentifier,
-  lookAheadOrScan
+  lookAheadOrScan,
+  checkIfExistInLexicalBindings,
+  BindingOrigin, 
+  BindingType, 
 } from './common';
 import { parseFunctionDeclaration, parseVariableDeclarationList } from './declarations';
 import { parseAssignmentExpression, parseExpression, parseIdentifier } from './expressions';

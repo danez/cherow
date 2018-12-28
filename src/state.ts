@@ -1,4 +1,4 @@
-import { Flags } from './common';
+import { Flags } from './parser/common';
 import { Comment } from './estree';
 import { Token } from './token';
 
@@ -18,7 +18,7 @@ export class State {
   public tokenValue: any;
   public comments: Comment[];
   public assignable: boolean;
-  public catch: boolean;
+  public inCatch: boolean;
   public exportedNames: any[];
   public exportedBindings: any[];
 
@@ -40,7 +40,7 @@ export class State {
     this.currentToken = Token.EndOfSource;
     this.tokenRegExp = undefined;
     this.assignable = true;
-    this.catch = false;
+    this.inCatch = false;
     this.tokens = [];
     this.comments = [];
     this.exportedNames = [];

@@ -1,5 +1,5 @@
 import { Chars } from '../chars';
-import { Context, Flags } from '../common';
+import { Context, Flags } from '../parser/common';
 import { Errors, report } from '../errors';
 import { Comment, CommentType } from '../estree';
 import { Token } from '../token';

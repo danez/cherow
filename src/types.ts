@@ -1,4 +1,4 @@
-import { Flags } from './common';
+import { Flags } from './parser/common';
 import { Comment } from './estree';
 import { Token } from './token';
 
@@ -84,7 +84,7 @@ export interface ParserState {
   tokens: Token[];
   comments: Comment[];
   assignable: boolean;
-  catch: boolean;
+  inCatch: boolean;
   exportedNames: any[];
   exportedBindings: any[];
 }

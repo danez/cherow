@@ -1,11 +1,17 @@
-import { Context, Flags, BindingType, BindingOrigin } from '../common';
 import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
 import {
+  Context,
+  BindingType, 
+  BindingOrigin,
   validateBindingIdentifier,
   lookAheadOrScan,
   nextTokenIsLeftParenOrPeriod,
-  nextTokenIsFuncKeywordOnSameLine
+  nextTokenIsFuncKeywordOnSameLine,
+  addToExportedNamesAndCheckForDuplicates,
+  addToExportedBindings,
+  addVariable,
+  checkIfExistInLexicalBindings
 } from './common';
 import { Token } from '../token';
 import { ParserState, ScopeState } from '../types';
@@ -13,12 +19,6 @@ import { parseStatementListItem, parseVariableStatement, parseLexicalDeclaration
 import { expect, optional, consumeSemicolon } from './common';
 import { parseHoistableFunctionDeclaration } from './declarations';
 import { parseAssignmentExpression, parseLiteral, parseIdentifier } from './expressions';
-import {
-  addToExportedNamesAndCheckForDuplicates,
-  addToExportedBindings,
-  addVariable,
-  checkIfExistInLexicalBindings
-} from '../scope';
 import { Errors, report } from '../errors';
 
 /**

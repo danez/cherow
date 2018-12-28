@@ -1,10 +1,10 @@
 import { AsciiLookup, Chars, CharType } from '../chars';
-import { Context, Flags } from '../common';
+import { Context } from '../parser/common';
 import { Errors, report } from '../errors';
 import { Token } from '../token';
 import { ParserState } from '../types';
 import { unicodeLookup } from '../unicode';
-import { fromCodePoint, nextChar, toHex } from './common';
+import { nextChar } from './common';
 
 /**
  *  Scans numeric and decimal literal literal

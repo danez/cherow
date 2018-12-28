@@ -12,9 +12,7 @@ module.exports = (parse, getType) => generatorOptions => {
     return { error };
   }
 
-  const type = getType
-    ? getType({ sourceType: generatorOptions.sourceType })
-    : 'Program';
+  const type = getType ? getType({ sourceType: generatorOptions.sourceType }) : 'Program';
 
   try {
     expect(ast, 'to have own property', 'type', type);
