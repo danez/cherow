@@ -5,7 +5,8 @@ import { AsciiLookup, CharType } from './chars';
 /** Example on alternative lexer code. */
 
 export const enum Context {
-  None = 0
+  None = 0,
+  Module = 1 << 0
 }
 
 /**
@@ -14,8 +15,7 @@ export const enum Context {
 const enum ScanState {
   None = 0,
   NewLine = 1 << 0,
-  SameLine = 1 << 1,
-  LastIsCR = 1 << 2
+  LastIsCR = 1 << 1
 }
 
 /*@internal*/
@@ -85,6 +85,28 @@ export function scan(source: string) {
     return true;
   }
 
+  /**
+   * Skips single HTML comments. Same behavior as in V8.
+   *
+   * @param parser Parser instance
+   * @param context Context masks.
+   */
+  function skipSingleHTMLComment(context: Context): Token {
+    // ES 2015 B.1.3 -  HTML comments are only allowed when parsing non-module code.
+    if (context & Context.Module) report(index, line, column, Errors.Unexpected);
+    return skipSingleLineComment();
+  }
+
+  /**
+   * Skips SingleLineComment, SingleLineHTMLCloseComment and SingleLineHTMLOpenComment
+   *
+   *  @see [Link](https://tc39.github.io/ecma262/#prod-SingleLineComment)
+   *  @see [Link](https://tc39.github.io/ecma262/#prod-annexB-SingleLineHTMLOpenComment)
+   *  @see [Link](https://tc39.github.io/ecma262/#prod-annexB-SingleLineHTMLCloseComment)
+   *
+   * @param state Parser instance
+   * @param returnToken Token to be returned
+   */
   function skipSingleLineComment(): Token {
     while (index < length) {
       switch (currentChar) {
@@ -159,9 +181,21 @@ export function scan(source: string) {
 
   const table = new Array(0xffff).fill(unexpectedCharacter, 0, 0x80) as ((context: Context) => Token)[];
 
-  // Whitespace
-  table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = () => Token.WhiteSpace;
+  // `,`, `~`, `?`, `[`, `]`, `{`, `}`, `:`, `;`, `(` ,`)`, `"`, `'`, `@`
+  table[Chars.Comma] = mapToToken(Token.Comma);
+  table[Chars.Tilde] = mapToToken(Token.Complement);
+  table[Chars.QuestionMark] = mapToToken(Token.QuestionMark);
+  table[Chars.LeftBracket] = mapToToken(Token.LeftBracket);
+  table[Chars.RightBracket] = mapToToken(Token.RightBracket);
+  table[Chars.LeftBrace] = mapToToken(Token.LeftBrace);
+  table[Chars.RightBrace] = mapToToken(Token.RightBrace);
+  table[Chars.Colon] = mapToToken(Token.Colon);
+  table[Chars.Semicolon] = mapToToken(Token.Semicolon);
+  table[Chars.LeftParen] = mapToToken(Token.LeftParen);
+  table[Chars.RightParen] = mapToToken(Token.RightParen);
+  table[Chars.At] = mapToToken(Token.At);
 
+  /* line terminators */
   table[Chars.CarriageReturn] = () => {
     state |= ScanState.NewLine | ScanState.LastIsCR;
     column = 0;
@@ -178,22 +212,11 @@ export function scan(source: string) {
     return Token.WhiteSpace;
   };
 
+  /* general whitespace */
+  table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = () => Token.WhiteSpace;
+
   // `a`...z`
   for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
-
-  // `,`, `~`, `?`, `[`, `]`, `{`, `}`, `:`, `;`, `(` ,`)`, `"`, `'`, `@`
-  table[Chars.Comma] = mapToToken(Token.Comma);
-  table[Chars.Tilde] = mapToToken(Token.Complement);
-  table[Chars.QuestionMark] = mapToToken(Token.QuestionMark);
-  table[Chars.LeftBracket] = mapToToken(Token.LeftBracket);
-  table[Chars.RightBracket] = mapToToken(Token.RightBracket);
-  table[Chars.LeftBrace] = mapToToken(Token.LeftBrace);
-  table[Chars.RightBrace] = mapToToken(Token.RightBrace);
-  table[Chars.Colon] = mapToToken(Token.Colon);
-  table[Chars.Semicolon] = mapToToken(Token.Semicolon);
-  table[Chars.LeftParen] = mapToToken(Token.LeftParen);
-  table[Chars.RightParen] = mapToToken(Token.RightParen);
-  table[Chars.At] = mapToToken(Token.At);
 
   // `/`, `/=`, `/>`, '/*..*/'
   table[Chars.Slash] = () => {
@@ -230,7 +253,7 @@ export function scan(source: string) {
   };
 
   // `<`, `<=`, `<<`, `<<=`, `</`,  <!--
-  table[Chars.LessThan] = () => {
+  table[Chars.LessThan] = ctx => {
     if (index < length) {
       if (currentChar === Chars.EqualSign) {
         nextChar();
@@ -244,7 +267,7 @@ export function scan(source: string) {
         return Token.ShiftLeft;
       } else if (currentChar === Chars.Exclamation && nextChar() === Chars.Hyphen && nextChar() === Chars.Hyphen) {
         nextChar();
-        // return skipSingleHTMLComment(state, context, 'HTMLOpen');
+        return skipSingleHTMLComment(ctx);
       }
     }
     return Token.LessThan;
@@ -335,16 +358,12 @@ export function scan(source: string) {
   };
 
   // `-`, `--`, `-=`
-  table[Chars.Hyphen] = () => {
+  table[Chars.Hyphen] = ctx => {
     if (currentChar === Chars.Hyphen) {
-      /* if (
-      nextChar() === Chars.GreaterThan &&
-      (context & Context.OptionDisablesWebCompat) === 0 &&
-      (s.flags & Flags.LineTerminator || s.startIndex === 0)
-    ) {
-      nextChar(s);
-      return skipSingleHTMLComment(s, context, 'HTMLClose');
-    }*/
+      if (nextChar() === Chars.GreaterThan && (state & ScanState.NewLine || start === 0)) {
+        nextChar();
+        return skipSingleHTMLComment(ctx);
+      }
       nextChar();
       return Token.Decrement;
     }
@@ -417,7 +436,9 @@ export function scan(source: string) {
     return {
       type: token,
       value: '',
-      newline: false,
+      newline,
+      line,
+      column,
       start,
       end: index
     };
