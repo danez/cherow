@@ -59,7 +59,7 @@ export function scan(source: string) {
 
   let token = Token.EndOfSource;
 
-  let value = '';
+  let value: any = '';
 
   let newline = false;
 
@@ -74,15 +74,33 @@ export function scan(source: string) {
 
   function mapToToken(token: Token): () => Token {
     return () => {
+      nextChar();
       return token;
     };
   }
 
   function consumeOpt(code: number) {
     if (source.charCodeAt(index) !== code) return false;
-    index++;
+    currentChar = source.charCodeAt(++index);
     column++;
     return true;
+  }
+
+  function advanceNewline() {
+    currentChar = source.charCodeAt(++index);
+    column = 0;
+    ++line;
+  }
+
+  /**
+   * Use to consume a line feed instead of `advanceNewline`.
+   */
+  function consumeLineFeed(lastIsCR: boolean) {
+    currentChar = source.charCodeAt(++index);
+    if (!lastIsCR) {
+      column = 0;
+      line++;
+    }
   }
 
   /**
@@ -94,7 +112,8 @@ export function scan(source: string) {
   function skipSingleHTMLComment(context: Context): Token {
     // ES 2015 B.1.3 -  HTML comments are only allowed when parsing non-module code.
     if (context & Context.Module) report(index, line, column, Errors.Unexpected);
-    return skipSingleLineComment();
+    state = skipSingleLineComment();
+    return Token.SingleComment;
   }
 
   /**
@@ -107,19 +126,18 @@ export function scan(source: string) {
    * @param state Parser instance
    * @param returnToken Token to be returned
    */
-  function skipSingleLineComment(): Token {
+
+  function skipSingleLineComment(): ScanState {
     while (index < length) {
       switch (currentChar) {
         case Chars.CarriageReturn:
-          column = 0;
-          line++;
+          advanceNewline();
           if (index < length && nextChar() === Chars.LineFeed) index++;
           return state | ScanState.NewLine;
         case Chars.LineFeed:
         case Chars.LineSeparator:
         case Chars.ParagraphSeparator:
-          column = 0;
-          line++;
+          advanceNewline();
           return state | ScanState.NewLine;
 
         default:
@@ -127,9 +145,8 @@ export function scan(source: string) {
       }
     }
 
-    return Token.SingleComment;
+    return state;
   }
-
   /**
    * Skips multiline comment
    *
@@ -139,39 +156,31 @@ export function scan(source: string) {
    */
   function skipMultilineComment(): any {
     while (index < length) {
-      switch (currentChar) {
+      switch (nextChar()) {
         case Chars.Asterisk:
-          index++;
-          column++;
+          nextChar();
           state &= ~ScanState.LastIsCR;
-          if (consumeOpt(Chars.Slash)) return Token.MultiComment;
+          if (consumeOpt(Chars.Slash)) return state;
           break;
 
         case Chars.CarriageReturn:
           state |= ScanState.NewLine | ScanState.LastIsCR;
-          column = 0;
-          line++;
+          advanceNewline();
           break;
 
         case Chars.LineFeed:
-          if ((state & ScanState.LastIsCR) === 0) {
-            column = 0;
-            line++;
-          }
-
+          consumeLineFeed((state & ScanState.LastIsCR) !== 0);
           state = (state & ~ScanState.LastIsCR) | ScanState.NewLine;
           break;
 
         case Chars.LineSeparator:
         case Chars.ParagraphSeparator:
           state = (state & ~ScanState.LastIsCR) | ScanState.NewLine;
-          column = 0;
-          line++;
+          advanceNewline();
           break;
 
         default:
           state &= ~ScanState.LastIsCR;
-          nextChar();
       }
     }
   }
@@ -198,38 +207,46 @@ export function scan(source: string) {
   /* line terminators */
   table[Chars.CarriageReturn] = () => {
     state |= ScanState.NewLine | ScanState.LastIsCR;
-    column = 0;
-    line++;
+    advanceNewline();
     return Token.WhiteSpace;
   };
 
   table[Chars.LineFeed] = () => {
-    if ((state & ScanState.LastIsCR) === 0) {
-      column = 0;
-      line++;
-    }
+    consumeLineFeed((state & ScanState.LastIsCR) !== 0);
     state = (state & ~ScanState.LastIsCR) | ScanState.NewLine;
     return Token.WhiteSpace;
   };
 
   /* general whitespace */
-  table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = () => Token.WhiteSpace;
+  table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = () => {
+    nextChar();
+    return Token.WhiteSpace;
+  };
+
+  // `1`...`9`
+  for (let i = Chars.One; i <= Chars.Nine; i++) table[i] = () => scanNumeric(false);
+
+  // `A`...`Z`
+  for (let i = Chars.UpperA; i <= Chars.UpperZ; i++) table[i] = scanIdentifier;
 
   // `a`...z`
   for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
 
   // `/`, `/=`, `/>`, '/*..*/'
   table[Chars.Slash] = () => {
-    if (currentChar === Chars.Slash) {
+    const next = nextChar();
+    if (next === Chars.Slash) {
       nextChar();
-      return skipSingleLineComment();
-    } else if (currentChar === Chars.Asterisk) {
+      state = skipSingleLineComment();
+      return Token.SingleComment;
+    } else if (next === Chars.Asterisk) {
       nextChar();
-      return skipMultilineComment();
-    } else if (currentChar === Chars.EqualSign) {
+      state = skipMultilineComment();
+      return Token.MultiComment;
+    } else if (next === Chars.EqualSign) {
       nextChar();
       return Token.DivideAssign;
-    } else if (currentChar === Chars.GreaterThan) {
+    } else if (next === Chars.GreaterThan) {
       nextChar();
       return Token.JSXAutoClose;
     }
@@ -239,13 +256,14 @@ export function scan(source: string) {
 
   // `=`, `==`, `===`, `=>`
   table[Chars.EqualSign] = () => {
-    if (currentChar === Chars.EqualSign) {
+    const next = nextChar();
+    if (next === Chars.EqualSign) {
       if (nextChar() === Chars.EqualSign) {
         nextChar();
         return Token.StrictEqual;
       }
       return Token.LooseEqual;
-    } else if (currentChar === Chars.GreaterThan) {
+    } else if (next === Chars.GreaterThan) {
       nextChar();
       return Token.Arrow;
     }
@@ -254,18 +272,24 @@ export function scan(source: string) {
 
   // `<`, `<=`, `<<`, `<<=`, `</`,  <!--
   table[Chars.LessThan] = ctx => {
-    if (index < length) {
-      if (currentChar === Chars.EqualSign) {
+    if (index < source.length) {
+      const next = nextChar();
+      if (next === Chars.EqualSign) {
         nextChar();
         return Token.LessThanOrEqual;
-      } else if (currentChar === Chars.LessThan) {
+      } else if (next === Chars.LessThan) {
         nextChar();
         if (currentChar === Chars.EqualSign) {
           nextChar();
           return Token.ShiftLeftAssign;
         }
         return Token.ShiftLeft;
-      } else if (currentChar === Chars.Exclamation && nextChar() === Chars.Hyphen && nextChar() === Chars.Hyphen) {
+      } else if (
+        (ctx & Context.Module) === 0 &&
+        next === Chars.Exclamation &&
+        nextChar() === Chars.Hyphen &&
+        nextChar() === Chars.Hyphen
+      ) {
         nextChar();
         return skipSingleHTMLComment(ctx);
       }
@@ -275,7 +299,7 @@ export function scan(source: string) {
 
   // `>`, `>=`, `>>`, `>>>`, `>>=`, `>>>=`
   table[Chars.GreaterThan] = () => {
-    if (currentChar === Chars.EqualSign) {
+    if (nextChar() === Chars.EqualSign) {
       nextChar();
       return Token.GreaterThanOrEqual;
     }
@@ -301,7 +325,7 @@ export function scan(source: string) {
 
   // `!`, `!=`, `!==`
   table[Chars.Exclamation] = () => {
-    if (currentChar !== Chars.EqualSign) return Token.Negate;
+    if (nextChar() !== Chars.EqualSign) return Token.Negate;
     if (nextChar() !== Chars.EqualSign) return Token.LooseNotEqual;
     nextChar();
     return Token.StrictNotEqual;
@@ -309,11 +333,12 @@ export function scan(source: string) {
 
   // `*`, `**`, `*=`, `**=`
   table[Chars.Asterisk] = () => {
-    if (currentChar === Chars.EqualSign) {
+    const next = nextChar();
+    if (next === Chars.EqualSign) {
       nextChar();
       return Token.MultiplyAssign;
     }
-    if (currentChar !== Chars.Asterisk) return Token.Multiply;
+    if (next !== Chars.Asterisk) return Token.Multiply;
     if (nextChar() !== Chars.EqualSign) return Token.Exponentiate;
     nextChar();
     return Token.ExponentiateAssign;
@@ -321,36 +346,38 @@ export function scan(source: string) {
 
   // `%`, `%=`
   table[Chars.Percent] = () => {
-    if (currentChar !== Chars.EqualSign) return Token.Modulo;
+    if (nextChar() !== Chars.EqualSign) return Token.Modulo;
     nextChar();
     return Token.ModuloAssign;
   };
 
   // `^`, `^=`
   table[Chars.Caret] = () => {
-    if (currentChar !== Chars.EqualSign) return Token.BitwiseXor;
+    if (nextChar() !== Chars.EqualSign) return Token.BitwiseXor;
     nextChar();
     return Token.BitwiseXorAssign;
   };
 
   // `&`, `&&`, `&=`
   table[Chars.Ampersand] = () => {
-    if (currentChar === Chars.Ampersand) {
+    const next = nextChar();
+    if (next === Chars.Ampersand) {
       nextChar();
       return Token.LogicalAnd;
     }
-    if (currentChar !== Chars.EqualSign) return Token.BitwiseAnd;
+    if (next !== Chars.EqualSign) return Token.BitwiseAnd;
     nextChar();
     return Token.BitwiseAndAssign;
   };
 
   // `+`, `++`, `+=`
   table[Chars.Plus] = () => {
-    if (currentChar === Chars.Plus) {
+    const next = nextChar();
+    if (next === Chars.Plus) {
       nextChar();
       return Token.Increment;
     }
-    if (currentChar === Chars.EqualSign) {
+    if (next === Chars.EqualSign) {
       nextChar();
       return Token.AddAssign;
     }
@@ -359,26 +386,27 @@ export function scan(source: string) {
 
   // `-`, `--`, `-=`
   table[Chars.Hyphen] = ctx => {
-    if (currentChar === Chars.Hyphen) {
-      if (nextChar() === Chars.GreaterThan && (state & ScanState.NewLine || start === 0)) {
+    const next = nextChar();
+    if (next === Chars.Hyphen) {
+      if ((ctx & Context.Module) === 0 && nextChar() === Chars.GreaterThan && state & ScanState.NewLine) {
         nextChar();
         return skipSingleHTMLComment(ctx);
       }
-      nextChar();
       return Token.Decrement;
     }
 
-    if (currentChar !== Chars.EqualSign) return Token.Subtract;
+    if (next !== Chars.EqualSign) return Token.Subtract;
     nextChar();
     return Token.SubtractAssign;
   };
 
   // `|`, `||`, `|=`
   table[Chars.VerticalBar] = () => {
-    if (currentChar === Chars.VerticalBar) {
+    const next = nextChar();
+    if (next === Chars.VerticalBar) {
       nextChar();
       return Token.LogicalOr;
-    } else if (currentChar === Chars.EqualSign) {
+    } else if (next === Chars.EqualSign) {
       nextChar();
       return Token.BitwiseOrAssign;
     }
@@ -387,19 +415,24 @@ export function scan(source: string) {
 
   // `.`, `...`, `.123` (numeric literal)
   table[Chars.Period] = () => {
-    if (index >= length) return Token.Period;
-    if (currentChar === Chars.Period) {
-      index++;
-      if (index < source.length && source.charCodeAt(index) === Chars.Period) {
-        index = index + 1;
-        column += 2;
-        currentChar = source.charCodeAt(index);
-        return Token.Ellipsis;
+    let idx = index + 1;
+    if (idx < length) {
+      const next = source.charCodeAt(idx);
+      if (next === Chars.Period) {
+        idx++;
+        if (idx < source.length && source.charCodeAt(idx) === Chars.Period) {
+          index = idx + 1;
+          column += 3;
+          currentChar = source.charCodeAt(idx);
+          return Token.Ellipsis;
+        }
+      } else if (next >= Chars.Zero && next <= Chars.Nine) {
+        // Rewind the initial token.
+        scanNumeric(true);
+        return Token.NumericLiteral;
       }
-    } else if (currentChar >= Chars.Zero && currentChar <= Chars.Nine) {
-      //      return scanNumber(state, context, true);
     }
-
+    nextChar();
     return Token.Period;
   };
 
@@ -412,15 +445,37 @@ export function scan(source: string) {
     return descKeywordTable[value] || Token.Identifier;
   }
 
+  /**
+   *  Scans numeric and decimal literal literal
+   *
+   * @see [https://tc39.github.io/ecma262/#prod-DecimalLiteral)
+   * @see [https://tc39.github.io/ecma262/#prod-NumericLiteral)
+   *
+   * @param state Parser instance
+   * @param context Context masks
+   */
+
+  function scanNumeric(isFloat: boolean): Token {
+    if (isFloat) {
+      value = 0;
+    } else {
+      // Hot path - fast path for decimal digits that fits into 4 bytes
+      const maxDigits = 10;
+      const digit = maxDigits - 1;
+      value = currentChar - Chars.Zero;
+      while (digit >= 0 && nextChar() <= Chars.Nine && currentChar >= Chars.Zero) {
+        value = value * 10 + currentChar - Chars.Zero;
+      }
+    }
+    return Token.NumericLiteral;
+  }
+
   return function(context: Context): any {
     state = ScanState.None;
 
     while (index < length) {
-      let current = currentChar;
       start = index;
-      currentChar = source.charCodeAt(++index);
-      column++;
-      if (((token = table[current](context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
+      if (((token = table[currentChar](context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
         return {
           type: token,
           value,
