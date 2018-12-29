@@ -1,6 +1,6 @@
 import { Token, descKeywordTable } from './token';
-import { Chars } from './chars';
-import { AsciiLookup, CharType } from './chars';
+import { Chars, AsciiLookup, CharType } from './chars';
+import { unicodeLookup } from './unicode';
 
 /** Example on alternative lexer code. */
 
@@ -184,11 +184,23 @@ export function scan(source: string) {
       }
     }
   }
+  const truthFn = () => {
+    nextChar();
+    return true;
+  };
+
+  const whiteSpaceMap: Function[] = new Array(0xfeff);
+  whiteSpaceMap.fill(() => false);
+  whiteSpaceMap.fill(nextChar, 0x9, 0xd + 1);
+  whiteSpaceMap.fill(nextChar, 0x2000, 0x200a + 1);
+  whiteSpaceMap[0xa0] = whiteSpaceMap[0x1680] = whiteSpaceMap[0x202f] = whiteSpaceMap[0x205f] = whiteSpaceMap[0x3000] = whiteSpaceMap[0xfeff] = truthFn;
 
   const unexpectedCharacter: () => void = () =>
     report(index, line, column, Errors.Unexpected, String.fromCharCode(currentChar));
 
-  const table = new Array(0xffff).fill(unexpectedCharacter, 0, 0x80) as ((context: Context) => Token)[];
+  const table = new Array(0xffff).fill(unexpectedCharacter, 0, 0x80).fill(scanMaybeIdentifier, 0x80) as ((
+    context: Context
+  ) => Token)[];
 
   // `,`, `~`, `?`, `[`, `]`, `{`, `}`, `:`, `;`, `(` ,`)`, `"`, `'`, `@`
   table[Chars.Comma] = mapToToken(Token.Comma);
@@ -217,6 +229,12 @@ export function scan(source: string) {
     return Token.WhiteSpace;
   };
 
+  table[Chars.ParagraphSeparator] = table[Chars.LineSeparator] = () => {
+    state = state & ~ScanState.LastIsCR | ScanState.NewLine;
+    advanceNewline();
+    return Token.WhiteSpace;
+  };
+
   /* general whitespace */
   table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = () => {
     nextChar();
@@ -227,10 +245,10 @@ export function scan(source: string) {
   for (let i = Chars.One; i <= Chars.Nine; i++) table[i] = () => scanNumeric(false);
 
   // `A`...`Z`
-  for (let i = Chars.UpperA; i <= Chars.UpperZ; i++) table[i] = scanIdentifier;
+  for (let i = Chars.UpperA; i <= Chars.UpperZ; i++) table[i] = scanKnownIdentifier;
 
   // `a`...z`
-  for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
+  for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanKnownIdentifier;
 
   // `/`, `/=`, `/>`, '/*..*/'
   table[Chars.Slash] = () => {
@@ -427,9 +445,7 @@ export function scan(source: string) {
           return Token.Ellipsis;
         }
       } else if (next >= Chars.Zero && next <= Chars.Nine) {
-        // Rewind the initial token.
-        scanNumeric(true);
-        return Token.NumericLiteral;
+        return scanNumeric(true);
       }
     }
     nextChar();
@@ -437,13 +453,33 @@ export function scan(source: string) {
   };
 
   /**
+   * Scans maybe identifier
+   */
+
+  function scanMaybeIdentifier(): Token {
+    if (whiteSpaceMap[currentChar](state)) return Token.WhiteSpace;
+    if (
+      (AsciiLookup[currentChar] & CharType.IDStart) > 0 ||
+      ((unicodeLookup[(currentChar >>> 5) + 34816] >>> currentChar) & 31 & 1) > 0
+    ) {
+      nextChar();
+      // TODO
+    }
+    return Token.Invalid;
+  }
+
+  /**
    * Scans identifier
    */
-  function scanIdentifier(): Token {
+  function scanKnownIdentifier(): Token {
     while ((AsciiLookup[nextChar()] & (CharType.IDContinue | CharType.Decimal)) > 0) {}
     value = source.slice(start, index);
     return descKeywordTable[value] || Token.Identifier;
   }
+
+  /**
+   * Scans identifier rest
+   */
 
   /**
    *  Scans numeric and decimal literal literal
@@ -466,6 +502,15 @@ export function scan(source: string) {
       while (digit >= 0 && nextChar() <= Chars.Nine && currentChar >= Chars.Zero) {
         value = value * 10 + currentChar - Chars.Zero;
       }
+      /*
+      if (
+        digit >= 0 &&
+        currentChar !== Chars.Period &&
+        ((AsciiLookup[currentChar] & CharType.IDStart) < 0 ||
+          ((unicodeLookup[(currentChar >>> 5) + 34816] >>> currentChar) & 31 & 1) < 1)
+      ) {
+        return Token.NumericLiteral;
+      }*/
     }
     return Token.NumericLiteral;
   }
