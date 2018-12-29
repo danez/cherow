@@ -2,7 +2,7 @@ import * as ESTree from '../estree';
 import { nextToken } from '../lexer/scan';
 import {
   Context,
-  BindingType, 
+  BindingType,
   BindingOrigin,
   validateBindingIdentifier,
   lookAheadOrScan,

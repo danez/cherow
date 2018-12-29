@@ -33,10 +33,7 @@ export function createBlockScope(): ScopeState {
 /**
  * Create a child scope. Inherit values from the parent scope
  */
-export function createChildScope(
-  parentScope: ScopeState,
-  masks: ScopeFlags
-): ScopeState {
+export function createChildScope(parentScope: ScopeState, masks: ScopeFlags): ScopeState {
   return {
     // A list of var-declared names in the current lexical scope
     vars: parentScope.vars,

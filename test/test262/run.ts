@@ -35,17 +35,23 @@ describe('test262 tests', () => {
       const data = test262Parser.parseFile({ file: shortName, contents });
 
       const isModule = data.attrs.flags.module;
-      const shouldFail = data.attrs.negative != null && (data.attrs.negative.phase === 'parse' || data.attrs.negative.phase === 'early');
+      const shouldFail =
+        data.attrs.negative != null && (data.attrs.negative.phase === 'parse' || data.attrs.negative.phase === 'early');
 
-      const xfailed = xfail.has(shortName) || !shouldFail && data.attrs.features != null && data.attrs.features.some((feat: any) => xfailFeatures.has(feat)) && !xpassDespiteFeatures.has(shortName);
+      const xfailed =
+        xfail.has(shortName) ||
+        (!shouldFail &&
+          data.attrs.features != null &&
+          data.attrs.features.some((feat: any) => xfailFeatures.has(feat)) &&
+          !xpassDespiteFeatures.has(shortName));
 
       let failed;
       try {
         // TODO location sanity checks
         if (isModule) {
-          parse(data.contents, { module: true});
+          parse(data.contents, { module: true });
         } else if (data.attrs.flags.onlyStrict) {
-          parse('"use strict";\n' + data.contents)
+          parse('"use strict";\n' + data.contents);
         } else if (data.attrs.flags.noStrict) {
           parse(data.contents);
         } else {
@@ -58,7 +64,7 @@ describe('test262 tests', () => {
       }
 
       if (xfailed) {
-      //  expect(failed).to.not.be(shouldFail);
+        //  expect(failed).to.not.be(shouldFail);
       } else {
         //expect(failed).to.be(shouldFail);
       }
@@ -70,7 +76,7 @@ describe('test262 expectations sanity', () => {
   describe('named tests exist', () => {
     for (let file of expectations.xfail.xpassDespiteFeatures.concat(expectations.xfail.files)) {
       it('existence of ' + file, () => {
-      //  expect(existsSync(join(testDir, file))).to.be.ok();
+        //  expect(existsSync(join(testDir, file))).to.be.ok();
       });
     }
   });
@@ -80,8 +86,8 @@ describe('test262 expectations sanity', () => {
       it('features of ' + file, () => {
         const contents = readFileSync(join(testDir, file), 'utf8');
         const data = test262Parser.parseFile({ file, contents });
-     //   expect(Array.isArray(data.attrs.features)).to.be.ok();
-      //  expect(data.attrs.features.some((feat: any) => xfailFeatures.has(feat))).to.be.ok();
+        //   expect(Array.isArray(data.attrs.features)).to.be.ok();
+        //  expect(data.attrs.features.some((feat: any) => xfailFeatures.has(feat))).to.be.ok();
       });
     }
   });

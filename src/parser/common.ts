@@ -16,21 +16,13 @@ export function updateToken(state: ParserState, token: Token) {
   state.currentToken = token;
 }
 
-export function optional(
-  state: ParserState,
-  context: Context,
-  token: Token
-): boolean {
+export function optional(state: ParserState, context: Context, token: Token): boolean {
   if (state.currentToken !== token) return false;
   nextToken(state, context);
   return true;
 }
 
-export function expect(
-  state: ParserState,
-  context: Context,
-  t: Token
-): boolean {
+export function expect(state: ParserState, context: Context, t: Token): boolean {
   if (state.currentToken !== t) {
     report(state, Errors.Unexpected);
     return false;
