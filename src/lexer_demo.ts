@@ -2,14 +2,20 @@ import { Token, descKeywordTable } from './token';
 import { Chars } from './chars';
 import { AsciiLookup, CharType } from './chars';
 
-/**
-
-Example on alternative lexer code. 
-
-*/
+/** Example on alternative lexer code. */
 
 export const enum Context {
   None = 0
+}
+
+/**
+ * A set of flags for maintaining the internal state machine.
+ */
+const enum ScanState {
+  None = 0,
+  NewLine = 1 << 0,
+  SameLine = 1 << 1,
+  LastIsCR = 1 << 2
 }
 
 /*@internal*/
@@ -45,7 +51,7 @@ export function scan(source: string) {
 
   let start = 0;
 
-  let line = 0;
+  let line = 1;
 
   let column = 0;
 
@@ -57,29 +63,9 @@ export function scan(source: string) {
 
   let newline = false;
 
+  let state = ScanState.None;
+
   let currentChar = source.charCodeAt(index);
-
-  const unexpectedCharacter: () => void = () =>
-    report(index, line, column, Errors.Unexpected, String.fromCharCode(currentChar));
-
-  const table = new Array(0xffff).fill(unexpectedCharacter, 0, 0x80) as ((context: Context) => Token)[];
-
-  // Whitespace
-  table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = () => Token.WhiteSpace;
-
-  table[Chars.LineFeed] = table[Chars.CarriageReturn] = () => {
-    column = 0;
-    line++;
-    newline = true;
-    // If it's a \r\n sequence, consume it as a single EOL.
-    if (index < length && source.charCodeAt(index) === Chars.LineFeed) {
-      ++index;
-    }
-    return Token.WhiteSpace;
-  };
-
-  // `a`...z`
-  for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
 
   function nextChar(): number {
     ++column;
@@ -91,6 +77,109 @@ export function scan(source: string) {
       return token;
     };
   }
+
+  function consumeOpt(code: number) {
+    if (source.charCodeAt(index) !== code) return false;
+    index++;
+    column++;
+    return true;
+  }
+
+  function skipSingleLineComment(): Token {
+    while (index < length) {
+      switch (currentChar) {
+        case Chars.CarriageReturn:
+          column = 0;
+          line++;
+          if (index < length && nextChar() === Chars.LineFeed) index++;
+          return state | ScanState.NewLine;
+        case Chars.LineFeed:
+        case Chars.LineSeparator:
+        case Chars.ParagraphSeparator:
+          column = 0;
+          line++;
+          return state | ScanState.NewLine;
+
+        default:
+          nextChar();
+      }
+    }
+
+    return Token.SingleComment;
+  }
+
+  /**
+   * Skips multiline comment
+   *
+   * @see [Link](https://tc39.github.io/ecma262/#prod-annexB-MultiLineComment)
+   *
+   * @param state Parser instance
+   */
+  function skipMultilineComment(): any {
+    while (index < length) {
+      switch (currentChar) {
+        case Chars.Asterisk:
+          index++;
+          column++;
+          state &= ~ScanState.LastIsCR;
+          if (consumeOpt(Chars.Slash)) return Token.MultiComment;
+          break;
+
+        case Chars.CarriageReturn:
+          state |= ScanState.NewLine | ScanState.LastIsCR;
+          column = 0;
+          line++;
+          break;
+
+        case Chars.LineFeed:
+          if ((state & ScanState.LastIsCR) === 0) {
+            column = 0;
+            line++;
+          }
+
+          state = (state & ~ScanState.LastIsCR) | ScanState.NewLine;
+          break;
+
+        case Chars.LineSeparator:
+        case Chars.ParagraphSeparator:
+          state = (state & ~ScanState.LastIsCR) | ScanState.NewLine;
+          column = 0;
+          line++;
+          break;
+
+        default:
+          state &= ~ScanState.LastIsCR;
+          nextChar();
+      }
+    }
+  }
+
+  const unexpectedCharacter: () => void = () =>
+    report(index, line, column, Errors.Unexpected, String.fromCharCode(currentChar));
+
+  const table = new Array(0xffff).fill(unexpectedCharacter, 0, 0x80) as ((context: Context) => Token)[];
+
+  // Whitespace
+  table[Chars.Space] = table[Chars.Tab] = table[Chars.FormFeed] = table[Chars.VerticalTab] = () => Token.WhiteSpace;
+
+  table[Chars.CarriageReturn] = () => {
+    state |= ScanState.NewLine | ScanState.LastIsCR;
+    column = 0;
+    line++;
+    return Token.WhiteSpace;
+  };
+
+  table[Chars.LineFeed] = () => {
+    if ((state & ScanState.LastIsCR) === 0) {
+      column = 0;
+      line++;
+    }
+    state = (state & ~ScanState.LastIsCR) | ScanState.NewLine;
+    return Token.WhiteSpace;
+  };
+
+  // `a`...z`
+  for (let i = Chars.LowerA; i <= Chars.LowerZ; i++) table[i] = scanIdentifier;
 
   // `,`, `~`, `?`, `[`, `]`, `{`, `}`, `:`, `;`, `(` ,`)`, `"`, `'`, `@`
   table[Chars.Comma] = mapToToken(Token.Comma);
@@ -110,10 +199,10 @@ export function scan(source: string) {
   table[Chars.Slash] = () => {
     if (currentChar === Chars.Slash) {
       nextChar();
-      // return skipSingleLineComment(s, context, 'SingleLine');
+      return skipSingleLineComment();
     } else if (currentChar === Chars.Asterisk) {
       nextChar();
-      // return skipMultilineComment(s, context);
+      return skipMultilineComment();
     } else if (currentChar === Chars.EqualSign) {
       nextChar();
       return Token.DivideAssign;
@@ -277,6 +366,24 @@ export function scan(source: string) {
     return Token.BitwiseOr;
   };
 
+  // `.`, `...`, `.123` (numeric literal)
+  table[Chars.Period] = () => {
+    if (index >= length) return Token.Period;
+    if (currentChar === Chars.Period) {
+      index++;
+      if (index < source.length && source.charCodeAt(index) === Chars.Period) {
+        index = index + 1;
+        column += 2;
+        currentChar = source.charCodeAt(index);
+        return Token.Ellipsis;
+      }
+    } else if (currentChar >= Chars.Zero && currentChar <= Chars.Nine) {
+      //      return scanNumber(state, context, true);
+    }
+
+    return Token.Period;
+  };
+
   /**
    * Scans identifier
    */
@@ -287,16 +394,18 @@ export function scan(source: string) {
   }
 
   return function(context: Context): any {
-    newline = false;
+    state = ScanState.None;
+
     while (index < length) {
       let current = currentChar;
       start = index;
       currentChar = source.charCodeAt(++index);
+      column++;
       if (((token = table[current](context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
         return {
           type: token,
           value,
-          newline,
+          newline: ScanState.NewLine !== 0,
           start,
           line,
           column,
@@ -308,7 +417,7 @@ export function scan(source: string) {
     return {
       type: token,
       value: '',
-      newline,
+      newline: false,
       start,
       end: index
     };
