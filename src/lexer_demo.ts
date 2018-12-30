@@ -899,7 +899,7 @@ export function scan(source: string) {
     }
 
     return {
-      type: token,
+      type: Token.EndOfSource,
       tokenValue: '',
       newline,
       line,
@@ -916,6 +916,7 @@ import * as ESTree from './estree';
 import { scan } from './lexer';
 import { Options, EcmaVersion } from './types';
 import { Context } from './common';
+import { Token, KeywordDescTable } from './token';
 
 function parseSource(
   source: string,
@@ -963,8 +964,35 @@ function parseSource(
   let currentToken = getToken(context);
   let nextToken = getToken(context);
 
+  // See: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-exports-static-semantics-exportednames
+  let exportedNames = {};
+  // See: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-exports-static-semantics-exportedbindings
+  let exportedBindings = {};
+
+  const scope = {};
+
+  const body = parseModuleItemOrStatementList(context);
+
+  /**
+   * Parse module item or statement list
+   *
+   * @see [Link](https://tc39.github.io/ecma262/#prod-ModuleItemList)
+   * @see [Link](https://tc39.github.io/ecma262/#prod-StatementList)
+   *
+   * @param context Context masks
+   */
+  function parseModuleItemOrStatementList(context: Context): any[] {
+    while (currentToken.type !== Token.EndOfSource) {
+      currentToken = getToken(context);
+    }
+
+    return ['fkleuver'];
+  }
+
   return {
-    value: 'fkleuver'
+    type: 'Program',
+    sourceType: context & Context.Module ? 'module' : 'script',
+    body: body
   };
 }
 
