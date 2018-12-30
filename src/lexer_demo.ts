@@ -7,11 +7,20 @@ import { unicodeLookup } from './unicode';
 export const enum Context {
   None = 0,
   Module = 1 << 0,
-  OptionsJSX = 1 << 1
+  Strict = 1 << 1,
+  OptionsJSX = 1 << 2
 }
 
 const enum Constants {
   Size = 128
+}
+
+export const enum Escape {
+  Empty = -1,
+  StrictOctal = -2,
+  EightOrNine = -3,
+  InvalidHex = -4,
+  OutOfRange = -5
 }
 
 /**
@@ -51,10 +60,23 @@ export function report(index: number, line: number, column: number, type: Errors
   throw error;
 }
 
+function fromCodePoint(code: Chars): string {
+  return code <= 0xffff
+    ? String.fromCharCode(code)
+    : String.fromCharCode(((code - 0x10000) >> 10) + 0xd800, ((code - 0x10000) & (1024 - 1)) + 0xdc00);
+}
+function toHex(code: number): number {
+  code -= Chars.Zero;
+  if (code <= 9) return code;
+  code = (code | 0x20) - (Chars.LowerA - Chars.Zero);
+  if (code <= 5) return code + 10;
+  return -1;
+}
+
 export function scan(source: string) {
   let index = 0;
 
-  let start = 0;
+  let startIndex = 0;
 
   let line = 1;
 
@@ -64,7 +86,7 @@ export function scan(source: string) {
 
   let token = Token.EndOfSource;
 
-  let value: any = '';
+  let tokenValue: any = '';
 
   let newline = false;
 
@@ -99,6 +121,17 @@ export function scan(source: string) {
       column = 0;
       line++;
     }
+  }
+
+  function nextUnicodeChar(): number {
+    const hi = source.charCodeAt(index++);
+
+    if (hi < 0xd800 || hi > 0xdbff) return hi;
+    if (index === source.length) return hi;
+    const lo = source.charCodeAt(index);
+
+    if (lo < 0xdc00 || lo > 0xdfff) return hi;
+    return ((hi & 0x3ff) << 10) | (lo & 0x3ff) | 0x10000;
   }
 
   /**
@@ -232,8 +265,8 @@ export function scan(source: string) {
    */
   function scanKnownIdentifier(): Token {
     while ((AsciiLookup[nextChar()] & (CharType.IDContinue | CharType.Decimal)) > 0) {}
-    value = source.slice(start, index);
-    return descKeywordTable[value] || Token.Identifier;
+    tokenValue = source.slice(startIndex, index);
+    return descKeywordTable[tokenValue] || Token.Identifier;
   }
 
   /**
@@ -248,19 +281,242 @@ export function scan(source: string) {
 
   function scanNumeric(isFloat: boolean): Token {
     if (isFloat) {
-      value = 0;
+      tokenValue = 0;
     } else {
       // Hot path - fast path for decimal digits that fits into 4 bytes
       const maxDigits = 10;
       const digit = maxDigits - 1;
-      value = currentChar - Chars.Zero;
+      tokenValue = currentChar - Chars.Zero;
       while (digit >= 0 && nextChar() <= Chars.Nine && currentChar >= Chars.Zero) {
-        value = value * 10 + currentChar - Chars.Zero;
+        tokenValue = tokenValue * 10 + currentChar - Chars.Zero;
       }
     }
     return Token.NumericLiteral;
   }
 
+  function parseEscape(context: Context): number {
+    switch (currentChar) {
+      // Magic escapes
+      case Chars.LowerB:
+        return Chars.Backspace;
+      case Chars.LowerF:
+        return Chars.FormFeed;
+      case Chars.LowerR:
+        return Chars.CarriageReturn;
+      case Chars.LowerN:
+        return Chars.LineFeed;
+      case Chars.LowerT:
+        return Chars.Tab;
+      case Chars.LowerV:
+        return Chars.VerticalTab;
+
+      // Line continuations
+      case Chars.CarriageReturn: {
+        if (index < source.length) {
+          const ch = source.charCodeAt(index);
+
+          if (ch === Chars.LineFeed) {
+            index = index + 1;
+          }
+        }
+      }
+      // falls through
+
+      case Chars.LineFeed:
+      case Chars.LineSeparator:
+      case Chars.ParagraphSeparator:
+        column = -1;
+        line++;
+        return Escape.Empty;
+
+      // Null character, octals
+      case Chars.Zero:
+      case Chars.One:
+      case Chars.Two:
+      case Chars.Three: {
+        // 1 to 3 octal digits
+        let code = currentChar - Chars.Zero;
+        let idx = index + 1;
+        let col = column + 1;
+        if (idx < source.length) {
+          let next = source.charCodeAt(idx);
+          if (next < Chars.Zero || next > Chars.Seven) {
+            // Strict mode code allows only \0, then a non-digit.
+            if (code !== 0 || next === Chars.Eight || next === Chars.Nine) {
+              if (context & Context.Strict) return Escape.StrictOctal;
+              // If not in strict mode, we mark the 'octal' as found and continue
+              // parsing until we parse out the literal AST node
+              //  state.flags = state.flags | Flags.HasOctal;
+            }
+          } else if (context & Context.Strict) {
+            return Escape.StrictOctal;
+          } else {
+            // state.flags = state.flags | Flags.HasOctal;
+            currentChar = next;
+            code = code * 8 + (next - Chars.Zero);
+            idx++;
+            col++;
+
+            if (idx < source.length) {
+              next = source.charCodeAt(idx);
+
+              if (next >= Chars.Zero && next <= Chars.Seven) {
+                currentChar = next;
+                code = code * 8 + (next - Chars.Zero);
+                idx++;
+                col++;
+              }
+            }
+
+            index = idx - 1;
+            column = col - 1;
+          }
+        }
+
+        return code;
+      }
+
+      case Chars.Four:
+      case Chars.Five:
+      case Chars.Six:
+      case Chars.Seven: {
+        if (context & Context.Strict) return Escape.StrictOctal;
+        let code = currentChar - Chars.Zero;
+        const idx = index + 1;
+        const col = column + 1;
+
+        if (idx < source.length) {
+          const next = source.charCodeAt(idx);
+          if (next >= Chars.Zero && next <= Chars.Seven) {
+            code = code * 8 + (next - Chars.Zero);
+            currentChar = next;
+            index = idx;
+            column = col;
+          }
+        }
+
+        return code;
+      }
+
+      // `8`, `9` (invalid escapes)
+      case Chars.Eight:
+      case Chars.Nine:
+        return Escape.EightOrNine;
+
+      // ASCII escapes
+      case Chars.LowerX: {
+        // 2 hex digits
+        const ch1 = nextChar();
+        const hi = toHex(ch1);
+        if (hi < 0 || index >= length) return Escape.InvalidHex;
+        const ch2 = nextChar();
+        const lo = toHex(ch2);
+        if (lo < 0) return Escape.InvalidHex;
+        return hi * 16 + lo;
+      }
+
+      // UCS-2/Unicode escapes
+      case Chars.LowerU: {
+        if (nextChar() === Chars.LeftBrace) {
+          // \u{N}
+          let code = toHex(nextChar());
+          if (code < 0) return Escape.InvalidHex;
+
+          nextChar();
+          while (currentChar !== Chars.RightBrace) {
+            const digit = toHex(currentChar);
+            if (digit < 0) return Escape.InvalidHex;
+            code = (code << 4) | digit;
+            // Code point out of bounds
+            if (code > 0x10ffff) return Escape.OutOfRange;
+            nextChar();
+          }
+
+          return code;
+        } else {
+          // \uNNNN
+          let code = toHex(currentChar);
+          if (code < 0) return Escape.InvalidHex;
+          for (let i = 0; i < 3; i++) {
+            const digit = toHex(nextChar());
+            if (digit < 0) return Escape.InvalidHex;
+            code = (code << 4) | digit;
+          }
+          return code;
+        }
+      }
+
+      default:
+        return nextUnicodeChar();
+    }
+  }
+
+  /**
+   * Throws a string error for either string or template literal
+   *
+   * @param state state object
+   * @param context Context masks
+   */
+  function reportInvalidEscapeError(code: Escape, index: number, line: number, column: number): void {
+    switch (code) {
+      case Escape.StrictOctal:
+        report(index, line, column, Errors.Unexpected);
+      case Escape.EightOrNine:
+        report(index, line, column, Errors.Unexpected);
+      case Escape.InvalidHex:
+        report(index, line, column, Errors.Unexpected);
+      case Escape.OutOfRange:
+        report(index, line, column, Errors.Unexpected);
+      default:
+        return;
+    }
+  }
+
+  /**
+   * Scan a string literal
+   *
+   * @see [Link](https://tc39.github.io/ecma262/#sec-literals-string-literals)
+   *
+   * @param state Parser instance
+   * @param context Context masks
+   */
+  function scanString(context: Context, quote: number): Token {
+    nextChar();
+    let start = index;
+    let ret = '';
+    while (index < length) {
+      if (currentChar === Chars.Backslash) {
+        ret += source.slice(start, index);
+        nextChar();
+        if (currentChar >= Constants.Size) {
+          ret += String.fromCodePoint(currentChar);
+        } else {
+          const code = parseEscape(context);
+          nextChar();
+          if (code >= 0) ret += String.fromCodePoint(code);
+          else reportInvalidEscapeError(code as Escape, index, line, column);
+          start = index;
+        }
+      } else if (currentChar === quote) {
+        if (start < index) tokenValue += source.slice(start, index);
+        return Token.StringLiteral;
+      } else if ((currentChar & 0x53) < 3 && (currentChar === Chars.CarriageReturn || currentChar === Chars.LineFeed)) {
+        report(index, line, column, Errors.Unexpected);
+      } else {
+        nextChar();
+      }
+    }
+    if (currentChar !== quote) report(index, line, column, Errors.Unexpected);
+    nextChar(); //  // Consume the quote
+    tokenValue = ret;
+    return Token.StringLiteral;
+  }
+
+  /**
+   * Scans punctuators
+   *
+   * @param context Context masks
+   */
   function next(context: Context): any {
     if (currentChar >= Constants.Size) return scanMaybeIdentifier();
 
@@ -296,6 +552,11 @@ export function scan(source: string) {
       case Chars.Eight:
       case Chars.Nine:
         return scanNumeric(false);
+
+      // `'string'`, `"string"`
+      case Chars.SingleQuote:
+      case Chars.DoubleQuote:
+        return scanString(context, currentChar);
 
       // `/`, `/=`, `/>`, '/*..*/'
       case Chars.Slash: {
@@ -623,13 +884,13 @@ export function scan(source: string) {
     state = ScanState.None;
 
     while (index < length) {
-      start = index;
+      startIndex = index;
       if (((token = next(context)) & Token.WhiteSpace) !== Token.WhiteSpace) {
         return {
           type: token,
-          value,
+          tokenValue,
           newline: ScanState.NewLine !== 0,
-          start,
+          startIndex,
           line,
           column,
           end: index
@@ -639,11 +900,11 @@ export function scan(source: string) {
 
     return {
       type: token,
-      value: '',
+      tokenValue: '',
       newline,
       line,
       column,
-      start,
+      startIndex,
       end: index
     };
   };
