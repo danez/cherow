@@ -1,21 +1,20 @@
-import { Flags } from './parser/common';
 import { Comment } from './estree';
 import { Token } from './token';
+
+export interface RawToken {
+  type: Token;
+  tokenValue: string | number;
+  newline: boolean;
+  line: number;
+  column: number;
+  start: number;
+  end: number;
+}
 
 /**
  * `ECMAScript version
  */
 export type EcmaVersion = 1 | 2 | 3 | 4 | 5 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020;
-
-/**
- * The Scope types
- */
-
-export interface ScopeState {
-  var: any;
-  lexvar: any;
-  lex: any;
-}
 
 /**
  * The parser options.
@@ -66,35 +65,4 @@ export interface Options {
 
   // Disable web compability (AnnexB)
   disableWebCompat?: boolean;
-}
-
-export interface ParserState {
-  index: number;
-  line: number;
-  column: number;
-  startIndex: number;
-  source: string;
-  flags: Flags;
-  length: number;
-  currentChar: number;
-  previousToken: Token;
-  currentToken: Token;
-  tokenValue: any;
-  tokenRegExp: any;
-  tokens: Token[];
-  comments: Comment[];
-  assignable: boolean;
-  inCatch: boolean;
-  exportedNames: any[];
-  exportedBindings: any[];
-}
-
-/**
- *  Line / column location
- *
- */
-export interface Location {
-  index: number;
-  column: number;
-  line: number;
 }

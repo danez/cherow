@@ -1,3 +1,4 @@
+import { RawToken } from './types';
 import { Token, descKeywordTable } from './token';
 import { Chars, AsciiLookup, CharType } from './chars';
 import { unicodeLookup } from './unicode';
@@ -832,7 +833,7 @@ export function scan(source: string) {
    * Skip whitespace and comments to the next token start or the end of file, whichever comes
    * first.
    */
-  return function(context: Context): any {
+  return function(context: Context): RawToken {
     state = ScanState.None;
 
     while (index < length) {
@@ -842,9 +843,9 @@ export function scan(source: string) {
           type: token,
           tokenValue,
           newline: ScanState.NewLine !== 0,
-          startIndex,
           line,
           column,
+          start: startIndex,
           end: index
         };
       }
@@ -856,8 +857,10 @@ export function scan(source: string) {
       newline,
       line,
       column,
-      startIndex,
+      start: startIndex,
       end: index
     };
   };
 }
+
+
