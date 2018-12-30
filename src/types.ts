@@ -1,33 +1,35 @@
-import { Token } from './token';
-import { Flags, LabelState } from './common';
+import { Flags } from './parser/common';
 import { Comment } from './estree';
-import { CommentType } from './lexer/comments';
+import { Token } from './token';
 
 /**
- * `onToken` option.
+ * `ECMAScript version
  */
-export type OnToken = void | ((token: string, value: string, line?: number, column?: number) => void);
+export type EcmaVersion = 1 | 2 | 3 | 4 | 5 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020;
 
 /**
- * `onError` option.
+ * The Scope types
  */
-export type OnError = void | ((error: string, line: number, column: number) => void);
 
-/**
- * `onComment` option.
- */
-export type OnComment = void | Comment[] | ((type: string, value: string, start: number, end: number) => any);
+export interface ScopeState {
+  var: any;
+  lexvar: any;
+  lex: any;
+}
 
 /**
  * The parser options.
  */
 export interface Options {
+  // Set to 3, 5 (default), 6, 7, 8, 9, or 10 to specify the version of ECMAScript syntax you want to use.
+  // You can also set to 2015 (same as 6), 2016 (same as 7), 2017 (same as 8), 2018 (same as 9), or 2019 (same as 10) to use the year-based naming.
+  ecmaVersion?: EcmaVersion;
 
   // The flag to allow module code
   module?: boolean;
 
   // Create a top-level comments array containing all comments
-  comments?: boolean;
+  attachComments?: boolean;
 
   // The flag to enable stage 3 support (ESNext)
   next?: boolean;
@@ -41,11 +43,8 @@ export interface Options {
   // The flag to enable React JSX parsing
   jsx?: boolean;
 
-  // The flag to attach raw property to each literal node
+  // The flag to attach raw property to each literal and identifier node
   raw?: boolean;
-
-  // Attach raw property to each identifier node
-  rawIdentifier?: boolean;
 
   // Set to true to record the source file in every node's loc object when the loc option is set.
   source?: string;
@@ -59,61 +58,35 @@ export interface Options {
   // The flag to allow experimental features
   experimental?: boolean;
 
-   // The flag to allow to skip shebang - '#'
-  skipShebang?: boolean;
-
-  // Enable editor mode
-  edit?: OnError;
-
-  // Enable editor mode
-  onToken?: OnToken;
-
   // Enables method that should be bypassed when running on NodeJS
-  node?: boolean;
+  native?: boolean;
 
   // Enabled tokenizing
   tokenize?: boolean;
 
-  // Option to enable either array or callback for comments
-  onComment?: OnComment;
+  // Disable web compability (AnnexB)
+  disableWebCompat?: boolean;
 }
 
 export interface ParserState {
-    index: number;
-    startIndex: number;
-    lastIndex: number;
-    line: number;
-    startLine: number;
-    lastLine: number;
-    column: number;
-    startColumn: number;
-    lastColumn: number;
-    source: string;
-    flags: Flags;
-    length: number;
-    commentState: number | undefined;
-    nextChar: number;
-    tokenRaw: string | null;
-    token: Token;
-    onToken: any;
-    onComment: any;
-    commentStart: number;
-    commentType: CommentType | void;
-    tokenValue: any;
-    tokenRegExp: any;
-     // Regular expression
-    capturingParens: number;
-    largestBackReference: number;
-    //
-    assignable: boolean;
-    destructible: boolean;
-    labelSet: any;
-    functionBoundaryStack: any;
-    labelSetStack: {[key: string]: boolean}[];
-    iterationStack: (boolean | LabelState)[];
-    switchStatement: LabelState;
-    iterationStatement: LabelState;
-    labelDepth: number;
+  index: number;
+  line: number;
+  column: number;
+  startIndex: number;
+  source: string;
+  flags: Flags;
+  length: number;
+  currentChar: number;
+  previousToken: Token;
+  currentToken: Token;
+  tokenValue: any;
+  tokenRegExp: any;
+  tokens: Token[];
+  comments: Comment[];
+  assignable: boolean;
+  inCatch: boolean;
+  exportedNames: any[];
+  exportedBindings: any[];
 }
 
 /**

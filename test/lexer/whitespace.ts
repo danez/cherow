@@ -1,113 +1,146 @@
 import * as t from 'assert';
-import { nextToken } from '../../src/lexer/scan';
-import { State } from '../../src/state';
 import { Context } from '../../src/common';
+import { scan } from '../../src/lexer';
+import { Token, KeywordDescTable } from '../../src/token';
 
-// https://github.com/tc39/test262/tree/master/test/language/white-space
+describe('src/scanner/seek', () => {
+  describe('seek()', () => {
+    context('script', () => run(false));
+    context('module', () => run(true));
+  });
 
-describe('Lexer - Whitespace', () => {
-
-    function pass(name: string, opts: any) {
-        it(name, () => {
-            const state = new State(opts.source, undefined, undefined);
-            nextToken(state, Context.Empty);
-            t.deepEqual({
-                line: state.line,
-                column: state.column,
-            },          {
-                line: opts.line,
-                column: opts.column
-            }, );
-        });
+  function run(isModule: boolean) {
+    interface Opts {
+      source: string;
+      hasNext: boolean;
+      line: number;
+      column: number;
     }
 
-    pass('should skip nothing', {
+    function pass(name: string, opts: Opts) {
+      it(name, () => {
+        const parser = scan(opts.source);
+        const token = parser(Context.None);
+        t.deepEqual(
+          {
+            //                seek: seek(parser, isModule ? Context.Module : Context.Empty),
+            //hasNext: hasNext(parser),
+            line: token.line,
+            column: token.column
+          },
+          {
+            //seek: opts.seek, hasNext: opts.hasNext,
+            line: opts.line,
+            column: opts.column
+          }
+        );
+      });
+    }
+
+    function passAll(name: (lt: string) => string, opts: (lt: string) => Opts) {
+      pass(name('line feed'), opts('\n'));
+      pass(name('carriage return'), opts('\r'));
+      pass(name('Windows newline'), opts('\r'));
+      pass(name('line separators'), opts('\u2028'));
+      pass(name('paragraph separators'), opts('\u2029'));
+    }
+
+    pass('skips nothing', {
       source: '',
-      line: 1, column: 0,
+      //  seek: Seek.None,
+      hasNext: false,
+      line: 1,
+      column: 0
     });
 
-    pass('should skip newline and linefeed', {
-      source: '\u2028',
-      line: 2, column: 0,
+    pass('skips spaces', {
+      source: '        ',
+      // seek: Seek.SameLine,
+      hasNext: false,
+      line: 1,
+      column: 8
     });
 
-    pass('should skip newline and linefeed', {
-      source: '\r\n',
-      line: 2, column: 0,
-    });
-
-    pass('should skip newline', {
-      source: '\r',
-      line: 2, column: 0,
-    });
-
-    pass('should skip newline', {
-      source: '\n',
-      line: 2, column: 0,
-    });
-
-    pass('should skip none-breaking space', {
-      source: '\A0',
-      line: 1, column: 2,
-    });
-
-    pass('should skip punctual space', {
-      source: '\u2008',
-      line: 1, column: 1,
-    });
-
-    pass('should skip punctual space', {
-      source: '\u2008',
-      line: 1, column: 1,
-    });
-
-    pass('should skip EmQuad', {
-      source: '\u2001',
-      line: 1, column: 1,
-    });
-
-    pass('should skip ideographic space', {
-      source: '\u3000',
-      line: 1, column: 1,
-    });
-
-    pass('should skip tabs', {
+    pass('skips tabs', {
       source: '\t\t\t\t\t\t\t\t',
-      line: 1, column: 8,
+      //  seek: Seek.SameLine,
+      hasNext: false,
+      line: 1,
+      column: 8
     });
 
-    pass('should skip vertical tabs', {
+    pass('skips vertical tabs', {
       source: '\v\v\v\v\v\v\v\v',
-      line: 1, column: 8,
+      //seek: Seek.SameLine,
+      hasNext: false,
+      line: 1,
+      column: 8
     });
 
-    pass('should skip mixed whitespace', {
+    passAll(
+      lt => `skips ${lt}s`,
+      lt => ({
+        source: `${lt}${lt}${lt}${lt}${lt}${lt}${lt}${lt}`,
+        // seek: Seek.NewLine,
+        hasNext: false,
+        line: 9,
+        column: 0
+      })
+    );
+
+    pass('skips mixed whitespace', {
       source: '    \t \r\n \n\r \v\f\t ',
-      line: 4, column: 5,
+      // seek: Seek.NewLine,
+      hasNext: false,
+      line: 4,
+      column: 5
     });
 
-    pass('should skip mixed whitespace', {
-      source: '    \t \r\n \n\r \v\f\t ',
-      line: 4, column: 5,
-    });
+    passAll(
+      () => 'skips single line comments with line feed',
+      lt => ({
+        source: `  \t // foo bar${lt}  `,
+        //      seek: Seek.NewLine,
+        hasNext: false,
+        line: 2,
+        column: 2
+      })
+    );
 
-    pass('should skip carriage return and newline', {
-      source: ' \r\n ',
-      line: 2, column: 1,
-    });
+    passAll(
+      lt => `skips multiple multiline comments with ${lt}`,
+      lt => ({
+        source: `  \t /* foo bar${lt} *//* baz*/ ${lt} /**/`,
+        //seek: Seek.NewLine,
+        hasNext: false,
+        line: 3,
+        column: 5
+      })
+    );
 
-    pass('should skip mixed whitespace', {
-      source: '\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u30001234',
-      line: 1, column: 19,
-    });
+    passAll(
+      lt => `skips multiline comments with ${lt}`,
+      lt => ({
+        source: `  \t /* foo * /* bar ${lt} */  `,
+        // seek: Seek.NewLine,
+        hasNext: false,
+        line: 2,
+        column: 5
+      })
+    );
 
-    pass('should skip mixed whitespace', {
-      source: '\u000A\u000D\u2028\u2029',
-      line: 5, column: 0,
-    });
+    passAll(
+      lt => `skips multiple single line comments with ${lt}`,
+      lt => ({
+        source: `  \t // foo bar${lt} // baz ${lt} //`,
+        //seek: Seek.NewLine,
+        hasNext: false,
+        line: 3,
+        column: 3
+      })
+    );
 
-    pass('should skip mixed whitespace', {
-      source: '\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF',
-      line: 5, column: 4,
-    });
+    if (isModule) {
+    }
+  }
 });

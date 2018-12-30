@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-const expect = require("unexpected");
+const expect = require('unexpected');
 
 module.exports = (parse, getType) => generatorOptions => {
   let ast;
@@ -12,13 +12,11 @@ module.exports = (parse, getType) => generatorOptions => {
     return { error };
   }
 
-  const type = getType
-    ? getType({ sourceType: generatorOptions.sourceType })
-    : "Program";
+  const type = getType ? getType({ sourceType: generatorOptions.sourceType }) : 'Program';
 
   try {
-    expect(ast, "to have own property", "type", type);
+    expect(ast, 'to have own property', 'type', type);
   } catch (error) {
-    return { error, artifacts: { "ast.json": JSON.stringify(ast, null, 2) } };
+    return { error, artifacts: { 'ast.json': JSON.stringify(ast, null, 2) } };
   }
 };
