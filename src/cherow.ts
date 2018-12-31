@@ -1,11 +1,11 @@
 import * as ESTree from './estree';
 import { scan } from './lexer';
-import { Options, EcmaVersion } from './types';
+import { Options, EcmaVersion, RawToken } from './types';
 import { Context } from './common';
 import { Token, KeywordDescTable } from './token';
 import { report, Errors } from './errors';
 
-function parseSource(
+export function parseSource(
   source: string,
   options: Options | void,
   /*@internal*/
@@ -22,8 +22,6 @@ function parseSource(
     if (options.module) context |= Context.Module;
     // The flag to enable stage 3 support (ESNext)
     if (options.next) context |= Context.OptionsNext;
-    // The flag to enable React JSX parsing
-    if (options.jsx) context |= Context.OptionsJSX;
     // The flag to enable start and end offsets to each node
     if (options.ranges) context |= Context.OptionsRanges;
     // The flag to enable line/column location information to each node
@@ -46,10 +44,10 @@ function parseSource(
     if (options.disableWebCompat) context |= Context.OptionDisablesWebCompat;
   }
 
-  const getToken = scan(source);
+  const seek = scan(source);
 
   let previousToken: any | null = null;
-  let currentToken = getToken(context);
+  let currentToken = seek(context);
 
   // See: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-exports-static-semantics-exportednames
   let exportedNames = {};
@@ -58,23 +56,47 @@ function parseSource(
 
   const scope = {};
 
-  function updateToken(t: any) {
+  /**
+   * Prime the scanner and set current token to the previous one
+   * and the new token as currentToken
+   *
+   * @param raw Token
+   */
+  function nextToken(raw: RawToken): void {
     previousToken = currentToken;
-    currentToken = t;
+    currentToken = raw;
   }
 
+  /**
+   * Does a token comparison. If match - prime the scanner and return true
+   * @param context
+   * @param token
+   */
   function optional(context: Context, token: Token): boolean {
     if (currentToken.type !== token) return false;
-    updateToken(getToken(context));
+    nextToken(seek(context));
     return true;
   }
 
-  function expect(context: Context, t: any): boolean {
+  /**
+   * Does a token comparison. If match - prime the scanner and return true.
+   * Else throws an error
+   *
+   * @param context Context masks
+   * @param token
+   */
+  function expect(context: Context, t: Token): boolean {
     if (currentToken.type !== t) {
-      report(t.end, t.line, t.column, Errors.Unexpected, KeywordDescTable[t & Token.Type]);
+      report(
+        currentToken.end,
+        currentToken.line,
+        currentToken.column,
+        Errors.Unexpected,
+        KeywordDescTable[t & Token.Type]
+      );
       return false;
     }
-    updateToken(getToken(context));
+    nextToken(seek(context));
     return true;
   }
 
@@ -91,8 +113,6 @@ function parseSource(
       ? optional(context, Token.Semicolon)
       : report(currentToken.end, currentToken.line, currentToken.column, Errors.Unexpected);
   }
-
-  const body = parseModuleItemOrStatementList(context);
 
   /**
    * Parse module item or statement list
@@ -203,7 +223,7 @@ function parseSource(
       if (currentToken.type === Token.Assign) {
         // reinterpret(context, expr);
       }
-      updateToken(getToken(context));
+      nextToken(seek(context));
       return {
         type: 'AssignmentExpression',
         left: expr,
@@ -272,7 +292,7 @@ function parseSource(
       // When the next token is no longer a binary operator, it's potentially the
       // start of an expression, so we break the loop
       if (prec + delta <= minPrec) break;
-      updateToken(getToken(context));
+      nextToken(seek(context));
       left = {
         type: t & Token.IsLogical ? 'LogicalExpression' : 'BinaryExpression',
         left,
@@ -295,7 +315,7 @@ function parseSource(
   function parseUnaryExpression(context: Context): any {
     const t = currentToken.type;
     if (t & Token.IsUnaryOp) {
-      updateToken(getToken(context));
+      nextToken(seek(context));
       const argument: ESTree.Expression = parseUnaryExpression(context);
       return {
         type: 'UnaryExpression',
@@ -317,7 +337,7 @@ function parseSource(
    */
   function parseUpdateExpression(context: Context): any {
     if (currentToken.type & Token.IsUpdateOp) {
-      updateToken(getToken(context));
+      nextToken(seek(context));
       const expr = parseLeftHandSideExpression(context);
       return {
         type: 'UpdateExpression',
@@ -329,7 +349,7 @@ function parseSource(
     const expression = parseLeftHandSideExpression(context);
 
     if (currentToken.type & Token.IsUpdateOp && !currentToken.newline) {
-      updateToken(getToken(context));
+      nextToken(seek(context));
       return {
         type: 'UpdateExpression',
         argument: expression,
@@ -351,14 +371,12 @@ function parseSource(
    * @param pos Location info
    */
   function parseLeftHandSideExpression(context: Context): any {
-    // LeftHandSideExpression ::
-    //   (NewExpression | MemberExpression) ...
-    let expr = parseNewOrMemberExpression(context);
+    let expr = parseMemberWithNewPrefixesExpression(context);
 
     while (true) {
       switch (currentToken.type) {
         case Token.Period:
-          updateToken(getToken(context));
+          nextToken(seek(context));
           expr = {
             type: 'MemberExpression',
             object: expr,
@@ -367,7 +385,7 @@ function parseSource(
           };
           continue;
         case Token.LeftBracket:
-          updateToken(getToken(context));
+          nextToken(seek(context));
           expr = {
             type: 'MemberExpression',
             object: expr,
@@ -413,16 +431,16 @@ function parseSource(
     return parseMetaProperty(context, id);
   }
 
-  function parseNewOrMemberExpression(context: Context): any {
+  function parseMemberWithNewPrefixesExpression(context: Context): any {
     if (currentToken.type === Token.NewKeyword) {
       let result: any;
       const id = parseIdentifier(context);
       if (currentToken.type === Token.SuperKeyword) {
         result = { type: 'Super' };
       } else if (optional(context, Token.Period)) {
-        return parseNewTargetExpression(context, id as any);
+        return parseMemberExpressionContinuation(context, parseNewTargetExpression(context, id as any));
       } else {
-        result = parseNewOrMemberExpression(context);
+        result = parseMemberWithNewPrefixesExpression(context);
       }
 
       return {
@@ -447,9 +465,20 @@ function parseSource(
    */
 
   function parseMemberExpression(context: Context): ESTree.Expression {
+    // MemberExpression ::
+    //   (PrimaryExpression | FunctionLiteral | ClassLiteral)
+    //     ('[' Expression ']' | '.' Identifier | Arguments | TemplateLiteral)*
+    //
+    // CallExpression ::
+    //   (SuperCall | ImportCall)
+    //     ('[' Expression ']' | '.' Identifier | Arguments | TemplateLiteral)*
+    //
+    // The '[' Expression ']' and '.' Identifier parts are parsed by
+    // ParseMemberExpressionContinuation, and the Arguments part is parsed by the
+    // caller.
     let result: any;
     if (currentToken.type === Token.SuperKeyword) {
-      result = { type: 'super' };
+      result = parseSuperExpression(context);
     } else if (currentToken.type === Token.ImportKeyword) {
       result = parseImportExpressions(context);
     } else {
@@ -457,6 +486,11 @@ function parseSource(
     }
 
     return parseMemberExpressionContinuation(context, result);
+  }
+
+  function parseSuperExpression(context: Context): any {
+    expect(context, Token.SuperKeyword);
+    return { type: 'super' };
   }
 
   /**
@@ -497,7 +531,7 @@ function parseSource(
     while (true) {
       switch (currentToken.type) {
         case Token.Period:
-          updateToken(getToken(context));
+          nextToken(seek(context));
           expr = {
             type: 'MemberExpression',
             object: expr,
@@ -506,7 +540,7 @@ function parseSource(
           };
           continue;
         case Token.LeftBracket:
-          updateToken(getToken(context));
+          nextToken(seek(context));
           expr = {
             type: 'MemberExpression',
             object: expr,
@@ -530,7 +564,7 @@ function parseSource(
    * @param Context Context masks
    */
   function parseArgumentList(context: Context): (ESTree.Expression | ESTree.SpreadElement)[] {
-    updateToken(getToken(context));
+    nextToken(seek(context));
     const expressions: (ESTree.Expression | ESTree.SpreadElement)[] = [];
     while (currentToken.type !== Token.RightParen) {
       expressions.push(parseAssignmentExpression(context));
@@ -546,12 +580,14 @@ function parseSource(
   }
 
   function parseIdentifier(context: Context) {
-    updateToken(getToken(context));
+    nextToken(seek(context));
     return {
       type: 'Identifier',
       name: previousToken.tokenValue
     };
   }
+
+  const body = parseModuleItemOrStatementList(context);
 
   return {
     type: 'Program',
