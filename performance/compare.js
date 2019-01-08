@@ -101,11 +101,20 @@ parsers = [
     }
 },
 {
-    name: 'Babylon',
+    name: 'Babylon (Babel v6)',
     link: 'https://github.com/babel/babylon',
     src: 'https://wzrd.in/standalone/babylon@latest',
     parse: function (code) {
         var syntax = window.babylon.parse(code, { ranges: true });
+        return syntax.program.body.length;
+    }
+},
+{
+    name: 'Babel v7',
+    link: 'https://github.com/babel/babel',
+    src: 'https://packd.now.sh/@babel/parser',
+    parse: function (code) {
+        var syntax = window._babel_parser.parse(code, { ranges: true });
         return syntax.program.body.length;
     }
 },
