@@ -73,7 +73,7 @@ parsers = [
 {
     name: 'Espree',
     link: 'https://github.com/eslint/espree',
-    src: 'https://wzrd.in/standalone/espree@latest',
+    src: 'https://packd.now.sh/espree',
     version: function () {
         return window.espree.version;
     },
@@ -85,7 +85,7 @@ parsers = [
 {
     name: 'Shift',
     link: 'https://github.com/shapesecurity/shift-parser-js',
-    src: 'https://wzrd.in/standalone/shift-parser@latest',
+    src: 'https://packd.now.sh/shift-parser',
     parse: function (code) {
         var syntax = window.shiftParser.parseScriptWithLocation(code);
         return syntax.tree.statements.length;
@@ -94,7 +94,7 @@ parsers = [
 {
     name: 'Shift (no early errors)',
     link: 'https://github.com/shapesecurity/shift-parser-js',
-    src: 'https://wzrd.in/standalone/shift-parser@latest',
+    src: 'https://packd.now.sh/shift-parser',
     parse: function (code) {
         var syntax = window.shiftParser.parseScriptWithLocation(code, { earlyErrors: false });
         return syntax.tree.statements.length;
@@ -103,7 +103,7 @@ parsers = [
 {
     name: 'Babylon (Babel v6)',
     link: 'https://github.com/babel/babylon',
-    src: 'https://wzrd.in/standalone/babylon@latest',
+    src: 'https://packd.now.sh/babylon',
     parse: function (code) {
         var syntax = window.babylon.parse(code, { ranges: true });
         return syntax.program.body.length;
